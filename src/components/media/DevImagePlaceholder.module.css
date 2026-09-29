@@ -1,0 +1,21 @@
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, rgb(17 18 15 / 5%) 0 2px, transparent 2px 14px),
+    linear-gradient(160deg, var(--color-stone), var(--color-paper) 75%);
+}
+
+.tag {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-accent-strong);
+  border: 1px dashed rgb(127 68 51 / 55%);
+  padding: var(--space-2) var(--space-3);
+  background: rgb(244 241 234 / 80%);
+}

@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach } from 'vitest'
@@ -40,3 +41,28 @@ if (typeof window !== 'undefined' && typeof window.requestAnimationFrame !== 'fu
     window.setTimeout(() => callback(performance.now()), 16)
   window.cancelAnimationFrame = (handle: number) => window.clearTimeout(handle)
 }
+
+/**
+ * Milestone 4 added several more GSAP-consuming sections to the homepage,
+ * so more `loadGsap()` dynamic imports are now in flight per render. Each
+ * hook already guards against ACTING after unmount (the `cancelled` /
+ * `isConnected` checks in every animation hook), but the underlying dynamic
+ * `import('gsap')` itself is a fire-and-forget promise a test's fast,
+ * synchronous render/assert can easily outrun — when that happens, Vitest
+ * tears down the jsdom environment for that test file before the import
+ * settles, and the module loader rejects with "environment was torn down".
+ * That rejection carries no information (nothing was acted on; the hook's
+ * own guard already made that a no-op) and does not fail any test — but it
+ * is noisy and can trip a stricter unhandled-rejection policy elsewhere.
+ * Swallow only this specific, benign shape; anything else still surfaces.
+ */
+process.on('unhandledRejection', (reason) => {
+  const message = reason instanceof Error ? reason.message : String(reason)
+  if (message.includes('after the environment was torn down')) {
+    return
+  }
+  // Not the known benign case — make sure it still fails the run instead of
+  // silently disappearing.
+  console.error('Unhandled rejection in tests:', reason)
+  process.exitCode = 1
+})

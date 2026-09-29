@@ -83,11 +83,20 @@ describe('homepage — statement and proof', () => {
     expect(within(proof).getByText('Ongoing projects')).toBeInTheDocument()
   })
 
-  it('keeps a single, logical heading outline on the homepage (h1 then h2s, no skips)', () => {
+  it('keeps a logical heading outline on the homepage (one h1, no skipped levels)', () => {
+    // Milestone 4 adds genuinely nested content (category names, principles,
+    // process steps) as h3s under their section's own h2 — so the ceiling
+    // is no longer a hardcoded 2. What must still hold: exactly one h1, and
+    // no jump from one level straight to a deeper one without passing
+    // through the level in between.
     renderHome()
     const headings = screen.getAllByRole('heading').map((el) => Number(el.tagName[1]))
     expect(headings[0]).toBe(1)
     expect(headings.filter((level) => level === 1)).toHaveLength(1)
-    expect(Math.max(...headings)).toBeLessThanOrEqual(2)
+    let deepestSeen = 1
+    for (const level of headings) {
+      expect(level).toBeLessThanOrEqual(deepestSeen + 1)
+      deepestSeen = Math.max(deepestSeen, level)
+    }
   })
 })
