@@ -1,0 +1,137 @@
+.hero {
+  display: flex;
+  flex-direction: column;
+}
+
+.heroMedia {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--color-stone);
+}
+
+.heroPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroText {
+  padding-block: var(--space-7) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--text-display-l);
+  max-width: 20ch;
+}
+
+.location {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+}
+
+.section {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--color-border);
+}
+
+.sectionHeading {
+  font-size: var(--text-h3);
+  margin-bottom: var(--space-6);
+}
+
+.description {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+  max-width: 64ch;
+}
+
+.facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5) var(--space-6);
+}
+
+.fact dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.fact dd {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--color-text);
+}
+
+.gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-5);
+}
+
+.galleryItem {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--color-stone);
+}
+
+.galleryPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video {
+  width: 100%;
+  background: var(--color-stone);
+}
+
+.cta {
+  padding-block: var(--space-9);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.ctaHeading {
+  font-size: var(--text-h2);
+  max-width: 20ch;
+}
+
+@media (min-width: 768px) {
+  .facts {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroMedia {
+    aspect-ratio: 21 / 9;
+  }
+
+  .facts {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .gallery {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
