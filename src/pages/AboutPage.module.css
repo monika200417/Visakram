@@ -1,0 +1,235 @@
+.eyebrow {
+  display: block;
+  color: var(--color-text-muted);
+}
+
+.section {
+  padding-block: var(--space-9);
+  border-top: 1px solid var(--color-border);
+}
+
+.sectionHeading {
+  margin-top: var(--space-5);
+  font-size: var(--text-display-l);
+  max-width: 20ch;
+}
+
+.supporting {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+  max-width: 56ch;
+}
+
+.index {
+  color: var(--color-accent-strong);
+}
+
+/* --- 01 Hero --- */
+.hero {
+  padding-block: var(--space-9);
+}
+
+.heroInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.heroHeading {
+  margin-top: var(--space-5);
+  font-size: var(--text-display-l);
+  max-width: 22ch;
+}
+
+.heroSupporting {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+  max-width: 56ch;
+}
+
+.heroMedia {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: var(--color-stone);
+  margin-top: var(--space-4);
+}
+
+.heroPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- 02 Experience --- */
+.experienceRow {
+  margin-top: var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.experienceValue {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-display-xl);
+  line-height: var(--leading-tight);
+  color: var(--color-accent-strong);
+}
+
+.experienceText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* --- 03 What we build --- */
+.serviceList {
+  list-style: none;
+  margin: var(--space-8) 0 var(--space-6);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.serviceItem {
+  border-top: 2px solid var(--color-border);
+  padding-top: var(--space-5);
+}
+
+.serviceItem:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.serviceTitle {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-h3);
+}
+
+.serviceDescription {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  max-width: 42ch;
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-small);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-accent);
+  padding-bottom: var(--space-1);
+}
+
+/* --- 04 Values --- */
+.valuesList {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.valueItem {
+  border-top: 2px solid var(--color-border);
+  padding-top: var(--space-5);
+}
+
+.valueItem:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.valueTitle {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-h3);
+}
+
+.valueDescription {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  max-width: 38ch;
+}
+
+/* --- 05 Founders --- */
+.founders {
+  margin-top: var(--space-8);
+}
+
+.converge {
+  margin-top: var(--space-8);
+  padding-top: var(--space-7);
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  max-width: 20ch;
+}
+
+/* --- 06 Trust story / 07 Local presence share a simple stacked layout --- */
+.trustInner,
+.localInner {
+  margin-top: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* --- CTA --- */
+.cta {
+  padding-block: var(--space-9);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.ctaHeading {
+  font-size: var(--text-h2);
+  max-width: 20ch;
+}
+
+@media (min-width: 768px) {
+  .experienceRow {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-8);
+  }
+
+  .experienceValue {
+    flex: 0 0 auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .serviceList,
+  .valuesList {
+    flex-direction: row;
+    gap: var(--space-5);
+  }
+
+  .serviceItem,
+  .valueItem {
+    flex: 1;
+    border-top: 0;
+    border-left: 2px solid var(--color-border);
+    padding-top: 0;
+    padding-left: var(--space-5);
+  }
+
+  .serviceItem:first-child,
+  .valueItem:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+}

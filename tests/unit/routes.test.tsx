@@ -16,7 +16,10 @@ describe('routing', () => {
     ['/', 'Places that hold their ground.'],
     ['/projects', 'Projects'],
     ['/services', 'Services'],
-    ['/about', 'About'],
+    [
+      '/about',
+      '20+ years of construction experience, carried into a contemporary way of building.',
+    ],
     ['/process', 'Process'],
     ['/contact', 'Start a Project'],
   ])('%s renders one h1 inside main', (path, heading) => {

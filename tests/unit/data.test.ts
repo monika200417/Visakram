@@ -20,6 +20,7 @@ describe('data layer', () => {
     expect(site.phone).toBeUndefined()
     expect(site.whatsappNumber).toBeUndefined()
     expect(site.siteUrl).toBeUndefined()
+    expect(site.aboutImage).toBeUndefined()
   })
 
   it('navigation matches the blueprint', () => {

@@ -2,14 +2,7 @@ import { site } from '../data/site'
 import { getServiceByCategory } from '../data/services'
 import type { Project } from '../data/projects'
 import type { DocumentMetaInput } from '../hooks/useDocumentMeta'
-
-/** Builds an absolute canonical URL only once a production domain is
- *  confirmed. site.siteUrl is undefined until the client confirms it
- *  (docs/SEO-SPEC.md §14-15) — no placeholder domain is ever substituted. */
-function canonicalFor(path: string): string | undefined {
-  if (!site.siteUrl) return undefined
-  return `${site.siteUrl.replace(/\/$/, '')}${path}`
-}
+import { buildCanonicalUrl } from './seo'
 
 /** Fallback metadata for the /projects archive page, built only from
  *  already-verified site facts (src/data/site.ts) — no invented counts. */
@@ -17,7 +10,7 @@ export function buildProjectsListingSeo(): DocumentMetaInput {
   return {
     title: `Projects — ${site.name}`,
     description: `Villas, apartments and residential construction projects by ${site.name} in ${site.serviceAreas.join(' and ')}.`,
-    canonicalUrl: canonicalFor('/projects'),
+    canonicalUrl: buildCanonicalUrl('/projects'),
   }
 }
 
@@ -38,7 +31,7 @@ export function buildProjectSeo(project: Project): DocumentMetaInput {
   return {
     title: `${project.name} — ${site.name}`,
     description,
-    canonicalUrl: canonicalFor(`/projects/${project.slug}`),
+    canonicalUrl: buildCanonicalUrl(`/projects/${project.slug}`),
     ogImage: project.seo?.ogImage ?? project.media.hero?.src,
   }
 }

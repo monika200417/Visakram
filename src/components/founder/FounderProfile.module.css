@@ -1,0 +1,114 @@
+/**
+ * Large editorial founder composition (docs/DESIGN-SYSTEM.md §12) — not a
+ * profile card. Single column on mobile (media first), alternating
+ * media/text side on desktop.
+ */
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.profile + .profile {
+  margin-top: var(--space-9);
+  padding-top: var(--space-9);
+  border-top: 1px solid var(--color-border);
+}
+
+.media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: var(--color-stone);
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.name {
+  margin: 0;
+  font-size: var(--text-h2);
+}
+
+.positioning {
+  color: var(--color-accent-strong);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  max-width: 52ch;
+}
+
+.groupLabel {
+  color: var(--color-text-muted);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.list li {
+  color: var(--color-text);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+}
+
+.disclaimer {
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+}
+
+.exposure {
+  color: var(--color-text);
+  font-size: var(--text-body);
+}
+
+.quote {
+  margin: 0;
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--color-accent);
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 500;
+  font-style: italic;
+  max-width: 48ch;
+}
+
+@media (min-width: 1024px) {
+  .profile {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-8);
+  }
+
+  .profile[data-align='end'] {
+    flex-direction: row-reverse;
+  }
+
+  .media {
+    flex: 0 0 42%;
+  }
+
+  .text {
+    flex: 1;
+  }
+}
