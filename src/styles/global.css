@@ -1,21 +1,77 @@
-/* Foundation reset only. Design tokens and typography arrive in Milestone 2. */
+@import './tokens.css';
+
+/**
+ * Global foundation. Replaces the Vite starter reset.
+ * Section numbers below map to docs/CLAUDE.md §7 / §9 requirements.
+ */
+
+/* 1. Box sizing */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+/* 2. Body / document defaults */
 html {
   -webkit-text-size-adjust: 100%;
+  color-scheme: light;
 }
 
 body {
   margin: 0;
   min-height: 100svh;
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
 }
 
+/* 3. Typography defaults */
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: var(--text-h1);
+}
+h2 {
+  font-size: var(--text-h2);
+}
+h3 {
+  font-size: var(--text-h3);
+  line-height: var(--leading-snug);
+}
+
+p {
+  margin: 0;
+}
+
+small,
+.text-small {
+  font-size: var(--text-small);
+}
+
+.text-mono-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* 4. Image / media defaults */
 img,
 video,
 svg {
@@ -23,25 +79,47 @@ svg {
   max-width: 100%;
 }
 
+/* 5. Link / button baseline */
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* 6. Focus styles — always visible, never suppressed */
 :focus-visible {
-  outline: 2px solid currentColor;
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
 
+/* 7. Skip link */
 .skip-link {
   position: absolute;
-  inset-inline-start: 0;
-  top: 0;
-  padding: 0.75rem 1rem;
-  background: #fff;
-  color: #000;
-  transform: translateY(-100%);
+  z-index: 100;
+  inset-inline-start: var(--space-4);
+  top: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transform: translateY(-150%);
+  transition: transform var(--motion-micro) var(--ease-standard);
 }
 
-.skip-link:focus {
+.skip-link:focus-visible {
   transform: translateY(0);
 }
 
+/* 8. Reduced motion — a complete, stable experience (docs/ANIMATION-SYSTEM.md §23) */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -51,4 +129,14 @@ svg {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Development placeholder marker — must never appear in production copy. */
+[data-dev-placeholder] {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--color-accent-strong);
+  border: 1px dashed var(--color-accent);
+  padding: var(--space-3) var(--space-4);
+  display: inline-block;
 }

@@ -1,0 +1,106 @@
+/**
+ * Design tokens — docs/DESIGN-SYSTEM.md.
+ * Single source of truth for color, type, spacing, layout and radius.
+ * Components must reference these variables rather than hardcoding values.
+ */
+:root {
+  /* --- Color: core palette (DESIGN-SYSTEM.md §3) --- */
+  --color-ink: #11120f;
+  --color-charcoal: #24251f;
+  --color-paper: #f4f1ea;
+  --color-white: #ffffff;
+  --color-stone: #d8d1c5;
+  --color-muted: #77766e;
+  --color-terracotta: #a65d45;
+  --color-terracotta-dark: #7f4433;
+
+  /* --- Color: light experience (default) --- */
+  --color-bg: var(--color-paper);
+  --color-surface: var(--color-white);
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-muted);
+  --color-border: rgb(17 18 15 / 14%);
+  --color-accent: var(--color-terracotta);
+  --color-accent-strong: var(--color-terracotta-dark);
+  --color-on-accent: var(--color-paper);
+
+  /* --- Color: dark experience (opt-in via [data-theme="dark"]) --- */
+  --color-bg-dark: var(--color-ink);
+  --color-surface-dark: var(--color-charcoal);
+  --color-text-dark: var(--color-paper);
+  --color-text-muted-dark: #b4b1a8;
+  --color-border-dark: rgb(244 241 234 / 16%);
+
+  /* --- Typography --- */
+  --font-display: 'Playfair Display', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Fluid type scale: desktop values from DESIGN-SYSTEM.md §4, scaled down for mobile. */
+  --text-display-xl: clamp(2.75rem, 1.6rem + 5.5vw, 8rem);
+  --text-display-l: clamp(2.5rem, 1.6rem + 4.2vw, 6rem);
+  --text-h1: clamp(2.25rem, 1.6rem + 3vw, 5rem);
+  --text-h2: clamp(1.875rem, 1.4rem + 2.2vw, 4rem);
+  --text-h3: clamp(1.5rem, 1.25rem + 1.2vw, 2.5rem);
+  --text-body-l: clamp(1.125rem, 1.05rem + 0.35vw, 1.5rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-mono-label: 0.75rem;
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-normal: 1.5;
+
+  --tracking-label: 0.08em;
+
+  /* --- Spacing scale (8px base) --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* --- Layout --- */
+  --container-max: 1440px;
+  --page-padding-desktop: 64px;
+  --page-padding-tablet: 32px;
+  --page-padding-mobile: 20px;
+  --page-padding: var(--page-padding-mobile);
+  --grid-columns: 4;
+  --grid-gap: var(--space-5);
+
+  /* --- Radius (DESIGN-SYSTEM.md §17 — sharp, architectural) --- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* --- Motion: Level 1 (micro) only. Levels 2-4 arrive with GSAP in later milestones. --- */
+  --motion-micro: 180ms;
+  --ease-standard: cubic-bezier(0.2, 0.65, 0.3, 1);
+
+  --header-height: 88px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-padding: var(--page-padding-tablet);
+    --grid-columns: 8;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --page-padding: var(--page-padding-desktop);
+    --grid-columns: 12;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-micro: 0.01ms;
+  }
+}
