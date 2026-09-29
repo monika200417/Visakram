@@ -1,0 +1,25 @@
+.section {
+  padding-block: var(--space-10);
+  background: var(--color-bg);
+}
+
+.inner {
+  max-width: 52rem;
+}
+
+.eyebrow {
+  display: block;
+  color: var(--color-accent-strong);
+  margin-bottom: var(--space-5);
+}
+
+.heading {
+  font-size: var(--text-h2);
+  margin-bottom: var(--space-6);
+}
+
+.supporting {
+  font-size: var(--text-body-l);
+  color: var(--color-text-muted);
+  max-width: 46ch;
+}

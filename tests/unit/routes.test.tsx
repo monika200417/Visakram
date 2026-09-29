@@ -13,7 +13,7 @@ function renderAt(path: string) {
 
 describe('routing', () => {
   it.each([
-    ['/', 'Visakram Builders'],
+    ['/', 'Places that hold their ground.'],
     ['/projects', 'Projects'],
     ['/services', 'Services'],
     ['/about', 'About'],

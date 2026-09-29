@@ -78,9 +78,15 @@
   --radius-sm: 2px;
   --radius-md: 4px;
 
-  /* --- Motion: Level 1 (micro) only. Levels 2-4 arrive with GSAP in later milestones. --- */
+  /* --- Motion (docs/ANIMATION-SYSTEM.md §4). JS/GSAP timelines use the
+     numeric mirror in src/animations/motion-tokens.ts instead of these. --- */
   --motion-micro: 180ms;
+  --motion-ui: 350ms;
+  --motion-editorial: 700ms;
+  --motion-cinematic: 1200ms;
   --ease-standard: cubic-bezier(0.2, 0.65, 0.3, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
 
   --header-height: 88px;
 }
@@ -102,5 +108,8 @@
 @media (prefers-reduced-motion: reduce) {
   :root {
     --motion-micro: 0.01ms;
+    --motion-ui: 0.01ms;
+    --motion-editorial: 0.01ms;
+    --motion-cinematic: 0.01ms;
   }
 }

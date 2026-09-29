@@ -1,0 +1,26 @@
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: max(560px, calc(100svh - var(--header-height)));
+  overflow: hidden;
+  background: var(--color-ink);
+  isolation: isolate;
+}
+
+/*
+ * flex:1 (not height:100%) so this grows past the min-height above when the
+ * real headline/copy needs more room than one viewport-minus-header — the
+ * previous fixed-height + overflow:hidden combination could clip the top of
+ * the content on shorter/narrower real browsers. The header stays in normal
+ * flow (see Header.module.css — position: relative), so this section already
+ * starts right below it; no offset value is needed here.
+ */
+.contentWrap {
+  position: relative;
+  z-index: 2;
+  flex: 1 0 auto;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: var(--space-9);
+}

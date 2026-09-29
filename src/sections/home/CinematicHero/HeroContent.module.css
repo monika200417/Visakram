@@ -1,0 +1,38 @@
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  max-width: 44rem;
+  padding-inline: var(--page-padding);
+  color: var(--color-paper);
+}
+
+.meta {
+  color: var(--color-stone);
+}
+
+.headline {
+  font-size: var(--text-display-l);
+  color: var(--color-paper);
+}
+
+.supporting {
+  font-size: var(--text-body-l);
+  color: var(--color-stone);
+  max-width: 38ch;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.pending {
+  color: var(--color-stone);
+}
