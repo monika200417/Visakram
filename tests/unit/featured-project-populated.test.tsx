@@ -21,13 +21,17 @@ const testFixtureProject: Project = {
   status: 'completed',
   year: '2026',
   description: 'Fixture description used only to test the Featured Project component.',
-  images: ['/test-fixture.jpg'],
+  media: {
+    hero: { src: '/test-fixture.jpg', alt: 'Test fixture image, not a real project photo' },
+    gallery: [],
+  },
 }
 
 vi.mock('../../src/data/projects', () => ({
   projects: [testFixtureProject],
   getProjectBySlug: (slug: string) =>
     slug === testFixtureProject.slug ? testFixtureProject : undefined,
+  getFeaturedProject: () => testFixtureProject,
 }))
 
 describe('featured project — once real project data exists', () => {
@@ -53,6 +57,10 @@ describe('featured project — once real project data exists', () => {
       'href',
       `/projects/${testFixtureProject.slug}`,
     )
+    // Real photography gets its real alt text, not a blank decorative one.
+    expect(
+      scoped.getByRole('img', { name: testFixtureProject.media.hero!.alt }),
+    ).toBeInTheDocument()
     // No "awaiting content" placeholder once real data exists.
     expect(scoped.queryByText(/awaiting a client-approved project/i)).not.toBeInTheDocument()
   })

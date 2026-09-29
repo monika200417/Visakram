@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
-import { buildCategories } from '../../src/data/buildCategories'
+import { services } from '../../src/data/services'
 import { processSteps } from '../../src/data/process'
 import { projects } from '../../src/data/projects'
 import { site } from '../../src/data/site'
@@ -23,7 +23,7 @@ describe('homepage — what we build', () => {
     const section = heading.closest('section')
     expect(section).not.toBeNull()
     const scoped = within(section as HTMLElement)
-    for (const category of buildCategories) {
+    for (const category of services) {
       expect(scoped.getByRole('heading', { level: 3, name: category.title })).toBeInTheDocument()
     }
   })
@@ -33,7 +33,7 @@ describe('homepage — what we build', () => {
     const heading = screen.getByRole('heading', { level: 2, name: 'What we build.' })
     const section = heading.closest('section') as HTMLElement
     const scoped = within(section)
-    for (const category of buildCategories) {
+    for (const category of services) {
       const link = scoped.getByRole('link', { name: new RegExp(category.title) })
       expect(link).toHaveAttribute('href', '/services')
     }
@@ -44,7 +44,7 @@ describe('homepage — what we build', () => {
     const heading = screen.getByRole('heading', { level: 2, name: 'What we build.' })
     const section = heading.closest('section') as HTMLElement
     expect(section.querySelectorAll('[data-dev-placeholder]').length).toBeGreaterThanOrEqual(
-      buildCategories.length,
+      services.length,
     )
   })
 })

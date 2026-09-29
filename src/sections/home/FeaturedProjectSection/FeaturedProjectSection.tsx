@@ -3,16 +3,17 @@ import { Link } from 'react-router-dom'
 import { Container } from '../../../components/layout/Container'
 import { DevImagePlaceholder } from '../../../components/media/DevImagePlaceholder'
 import { useRevealOnScroll } from '../../../animations/useRevealOnScroll'
-import { buildCategories } from '../../../data/buildCategories'
-import { projects } from '../../../data/projects'
+import { getFeaturedProject } from '../../../data/projects'
+import { services } from '../../../data/services'
 import styles from './FeaturedProjectSection.module.css'
 
 /**
- * The first verified project is the one featured on the homepage, once the
- * client supplies one. `projects` is empty until then (src/data/projects.ts)
- * — this is never backfilled with an invented name, photo or location.
+ * getFeaturedProject() honours an explicit `featured: true` project, or
+ * falls back to the first one — see src/data/projects.ts. `projects` is
+ * empty until the client supplies one, so this is never backfilled with an
+ * invented name, photo or location.
  */
-const featuredProject = projects[0]
+const featuredProject = getFeaturedProject()
 
 /**
  * Chapter 05 — Featured Project
@@ -41,8 +42,12 @@ export function FeaturedProjectSection() {
           {featuredProject ? (
             <article className={styles.spread}>
               <div className={styles.image}>
-                {featuredProject.images[0] ? (
-                  <img src={featuredProject.images[0]} alt="" className={styles.photo} />
+                {featuredProject.media.hero ? (
+                  <img
+                    src={featuredProject.media.hero.src}
+                    alt={featuredProject.media.hero.alt}
+                    className={styles.photo}
+                  />
                 ) : (
                   <DevImagePlaceholder label={featuredProject.name} />
                 )}
@@ -57,7 +62,7 @@ export function FeaturedProjectSection() {
                   <div className={styles.fact}>
                     <dt>Category</dt>
                     <dd>
-                      {buildCategories.find((c) => c.id === featuredProject.category)?.title ??
+                      {services.find((s) => s.category === featuredProject.category)?.title ??
                         featuredProject.category}
                     </dd>
                   </div>

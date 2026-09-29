@@ -1,15 +1,19 @@
 import { describe, expect, it } from 'vitest'
-import { buildCategories } from '../../src/data/buildCategories'
+import { founderBackgroundDisclaimer, founders, getFounderBySlug } from '../../src/data/founders'
 import { primaryNavigation } from '../../src/data/navigation'
 import { processSteps } from '../../src/data/process'
-import { getProjectBySlug, projects } from '../../src/data/projects'
+import { getFeaturedProject, getProjectBySlug, projects } from '../../src/data/projects'
+import { getServiceByCategory, getServiceBySlug, services } from '../../src/data/services'
 import { site } from '../../src/data/site'
+import { getTestimonialById, testimonials } from '../../src/data/testimonials'
+import { assertUniqueIdentifiers } from '../../src/data/validate'
 import { visakramWayPrinciples } from '../../src/data/visakramWay'
 
 describe('data layer', () => {
   it('has no invented projects', () => {
     expect(projects).toHaveLength(0)
     expect(getProjectBySlug('anything')).toBeUndefined()
+    expect(getFeaturedProject()).toBeUndefined()
   })
 
   it('leaves unconfirmed business details undefined', () => {
@@ -28,14 +32,17 @@ describe('data layer', () => {
     ])
   })
 
-  it('has exactly the three approved build categories, matching the project category union', () => {
-    expect(buildCategories).toHaveLength(3)
-    expect(buildCategories.map((c) => c.title)).toEqual([
+  it('has exactly the three verified services, matching the project category union', () => {
+    expect(services).toHaveLength(3)
+    expect(services.map((s) => s.title)).toEqual([
       'Villas',
       'Apartments',
       'Residential Construction',
     ])
-    expect(buildCategories.map((c) => c.id)).toEqual(['villa', 'apartment', 'residential'])
+    expect(services.map((s) => s.category)).toEqual(['villa', 'apartment', 'residential'])
+    expect(getServiceBySlug('villas')?.title).toBe('Villas')
+    expect(getServiceByCategory('apartment')?.slug).toBe('apartments')
+    expect(getServiceBySlug('not-a-real-service')).toBeUndefined()
   })
 
   it('has exactly the five approved process steps, in order', () => {
@@ -55,5 +62,44 @@ describe('data layer', () => {
     for (const principle of visakramWayPrinciples) {
       expect(principle.description.length).toBeGreaterThan(0)
     }
+  })
+
+  it('has exactly the two verified founders, with no invented role or photo', () => {
+    expect(founders).toHaveLength(2)
+    expect(founders.map((f) => f.name)).toEqual(['Shanmukesh Sirikolla', 'Venkata Satish Anne'])
+    for (const founder of founders) {
+      // No formal Visakram title has been verified — positioning describes
+      // skill focus, never an invented role like "Co-Founder" or "CEO".
+      expect(founder.positioning.length).toBeGreaterThan(0)
+      expect(founder.image).toBeUndefined()
+    }
+    expect(getFounderBySlug('shanmukesh-sirikolla')?.name).toBe('Shanmukesh Sirikolla')
+    expect(getFounderBySlug('not-a-real-founder')).toBeUndefined()
+    // The disclaimer that prior employment isn't Visakram Builders' own
+    // project history must exist wherever founder background is defined.
+    expect(founderBackgroundDisclaimer.toLowerCase()).toContain('does not mean')
+  })
+
+  it('has no invented testimonials', () => {
+    expect(testimonials).toHaveLength(0)
+    expect(getTestimonialById('anything')).toBeUndefined()
+  })
+
+  describe('assertUniqueIdentifiers', () => {
+    it('passes for unique, present identifiers', () => {
+      expect(() =>
+        assertUniqueIdentifiers([{ slug: 'a' }, { slug: 'b' }], 'slug', 'test'),
+      ).not.toThrow()
+    })
+
+    it('throws on a duplicate identifier', () => {
+      expect(() => assertUniqueIdentifiers([{ slug: 'a' }, { slug: 'a' }], 'slug', 'test')).toThrow(
+        /duplicate/,
+      )
+    })
+
+    it('throws on a missing identifier', () => {
+      expect(() => assertUniqueIdentifiers([{ slug: '' }], 'slug', 'test')).toThrow(/missing/)
+    })
   })
 })
