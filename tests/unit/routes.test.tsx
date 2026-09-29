@@ -21,7 +21,7 @@ describe('routing', () => {
       '20+ years of construction experience, carried into a contemporary way of building.',
     ],
     ['/process', 'Process'],
-    ['/contact', 'Start a Project'],
+    ['/contact', 'Start a project.'],
   ])('%s renders one h1 inside main', (path, heading) => {
     renderAt(path)
     expect(screen.getByRole('main')).toBeInTheDocument()
