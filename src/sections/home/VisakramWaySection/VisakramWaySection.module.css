@@ -20,17 +20,25 @@
   max-width: 16ch;
 }
 
+.tagline {
+  margin-top: var(--space-3);
+  color: var(--color-stone);
+  font-size: var(--text-body-l);
+}
+
 .stage {
   margin-top: var(--space-8);
 }
 
-.visual {
+/* Visual + progress meta are desktop-cinematic only; hidden everywhere else. */
+.visual,
+.meta {
   display: none;
 }
 
 .list {
   list-style: none;
-  margin: 0;
+  margin: var(--space-8) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -64,47 +72,137 @@
   max-width: 42ch;
 }
 
-@media (min-width: 1024px) {
-  .stage {
+/*
+ * Pinned cinematic composition. These rules use the exact media query the
+ * scrub hook's gsap.matchMedia uses, so layout and behavior switch together
+ * and nothing shifts when the hook attaches. Everything from `.pinned` down
+ * has a definite height (100svh -> 100%), so the visual and the active
+ * chapter are structurally always fully on screen while pinned.
+ *
+ * Only one principle is shown at a time, stacked in the same spot
+ * (`[data-scrubbing]` is set by the hook, so without JS/GSAP the three
+ * principles just remain a readable list). Previous/next chapters live in
+ * the compact `.nav` row and take no meaningful layout space.
+ */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .section {
+    padding-block: 0;
+  }
+
+  .pinned {
+    height: 100svh;
+  }
+
+  .container {
+    height: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    gap: var(--space-9);
-    min-height: 60vh;
+    padding-block: var(--space-7);
+  }
+
+  .stage {
+    margin-top: 0;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 11fr 9fr;
+    gap: var(--space-8);
   }
 
   .visual {
     display: block;
     position: relative;
-    height: 40vh;
-    min-height: 320px;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid rgb(244 241 234 / 14%);
+    background: var(--color-charcoal);
   }
 
-  .visualLayer {
-    position: absolute;
-    inset: 0;
+  .copy {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: var(--space-3);
+    height: 100%;
+    min-height: 0;
+  }
+
+  .heading {
+    margin-top: var(--space-3);
+    font-size: var(--text-h3);
+  }
+
+  .list {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .list[data-scrubbing='true'] .item {
+    border-top: 0;
+    padding-top: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
     opacity: 0;
+    transform: translateY(calc(-50% + 12px));
+    pointer-events: none;
+    transition:
+      opacity 520ms var(--ease-standard),
+      transform 520ms var(--ease-standard);
   }
 
-  .visualLayer:first-child {
+  .list[data-scrubbing='true'] .item[data-active='true'] {
     opacity: 1;
+    transform: translateY(-50%);
+    pointer-events: auto;
   }
 
-  .visualIndex {
-    font-family: var(--font-mono);
+  .itemIndex {
+    font-size: var(--text-h3);
+  }
+
+  .itemTitle {
     font-size: var(--text-h2);
+    line-height: var(--leading-tight);
+  }
+
+  .meta {
+    display: block;
+  }
+
+  .nav {
+    list-style: none;
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    display: flex;
+    gap: var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-small);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .navItem {
+    color: var(--color-stone);
+    opacity: 0.4;
+    transition: opacity var(--motion-ui) var(--ease-standard);
+  }
+
+  .navItem[data-active='true'] {
+    opacity: 1;
     color: var(--color-terracotta);
   }
 
-  .visualTitle {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-display-l);
-    line-height: var(--leading-tight);
-    color: var(--color-paper);
+  .track {
+    height: 1px;
+    background: rgb(244 241 234 / 18%);
+  }
+
+  .fill {
+    height: 100%;
+    background: var(--color-terracotta);
+    transform: scaleX(0);
+    transform-origin: left center;
   }
 }
