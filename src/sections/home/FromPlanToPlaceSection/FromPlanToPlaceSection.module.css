@@ -1,0 +1,210 @@
+.section {
+  padding-block: var(--space-9);
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.container {
+  position: relative;
+}
+
+.eyebrow {
+  display: block;
+  color: var(--color-stone);
+}
+
+.heading {
+  margin-top: var(--space-5);
+  font-size: var(--text-display-l);
+  color: var(--color-paper);
+  max-width: 18ch;
+}
+
+.disclaimer {
+  margin-top: var(--space-4);
+  max-width: 48ch;
+  font-size: var(--text-small);
+  color: var(--color-stone);
+  line-height: var(--leading-normal);
+}
+
+/*
+ * The pinned cinematic viewport (Milestone 10 §22 revision — "pinned
+ * cinematic storytelling chapter", fixing a bug where the previously-
+ * pinned element (the whole `<section>`, taller than one viewport once
+ * the eyebrow/heading/disclaimer/6 stages/large visual were all
+ * counted) left part of the composition permanently off-screen for the
+ * whole pinned scroll). On mobile/tablet this is an unstyled wrapper —
+ * no height, no flex — so `.stage` below it lays out exactly as it
+ * always has: one normal, fully-static, scrolling block, no pin
+ * involved at all. At desktop widths (below) it becomes the element
+ * useFromPlanToPlaceScrub actually pins, capped to ~100svh so its own
+ * content can never be taller than the screen while pinned. The outer
+ * `<section>` supplies the scroll distance: it stays in normal flow,
+ * carries the intro copy above this viewport, and — once GSAP inserts
+ * its pin spacer here — extends well past one viewport so the scrub has
+ * room to breathe.
+ */
+.pinnedViewport {
+}
+
+.stage {
+  margin-top: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.visual {
+  position: relative;
+  height: 56vh;
+  min-height: 340px;
+  border: 1px solid rgb(244 241 234 / 14%);
+  background: var(--color-charcoal);
+}
+
+.visual canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.item {
+  border-top: 1px solid rgb(244 241 234 / 14%);
+  padding-top: var(--space-5);
+  opacity: 1;
+  transition: opacity var(--motion-ui) var(--ease-standard);
+}
+
+.item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.itemIndex {
+  color: var(--color-terracotta);
+}
+
+.itemTitle {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-h3);
+  color: var(--color-paper);
+}
+
+.itemDescription {
+  margin-top: var(--space-2);
+  color: var(--color-stone);
+  font-size: var(--text-body-l);
+  max-width: 46ch;
+}
+
+/*
+ * Desktop layout: the visual is the dominant object (~62% of the row),
+ * the stage text is a narrower editorial column (~38%). Every element
+ * from `.pinnedViewport` down to `.visual`/`.list` is given a definite,
+ * fully-resolved height in this block (100svh -> 100% -> 100% -> 100%),
+ * so the whole composition is *structurally* incapable of exceeding the
+ * pinned viewport at any tested size — this is not tuned to specific
+ * numbers, it is guaranteed by the box model. This replaces the
+ * previous approach, where `.visual` claimed an independent
+ * viewport-relative height (72vh, capped 560–780px) that had nothing to
+ * do with how tall the pinned element actually was. The building/camera
+ * are unchanged; only how much screen real estate this pane is given
+ * changed.
+ *
+ * DOM order keeps .visual first for a sane reading order without
+ * JS/GSAP, so the wide/narrow split is assigned purely with explicit
+ * grid-column placement rather than reordering markup.
+ *
+ * Only one stage's title/description is visible at a time, stacked in
+ * the exact same fixed editorial spot (`.item[data-active='true']`).
+ * useFromPlanToPlaceScrub toggles which one via the same `data-active`
+ * attribute it already wrote (now also mirrored to `aria-hidden`), so
+ * text, camera and construction stage are always driven by the same
+ * progress value and can never fall out of sync with each other —
+ * there is no separate "list scrolls past a sticky column" mechanism
+ * left to desync.
+ */
+@media (min-width: 1024px) {
+  .pinnedViewport {
+    height: 100svh;
+    display: flex;
+  }
+
+  .pinnedContainer {
+    height: 100%;
+    display: grid;
+    padding-block: var(--space-6);
+  }
+
+  .stage {
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: minmax(280px, 38%) 1fr;
+    align-items: stretch;
+    gap: var(--space-9);
+    height: 100%;
+    width: 100%;
+  }
+
+  .visual {
+    grid-column: 2;
+    grid-row: 1;
+    height: 100%;
+    min-height: 320px;
+  }
+
+  .list {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /*
+   * Single-stage editorial viewport. Applies only while the scrub hook is
+   * live (`data-scrubbing`), so reduced motion / no-JS keep the plain
+   * readable list. Every item is absolutely stacked in the same spot —
+   * none contribute layout height — and only the `data-active='true'` one
+   * is visible. Inactive items are also aria-hidden (set by the hook), so
+   * assistive tech reads just the current stage.
+   */
+  .list[data-scrubbing='true'] .item {
+    border-top: 0;
+    padding-top: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    opacity: 0;
+    transform: translateY(calc(-50% + 12px));
+    pointer-events: none;
+    transition:
+      opacity 480ms var(--ease-standard),
+      transform 480ms var(--ease-standard);
+  }
+
+  .list[data-scrubbing='true'] .item[data-active='true'] {
+    opacity: 1;
+    transform: translateY(-50%);
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+  }
+}

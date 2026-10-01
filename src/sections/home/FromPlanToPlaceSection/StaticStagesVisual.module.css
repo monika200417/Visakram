@@ -1,0 +1,91 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  width: 100%;
+  height: 100%;
+  align-content: center;
+}
+
+.glyph {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.glyphMark {
+  position: absolute;
+  inset: var(--space-3);
+  display: block;
+}
+
+/* 01 Plan — plan grid */
+.plan .glyphMark {
+  background-image:
+    linear-gradient(var(--color-text-muted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-text-muted) 1px, transparent 1px);
+  background-size: 25% 25%;
+  opacity: 0.5;
+}
+
+/* 02 Foundation — solid base */
+.foundation .glyphMark {
+  inset: auto var(--space-3) var(--space-3) var(--space-3);
+  height: 30%;
+  background: var(--color-text);
+}
+
+/* 03 Structure — columns and connecting beams */
+.structure .glyphMark {
+  background-image:
+    linear-gradient(
+      var(--color-text-muted) 0 10%,
+      transparent 10% 90%,
+      var(--color-text-muted) 90% 100%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--color-text) 0,
+      var(--color-text) 12%,
+      transparent 12%,
+      transparent 30%
+    );
+}
+
+/* 04 Floors — stacked bands */
+.floors .glyphMark {
+  background-image: repeating-linear-gradient(
+    var(--color-text-muted) 0,
+    var(--color-text-muted) 14%,
+    transparent 14%,
+    transparent 30%
+  );
+}
+
+/* 05 Facade — panel with window openings */
+.facade .glyphMark {
+  background-image: radial-gradient(circle, var(--color-surface-dark) 22%, transparent 24%);
+  background-size: 33% 33%;
+  background-position: 16.5% 16.5%;
+  border: 1px solid var(--color-accent-strong);
+}
+
+/* 06 Place — completed building, solid block with a parapet cap and a
+   faint window grid */
+.place .glyphMark {
+  background:
+    radial-gradient(circle, var(--color-surface-dark) 14%, transparent 16%) 0 0 / 25% 20%,
+    var(--color-text);
+}
+
+.place .glyphMark::before {
+  content: '';
+  position: absolute;
+  top: -12%;
+  left: 20%;
+  width: 60%;
+  height: 14%;
+  background: var(--color-accent-strong);
+}
