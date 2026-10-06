@@ -906,3 +906,50 @@ After this document:
 6. `CLAUDE.md`
 
 Only after these foundations are sufficiently defined should the actual implementation begin.
+
+---
+
+# 31. Home Tour (Scroll-Controlled Photorealistic Footage)
+
+The Home Tour is a media presentation, not a 3D scene (the procedural Three.js
+villa was retired in favour of photorealistic footage; its dusk version is
+archived in `docs/milestones/`). Footage, chapter text, journey line and the
+chapter timeline all read **one** normalized progress value, produced by **one**
+scrubbed GSAP timeline on **one** ScrollTrigger (`useHomeTourScrub`). No second
+trigger, no second scroll listener, no React state while scrolling.
+
+```text
+scroll → ScrollTrigger (scrub, pin) → tween of a single number (0 → 1)
+       → progressRef  +  --tour-p CSS variable  +  chapter copy
+       → timeline.frameAt(p) → active clip(s), clip time, opacity
+       → video.currentTime (via a "latest wins" seeker)
+```
+
+- **Data, not JSX.** `src/data/homeTour.ts` holds the nine editorial chapters;
+  `src/media/home-tour/manifest.ts` holds each chapter's clip, poster, `start`,
+  `end` and `scrollVh` (its share of the pin). The pin length is the sum of the
+  `scrollVh` values. Chapters without footage are simply not in the timeline, so
+  clips are added or replaced in the manifest only.
+- **Timeline** (`timeline.ts`, pure TypeScript): chapters share progress in
+  proportion to `scrollVh`. At each boundary a short handoff holds the outgoing
+  clip's last frame and the incoming clip's first frame and crossfades between
+  them (a quiet crossfade where frames are not matched; never a wipe or zoom).
+  Everything is a pure function of progress, so reverse scrolling retraces the
+  same frames.
+- **Media** (`HomeTourMedia`): a still and a muted, inline, control-free clip per
+  chapter, stacked full-bleed; no play button or player chrome. The still is
+  always beneath its clip, so there is never a blank frame. Only the previous,
+  current and next chapters keep media mounted. A failing clip falls back to its
+  still; a failing still falls back to a tinted panel.
+- **Seeking** (`seek.ts`): while a seek is in flight only the newest target is
+  remembered, then applied when the seek lands. Clips are never played.
+- Copy follows the same smoothed value as the footage (the lesson from The
+  Visakram Way: never drive text from raw scroll while visuals follow a scrub).
+- Pin length is tuned in the browser (the manifest values are a starting point).
+- **Fallbacks:** mobile/tablet, reduced motion and data-saver get a static block
+  of stills and captions with no clip download; the chapters are always HTML.
+- Clips to be scrubbed smoothly must be encoded with short keyframe spacing.
+  The placeholder reference reel is not (see `public/assets/home-tour/placeholder`).
+
+---
+

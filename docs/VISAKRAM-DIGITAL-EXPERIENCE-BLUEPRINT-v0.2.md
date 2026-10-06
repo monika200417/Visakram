@@ -522,6 +522,46 @@ based on real-device testing.
 
 ---
 
+# CHAPTER 07B — HOME TOUR
+
+Placed between From Plan to Place and How We Build.
+
+```text
+From Plan to Place  → how the building comes to life
+Home Tour           → what the finished space feels like
+How We Build        → how Visakram manages the process
+```
+
+## Concept
+
+"Experience spaces beyond walls." One villa, shown as photorealistic footage
+scrubbed by the user's scroll. The camera's **time** moves along the chapters:
+
+```text
+01 Exterior → 02 Entry → 03 Living → 04 Dining → 05 Kitchen →
+06 Staircase → 07 Bedroom → 08 Balcony → 09 Final Reveal
+```
+
+Footage is added chapter by chapter (the first two are Exterior and Staircase).
+Real video on desktop (motion allowed); everything else gets a static block of
+stills with the chapters as text.
+
+## Rules
+
+- No free camera, mouse-look, head bob, game movement or cuts.
+- The residence is illustrative — not a Visakram project, no signage, no
+  brand mark — and is labelled as such wherever it appears.
+- Captions are the approved short lines only; no capability claims.
+- Visually and emotionally distinct from From Plan to Place: warm, low,
+  first-person, real footage, interior-led (vs. a cool, elevated construction study).
+
+The dusk procedural version is archived in `docs/milestones/`.
+
+Implementation: `src/media/home-tour/` (manifest, timeline, seeker) and
+`src/sections/home/HomeTourSection/` (pin, media, overlay, journey line, fallback).
+
+---
+
 # CHAPTER 08 — HOW WE BUILD
 
 ## Purpose

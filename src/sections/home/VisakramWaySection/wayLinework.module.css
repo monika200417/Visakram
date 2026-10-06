@@ -1,0 +1,206 @@
+/*
+ * Shared architectural linework for The Visakram Way's SVG visuals.
+ * Charcoal environment, stone/concrete tones in low-alpha paper, and a
+ * restrained warm metallic gold used only for alignment, measurement and
+ * the final light. Scoped here (not global tokens) — provisional until the
+ * brand palette is finalised. Every rule is prefixed with `.root` so it
+ * out-ranks the element defaults below.
+ */
+.root {
+  --way-gold: #c9a45c;
+  --way-gold-soft: rgb(201 164 92 / 38%);
+  --way-gold-faint: rgb(201 164 92 / 16%);
+}
+
+.root line,
+.root polyline,
+.root polygon,
+.root path,
+.root rect,
+.root circle {
+  fill: none;
+  stroke: rgb(244 241 234 / 34%);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Rendered plates: solids carry no outline unless a class adds one. */
+.root.plate rect,
+.root.plate polygon,
+.root.plate circle {
+  stroke: none;
+}
+
+.root .faint,
+.root .faint * {
+  stroke: rgb(244 241 234 / 14%);
+}
+
+.root .line,
+.root .line * {
+  stroke: rgb(244 241 234 / 30%);
+}
+
+.root .strong,
+.root .strong * {
+  stroke: rgb(244 241 234 / 62%);
+  stroke-width: 1.6;
+}
+
+.root .stone {
+  fill: rgb(244 241 234 / 8%);
+  stroke: rgb(244 241 234 / 40%);
+}
+
+.root .concrete {
+  fill: rgb(216 209 197 / 11%);
+  stroke: rgb(244 241 234 / 46%);
+}
+
+.root .glass {
+  fill: rgb(201 164 92 / 5%);
+  stroke: rgb(244 241 234 / 28%);
+}
+
+.root .timber {
+  fill: rgb(166 93 69 / 30%);
+  stroke: rgb(244 241 234 / 26%);
+}
+
+.root .lit {
+  fill: rgb(201 164 92 / 32%);
+  stroke: none;
+}
+
+.root .hatch {
+  fill: url('#way-hatch');
+  stroke: rgb(244 241 234 / 40%);
+}
+
+.root .gold,
+.root .gold * {
+  stroke: var(--way-gold);
+}
+
+.root .goldSoft,
+.root .goldSoft * {
+  stroke: var(--way-gold-soft);
+}
+
+.root .goldDash,
+.root .goldDash * {
+  stroke: var(--way-gold-soft);
+  stroke-dasharray: 5 7;
+}
+
+.root .dashed,
+.root .dashed * {
+  stroke: rgb(244 241 234 / 26%);
+  stroke-dasharray: 5 7;
+}
+
+.root .goldThick,
+.root .goldThick * {
+  stroke: var(--way-gold);
+  stroke-width: 2.2;
+}
+
+.root .dot {
+  fill: var(--way-gold);
+  stroke: none;
+}
+
+.root .tag {
+  fill: var(--way-gold);
+  stroke: none;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+}
+
+.root .tagName {
+  fill: rgb(244 241 234 / 70%);
+  stroke: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Shaded solids (IsoBox): hairline lit edges, optional generated texture. */
+.root .edge polygon {
+  stroke: rgb(255 240 210 / 30%);
+  stroke-width: 0.8;
+}
+
+.root .texture polygon {
+  stroke: none;
+  opacity: 0.42;
+}
+
+.root .solid {
+  stroke: rgb(255 240 210 / 14%);
+  stroke-width: 0.8;
+}
+
+.root .noStroke,
+.root .noStroke * {
+  stroke: none;
+}
+
+/* A wide, faint underlay stroke gives gold lines their warm bloom without any filter. */
+.root .halo,
+.root .halo * {
+  stroke: rgb(201 164 92 / 14%);
+  stroke-width: 7;
+}
+
+.root .brass {
+  fill: url('#way-brass');
+  stroke: rgb(255 240 210 / 25%);
+  stroke-width: 0.6;
+}
+
+.root .copper {
+  stroke: #f2a366;
+  stroke-width: 3;
+}
+
+.root .copperHalo {
+  stroke: rgb(242 163 102 / 20%);
+  stroke-width: 10;
+}
+
+.root .copperThin {
+  stroke: #e48f55;
+  stroke-width: 2.2;
+}
+
+.root .label {
+  fill: rgb(244 241 234 / 88%);
+  stroke: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.root.plate,
+.root.overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.root .lightStrip {
+  fill: rgb(255 216 144 / 70%);
+  stroke: none;
+}
+
+.root .rivet {
+  fill: #d9bd7d;
+  stroke: none;
+}

@@ -780,6 +780,22 @@ If the answer is unclear, do not add the feature yet.
 
 ---
 
+# 31B. Home Tour Budget
+
+The Home Tour is footage scrubbed by scroll — no Three.js, no WebGL:
+
+```text
+Loading     media loads when the section is near the viewport; nothing in the initial bundle
+Footage     one clip per chapter; only previous + current + next are mounted, farther ones released
+First view  the first poster (WebP, ~100 KB) paints immediately; clips fade in over it
+Encode      short keyframe spacing (about every 4-8 frames), no B-frames, so seeking is cheap
+Idle        zero work: clips are never played; seeks happen only when scroll progress changes
+Mobile/RM   static stills + captions, no clip download; Save-Data also gets stills
+Placeholder development media is stripped from production builds (see vite.config.ts)
+```
+
+---
+
 # 32. Next Documents
 
 After this document:

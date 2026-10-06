@@ -36,50 +36,90 @@ export type WayAsset = {
 
 export type WayMotif = 'quality' | 'timeliness' | 'transparency'
 
+export type WayStage = {
+  label: string
+  /** Where this stage begins, as a 0–1 fraction of its own chapter's progress. */
+  start: number
+}
+
 export type WayChapterVisual = {
   motif: WayMotif
-  /** The three-beat visual story told inside this chapter, in order. */
-  beats: readonly [string, string, string]
+  /** The visual story told inside this chapter, in order. */
+  stages: readonly WayStage[]
   /**
    * Optional real client-provided media. When set, WayVisual renders it in
-   * place of the conceptual linework, inside the same layer, so swapping in
-   * photographs/drawings/video needs no change to the storytelling
-   * architecture or animation.
+   * place of the conceptual rendered plate (the shaded SVG architecture),
+   * inside the same layer, while the gold technical overlay (dimensions,
+   * callouts, datum) stays on top — so swapping in photographs, renders or
+   * video needs no change to the storytelling architecture or animation.
    */
   asset?: WayAsset
 }
 
 /**
- * Conceptual visual narrative per principle, keyed by principle title. The
- * procedural visuals are illustrative treatments — not depictions of any
- * actual Visakram project.
+ * Stage starts per chapter, shared by the SVG visuals (when each stage's
+ * artwork reveals), the caption row and the scroll hook (which stage is
+ * current), so they cannot drift apart. Fractions of the chapter's own
+ * progress; the chapter itself is one third of the pinned scroll.
  */
-const visuals: Record<string, WayChapterVisual> = {
-  Quality: { motif: 'quality', beats: ['Material', 'Craftsmanship', 'Finished detail'] },
-  Timeliness: { motif: 'timeliness', beats: ['Site', 'Structure', 'Visible progress'] },
-  Transparency: { motif: 'transparency', beats: ['Plan', 'Decisions', 'Clarity'] },
-}
+export const wayStageStarts = {
+  quality: [0, 0.2, 0.45, 0.7],
+  timeliness: [0, 0.2, 0.4, 0.6, 0.8],
+  transparency: [0, 0.2, 0.4, 0.6, 0.8],
+} as const satisfies Record<WayMotif, readonly number[]>
 
-export function getWayVisual(title: string): WayChapterVisual {
-  return visuals[title] ?? { motif: 'quality', beats: ['', '', ''] }
+/** Chapter-local progress at which every chapter's final light and finish resolve. */
+export const wayResolveAt = 0.9
+
+function stagesOf(motif: WayMotif, labels: readonly string[]): readonly WayStage[] {
+  return labels.map((label, i) => ({ label, start: wayStageStarts[motif][i] ?? 0 }))
 }
 
 /**
- * Where, as a fraction of a chapter's own progress, each of its three
- * visual beats begins. Shared by the scroll timeline (when a beat fades
- * in) and the caption logic (which beat is current), so they cannot drift.
+ * Conceptual visual narrative per principle, keyed by principle title. The
+ * procedural visuals are illustrative treatments — not depictions of any
+ * actual Visakram project, and they carry no capability claims.
  */
-export const wayBeatStarts = [0, 0.2, 0.55] as const
+const visuals: Record<string, WayChapterVisual> = {
+  Quality: {
+    motif: 'quality',
+    stages: stagesOf('quality', ['Material', 'Structural precision', 'Craftsmanship', 'Finish']),
+  },
+  Timeliness: {
+    motif: 'timeliness',
+    stages: stagesOf('timeliness', ['Foundation', 'Structure', 'Floors', 'Envelope', 'Completion']),
+  },
+  Transparency: {
+    motif: 'transparency',
+    stages: stagesOf('transparency', [
+      'Plan',
+      'Structure',
+      'Walls & envelope',
+      'Materials & facade',
+      'Finished space',
+    ]),
+  },
+}
+
+export function getWayVisual(title: string): WayChapterVisual {
+  return visuals[title] ?? { motif: 'quality', stages: [] }
+}
 
 /** Which chapter (0-based) is current at a normalized 0→1 progress. */
 export function getWayChapterIndex(progress: number, chapterCount: number): number {
   return Math.min(chapterCount - 1, Math.max(0, Math.floor(progress * chapterCount)))
 }
 
-/** Which beat (0–2) is current at a normalized 0→1 progress. */
-export function getWayBeatIndex(progress: number, chapterCount: number): number {
+/** Which stage of its chapter is current at a normalized 0→1 progress. */
+export function getWayStageIndex(
+  progress: number,
+  chapterCount: number,
+  stages: readonly WayStage[],
+): number {
   const local = progress * chapterCount - getWayChapterIndex(progress, chapterCount)
-  if (local >= wayBeatStarts[2]) return 2
-  if (local >= wayBeatStarts[1]) return 1
-  return 0
+  let index = 0
+  stages.forEach((stage, i) => {
+    if (local >= stage.start) index = i
+  })
+  return index
 }

@@ -2,6 +2,7 @@ import { CinematicHero } from '../sections/home/CinematicHero/CinematicHero'
 import { CustomerStoriesSection } from '../sections/home/CustomerStoriesSection/CustomerStoriesSection'
 import { FeaturedProjectSection } from '../sections/home/FeaturedProjectSection/FeaturedProjectSection'
 import { FromPlanToPlaceSection } from '../sections/home/FromPlanToPlaceSection/FromPlanToPlaceSection'
+import { HomeTourSection } from '../sections/home/HomeTourSection/HomeTourSection'
 import { HowWeBuildSection } from '../sections/home/HowWeBuildSection/HowWeBuildSection'
 import { ProofSection } from '../sections/home/ProofSection/ProofSection'
 import { StatementSection } from '../sections/home/StatementSection/StatementSection'
@@ -28,6 +29,7 @@ export function HomePage() {
       <FeaturedProjectSection />
       <VisakramWaySection />
       <FromPlanToPlaceSection />
+      <HomeTourSection />
       <HowWeBuildSection />
       <CustomerStoriesSection />
     </>

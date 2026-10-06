@@ -1,0 +1,389 @@
+/* ----------------------------------------------------------------------
+ * Static / mobile / reduced-motion layout — the default. One calm block:
+ * the title, then a card per chapter (its still and its caption).
+ * The pinned cinematic frame below only applies in [data-mode='tour'].
+ * -------------------------------------------------------------------- */
+.section {
+  padding-block: var(--space-9);
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.vignette,
+.journey {
+  display: none;
+}
+
+.heading {
+  font-size: var(--text-display-l);
+  color: var(--color-paper);
+  max-width: 14ch;
+}
+
+.tagline {
+  margin-top: var(--space-4);
+  color: var(--color-stone);
+  font-size: var(--text-body-l);
+}
+
+.staticBlock {
+  display: block;
+}
+
+.cards {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-7);
+}
+
+.card {
+  border-top: 1px solid rgb(244 241 234 / 14%);
+  padding-top: var(--space-5);
+}
+
+.cardImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  margin-bottom: var(--space-5);
+  background: #0a0908;
+}
+
+.chapterIndex {
+  color: #c9a45c;
+}
+
+.chapterTitle {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-h3);
+  color: var(--color-paper);
+}
+
+.chapterCaption {
+  margin-top: var(--space-2);
+  color: var(--color-stone);
+  font-size: var(--text-body-l);
+  max-width: 42ch;
+}
+
+.disclaimer {
+  margin-top: var(--space-7);
+  max-width: 60ch;
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  line-height: var(--leading-normal);
+}
+
+@media (min-width: 720px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-7);
+  }
+}
+
+/* ----------------------------------------------------------------------
+ * The pinned cinematic frame. Applies only while the film is active
+ * (desktop, motion allowed) — the section sets data-mode='tour'.
+ * Everything animated here is driven by one CSS variable, --tour-p (0–1),
+ * which useHomeTourScrub writes from the scrubbed progress.
+ * -------------------------------------------------------------------- */
+.section[data-mode='tour'] {
+  padding-block: 0;
+}
+
+.section[data-mode='tour'] .pinned {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  background: #0a0908;
+}
+
+.section[data-mode='tour'] .stage {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+}
+
+/*
+ * The film: one figure per chapter, stacked full-bleed. The scroll hook sets each
+ * figure's opacity and visibility directly. The still sits beneath its clip, so
+ * a loading, seeking or failed clip never leaves a blank frame.
+ */
+.media {
+  position: absolute;
+  inset: 0;
+  background: #0a0908;
+}
+
+.figure {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  background: #0a0908;
+}
+
+.still,
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video {
+  opacity: 0;
+  transition: opacity 400ms var(--ease-standard);
+}
+
+.video[data-ready='true'] {
+  opacity: 1;
+}
+
+/* Last resort when even the still cannot load: a quiet warm panel, never blank. */
+.fallback {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 70% 35%, rgb(201 164 92 / 16%), transparent 60%),
+    linear-gradient(180deg, #17130f 0%, #0a0908 100%);
+}
+
+/* Keeps the editorial type secondary to the architecture but always legible. */
+.section[data-mode='tour'] .vignette {
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgb(10 9 8 / 62%) 0%, rgb(10 9 8 / 18%) 38%, transparent 56%),
+    linear-gradient(0deg, rgb(10 9 8 / 78%) 0%, rgb(10 9 8 / 20%) 26%, transparent 42%),
+    linear-gradient(180deg, rgb(10 9 8 / 50%) 0%, transparent 20%);
+}
+
+.section[data-mode='tour'] .container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+}
+
+/* Opening title: "HOME TOUR / Experience spaces beyond walls." fades as the journey begins. */
+.section[data-mode='tour'] .intro {
+  position: absolute;
+  top: 13%;
+  left: var(--page-padding);
+  max-width: 34rem;
+  opacity: max(0, calc(1 - var(--tour-p, 0) * 16));
+  transform: translateY(calc(var(--tour-p, 0) * -140px));
+  pointer-events: none;
+}
+
+.section[data-mode='tour'] .heading {
+  max-width: none;
+  font-size: clamp(3.25rem, 1.2rem + 6.4vw, 7.5rem);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #f6efdc 0%, #ead9ae 60%, #c9a45c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  width: min-content;
+}
+
+.section[data-mode='tour'] .tagline {
+  margin-top: var(--space-5);
+  font-size: 0.8125rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgb(244 241 234 / 80%);
+}
+
+/* Current chapter: the only one visible, stacked in one spot, secondary to the film. */
+.section[data-mode='tour'] .chapters {
+  list-style: none;
+  padding: 0;
+  position: absolute;
+  left: var(--page-padding);
+  bottom: 19%;
+  width: min(32rem, 42%);
+  height: 13rem;
+  margin: 0;
+  display: block;
+}
+
+.section[data-mode='tour'] .chapter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: 0;
+  padding-top: 0;
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  transition:
+    opacity 560ms var(--ease-standard),
+    transform 560ms var(--ease-standard);
+}
+
+.section[data-mode='tour'] .chapters:not([data-scrubbing='true']) .chapter:first-child,
+.section[data-mode='tour'] .chapter[data-active='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section[data-mode='tour'] .chapterIndex {
+  font-size: var(--text-small);
+  letter-spacing: 0.3em;
+}
+
+.section[data-mode='tour'] .chapterTitle {
+  margin-top: var(--space-3);
+  font-size: clamp(2.25rem, 1rem + 3.2vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  color: #f6efdc;
+}
+
+.section[data-mode='tour'] .chapterCaption {
+  margin-top: var(--space-4);
+  max-width: 30ch;
+  color: rgb(244 241 234 / 78%);
+}
+
+.section[data-mode='tour'] .disclaimer {
+  position: absolute;
+  right: var(--page-padding);
+  bottom: calc(var(--space-5) + 3.2rem);
+  margin: 0;
+  max-width: 26rem;
+  text-align: right;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: rgb(244 241 234 / 38%);
+}
+
+/* The journey line: an architectural surveying line, not a progress bar. */
+.section[data-mode='tour'] .journey {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  left: var(--page-padding);
+  right: var(--page-padding);
+  bottom: var(--space-5);
+  height: 2.4rem;
+  pointer-events: none;
+}
+
+.rail,
+.trace {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0.6rem;
+  height: 1px;
+}
+
+.rail {
+  background: rgb(244 241 234 / 20%);
+}
+
+.trace {
+  height: 2px;
+  margin-top: -0.5px;
+  background: linear-gradient(90deg, rgb(201 164 92 / 10%), #c9a45c 82%, #f1dfae);
+  transform: scaleX(var(--tour-p, 0));
+  transform-origin: left center;
+}
+
+.stations {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.station {
+  position: absolute;
+  top: 0.6rem;
+  width: 1px;
+  height: 0;
+}
+
+.station::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -5px;
+  width: 1px;
+  height: 11px;
+  background: rgb(244 241 234 / 36%);
+  transition:
+    background 360ms var(--ease-standard),
+    height 360ms var(--ease-standard);
+}
+
+.stationNo {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  color: rgb(244 241 234 / 38%);
+  transition: color 360ms var(--ease-standard);
+}
+
+.station[data-active='true']::before {
+  height: 17px;
+  top: -8px;
+  background: #c9a45c;
+}
+
+.station[data-active='true'] .stationNo {
+  color: #c9a45c;
+}
+
+/* The survey marker: a station dot, its ring and a plumb tick, at the camera's place on the line. */
+.marker {
+  position: absolute;
+  left: calc(var(--tour-p, 0) * 100%);
+  top: 0.6rem;
+  width: 0;
+  height: 0;
+}
+
+.markerDot,
+.markerRing {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.markerDot {
+  width: 7px;
+  height: 7px;
+  background: #f1dfae;
+}
+
+.markerRing {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgb(201 164 92 / 50%);
+}
+
+.marker::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 12px;
+  width: 1px;
+  height: 14px;
+  background: rgb(201 164 92 / 55%);
+}

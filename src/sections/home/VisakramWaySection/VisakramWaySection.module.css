@@ -8,13 +8,7 @@
   position: relative;
 }
 
-.eyebrow {
-  display: block;
-  color: var(--color-stone);
-}
-
 .heading {
-  margin-top: var(--space-5);
   font-size: var(--text-display-l);
   color: var(--color-paper);
   max-width: 16ch;
@@ -26,12 +20,10 @@
   font-size: var(--text-body-l);
 }
 
-.stage {
-  margin-top: var(--space-8);
-}
-
-/* Visual + progress meta are desktop-cinematic only; hidden everywhere else. */
+/* Visual, scrim and progress meta are desktop-cinematic only. */
 .visual,
+.scrim,
+.stages,
 .meta {
   display: none;
 }
@@ -73,16 +65,16 @@
 }
 
 /*
- * Pinned cinematic composition. These rules use the exact media query the
- * scrub hook's gsap.matchMedia uses, so layout and behavior switch together
- * and nothing shifts when the hook attaches. Everything from `.pinned` down
- * has a definite height (100svh -> 100%), so the visual and the active
- * chapter are structurally always fully on screen while pinned.
+ * The pinned architectural film frame. These rules use the exact media
+ * query the scrub hook's gsap.matchMedia uses, so layout and behavior switch
+ * together and nothing shifts when the hook attaches.
  *
- * Only one principle is shown at a time, stacked in the same spot
- * (`[data-scrubbing]` is set by the hook, so without JS/GSAP the three
- * principles just remain a readable list). Previous/next chapters live in
- * the compact `.nav` row and take no meaningful layout space.
+ * `.pinned` is a 100svh frame. The visual fills it edge to edge (inset from
+ * 18% of the left, bleeding to the right, top and bottom) so the
+ * architecture dominates, and a left scrim lets the editorial type sit over
+ * the image rather than in a card. Only one principle shows at a time,
+ * stacked in the same spot (`[data-scrubbing]` is set by the hook, so
+ * without JS/GSAP the three principles remain a readable list).
  */
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .section {
@@ -90,43 +82,150 @@
   }
 
   .pinned {
+    position: relative;
     height: 100svh;
-  }
-
-  .container {
-    height: 100%;
-    display: grid;
-    padding-block: var(--space-7);
-  }
-
-  .stage {
-    margin-top: 0;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 11fr 9fr;
-    gap: var(--space-8);
+    overflow: hidden;
+    background: var(--color-ink);
   }
 
   .visual {
     display: block;
+    position: absolute;
+    inset: 0 0 0 18%;
+  }
+
+  .scrim {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        90deg,
+        var(--color-ink) 0%,
+        var(--color-ink) 16%,
+        rgb(17 18 15 / 86%) 30%,
+        rgb(17 18 15 / 40%) 44%,
+        transparent 58%
+      ),
+      linear-gradient(
+        180deg,
+        rgb(17 18 15 / 70%) 0%,
+        transparent 16%,
+        transparent 80%,
+        rgb(17 18 15 / 60%) 100%
+      );
+  }
+
+  /* The single active stage row, bottom of the frame. Rows share one spot and
+     grow upward if they must wrap; only data-active shows. */
+  .stages {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    left: 40%;
+    right: var(--space-6);
+    bottom: var(--space-7);
+    height: 0;
+    pointer-events: none;
+  }
+
+  .stageRow {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-paper);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 420ms var(--ease-standard),
+      visibility 0s linear 420ms;
+  }
+
+  .stageRow[data-active='true'] {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .stage {
+    white-space: nowrap;
+    opacity: 0.38;
+    transition: opacity var(--motion-ui) var(--ease-standard);
+  }
+
+  .stage[data-active='true'] {
+    opacity: 1;
+  }
+
+  .stageNo {
+    margin-right: var(--space-2);
+    color: #c9a45c;
+  }
+
+  .container {
     position: relative;
+    z-index: 2;
     height: 100%;
-    min-height: 0;
-    overflow: hidden;
-    border: 1px solid rgb(244 241 234 / 14%);
-    background: var(--color-charcoal);
   }
 
   .copy {
     display: flex;
     flex-direction: column;
     height: 100%;
-    min-height: 0;
+    width: min(38%, 34rem);
+    padding-block: var(--space-7);
   }
 
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* "— THE VISAKRAM WAY —": spaced caps between fine gold rules */
   .heading {
-    margin-top: var(--space-3);
-    font-size: var(--text-h3);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.8125rem;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: #e6d8b4;
+  }
+
+  .heading::before,
+  .heading::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    max-width: 2.5rem;
+    background: linear-gradient(90deg, transparent, #c9a45c);
+  }
+
+  .heading::after {
+    transform: scaleX(-1);
+  }
+
+  .tagline {
+    margin: 0;
+    font-size: var(--text-small);
+    letter-spacing: 0.06em;
+    color: rgb(244 241 234 / 55%);
   }
 
   .list {
@@ -134,7 +233,6 @@
     flex: 1;
     min-height: 0;
     margin: 0;
-    overflow: hidden;
   }
 
   .list[data-scrubbing='true'] .item {
@@ -145,11 +243,11 @@
     right: 0;
     top: 50%;
     opacity: 0;
-    transform: translateY(calc(-50% + 12px));
+    transform: translateY(calc(-50% + 14px));
     pointer-events: none;
     transition:
-      opacity 520ms var(--ease-standard),
-      transform 520ms var(--ease-standard);
+      opacity 560ms var(--ease-standard),
+      transform 560ms var(--ease-standard);
   }
 
   .list[data-scrubbing='true'] .item[data-active='true'] {
@@ -159,12 +257,32 @@
   }
 
   .itemIndex {
-    font-size: var(--text-h3);
+    color: #c9a45c;
+    font-size: var(--text-small);
+    letter-spacing: 0.3em;
   }
 
+  /* Ivory-to-gold editorial display type, as in the references */
   .itemTitle {
-    font-size: var(--text-h2);
-    line-height: var(--leading-tight);
+    margin: var(--space-3) 0 0;
+    width: max-content;
+    max-width: none;
+    padding-right: 0.08em;
+    font-size: clamp(2.5rem, 1rem + 4vw, 5rem);
+    line-height: 1.02;
+    letter-spacing: 0.01em;
+    background: linear-gradient(180deg, #f6efdc 0%, #e0c488 52%, #a98441 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .itemDescription {
+    margin-top: var(--space-5);
+    max-width: 30ch;
+    font-size: var(--text-body-l);
+    line-height: 1.6;
+    color: rgb(244 241 234 / 82%);
   }
 
   .meta {
@@ -178,8 +296,8 @@
     display: flex;
     gap: var(--space-5);
     font-family: var(--font-mono);
-    font-size: var(--text-small);
-    letter-spacing: 0.08em;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
@@ -191,17 +309,17 @@
 
   .navItem[data-active='true'] {
     opacity: 1;
-    color: var(--color-terracotta);
+    color: #c9a45c;
   }
 
   .track {
     height: 1px;
-    background: rgb(244 241 234 / 18%);
+    background: rgb(244 241 234 / 16%);
   }
 
   .fill {
     height: 100%;
-    background: var(--color-terracotta);
+    background: #c9a45c;
     transform: scaleX(0);
     transform-origin: left center;
   }
