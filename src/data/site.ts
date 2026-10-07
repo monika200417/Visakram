@@ -29,4 +29,9 @@ export const site = {
    *  convention used elsewhere until a real photo is supplied — no code
    *  change needed then, just this field. */
   aboutImage: undefined as { src: string; alt: string } | undefined,
+  /** Full-bleed image behind the homepage's closing statement (Chapter 14,
+   *  blueprint "Large visual/video"). Left undefined so the closing renders
+   *  as a type-only dark band until a real, cleared image is supplied — no
+   *  code change needed then, just this field. */
+  closingImage: undefined as { src: string; alt: string } | undefined,
 } as const

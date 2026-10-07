@@ -65,15 +65,22 @@ async function renderHome() {
 }
 
 describe('homepage — from plan to place (canvas-eligible, mocked 3D module)', () => {
-  it('reaches for the lazy 3D module and passes it a shared progress ref, instead of the static fallback', async () => {
-    await renderHome()
-    const canvasStandIn = await screen.findByTestId('mock-plan-to-place-canvas')
-    expect(canvasStandIn).toHaveAttribute('data-has-progress-ref', 'true')
+  // This test cold-imports the whole app graph (vi.resetModules + dynamic import), so it is
+  // heavy next to its siblings: ~3s alone, but it climbs past vitest's 5s default when the full
+  // suite runs in parallel. The explicit timeout is headroom, not a change in what is asserted.
+  it(
+    'reaches for the lazy 3D module and passes it a shared progress ref, instead of the static fallback',
+    { timeout: 20_000 },
+    async () => {
+      await renderHome()
+      const canvasStandIn = await screen.findByTestId('mock-plan-to-place-canvas')
+      expect(canvasStandIn).toHaveAttribute('data-has-progress-ref', 'true')
 
-    // The static HTML story text is still present alongside the mocked
-    // canvas — the canvas never replaces it (docs/SEO-SPEC.md §28).
-    const heading = screen.getByRole('heading', { level: 2, name: 'From plan to place.' })
-    const section = heading.closest('section') as HTMLElement
-    expect(within(section).getByRole('heading', { level: 3, name: 'Plan' })).toBeInTheDocument()
-  })
+      // The static HTML story text is still present alongside the mocked
+      // canvas — the canvas never replaces it (docs/SEO-SPEC.md §28).
+      const heading = screen.getByRole('heading', { level: 2, name: 'From plan to place.' })
+      const section = heading.closest('section') as HTMLElement
+      expect(within(section).getByRole('heading', { level: 3, name: 'Plan' })).toBeInTheDocument()
+    },
+  )
 })

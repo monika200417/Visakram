@@ -1,0 +1,63 @@
+/**
+ * The closing band: dark, full-bleed, type-led. It is the page's last
+ * composition, so it is generous in scale and restrained in ornament — one
+ * hairline, one statement, one action.
+ */
+.section {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 70svh;
+  padding-block: var(--space-10) var(--space-9);
+  background: var(--color-bg-dark);
+  color: var(--color-text-dark);
+  overflow: hidden;
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A flat tint, not a gradient: keeps the statement legible over any photograph. */
+.tint {
+  position: absolute;
+  inset: 0;
+  background: rgb(17 18 15 / 60%);
+}
+
+.container {
+  position: relative;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border-dark);
+}
+
+.eyebrow {
+  color: var(--color-text-muted-dark);
+}
+
+.heading {
+  font-size: var(--text-display-xl);
+  max-width: 12ch;
+  color: var(--color-text-dark);
+  overflow-wrap: break-word;
+}
+
+.cta {
+  margin-top: var(--space-3);
+}
+
+@media (min-width: 1024px) {
+  .section {
+    min-height: 80svh;
+  }
+}

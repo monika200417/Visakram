@@ -26,3 +26,12 @@
   white-space: nowrap;
   border: 0;
 }
+
+/**
+ * A page that ends on a full-bleed dark band (the homepage closing chapter,
+ * marked data-flush-footer) runs straight into the dark footer. The footer's
+ * own top margin only exists to separate it from pale pages that end on paper.
+ */
+main:has(> [data-flush-footer]:last-child) + footer {
+  margin-top: 0;
+}
