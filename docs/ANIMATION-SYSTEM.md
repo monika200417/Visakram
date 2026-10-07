@@ -929,7 +929,11 @@ scroll → ScrollTrigger (scrub, pin) → tween of a single number (0 → 1)
   `src/media/home-tour/manifest.ts` holds each chapter's clip, poster, `start`,
   `end` and `scrollVh` (its share of the pin). The pin length is the sum of the
   `scrollVh` values. Chapters without footage are simply not in the timeline, so
-  clips are added or replaced in the manifest only.
+  clips are added or replaced in the manifest only. All nine chapters are in the
+  timeline from the start; a chapter's media is `production`, `reference-only`
+  (a development reference still, never shipped) or `missing` (nothing supplied:
+  a quiet panel, never a borrowed image). The normalized progress range of each
+  chapter is derived from its weight, and a handoff is a fixed scroll distance.
 - **Timeline** (`timeline.ts`, pure TypeScript): chapters share progress in
   proportion to `scrollVh`. At each boundary a short handoff holds the outgoing
   clip's last frame and the incoming clip's first frame and crossfades between

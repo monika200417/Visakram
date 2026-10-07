@@ -5,9 +5,9 @@ import type { Plugin } from 'vite'
 import { defineConfig } from 'vitest/config'
 
 /**
- * The Home Tour's development placeholders (public/assets/home-tour/placeholder)
+ * The Home Tour's development reference stills (public/assets/home-tour/placeholder)
  * are copies of unconfirmed reference media and must never ship. Every production
- * build removes them from dist/; set HOME_TOUR_ALLOW_PLACEHOLDERS=1 to keep them
+ * build removes them from dist/; set VITE_HOME_TOUR_ALLOW_PLACEHOLDERS=1 to keep them
  * for a local preview of the build.
  */
 function stripHomeTourPlaceholders(): Plugin {
@@ -15,7 +15,7 @@ function stripHomeTourPlaceholders(): Plugin {
     name: 'strip-home-tour-placeholders',
     apply: 'build',
     closeBundle() {
-      if (process.env.HOME_TOUR_ALLOW_PLACEHOLDERS === '1') return
+      if (process.env.VITE_HOME_TOUR_ALLOW_PLACEHOLDERS === '1') return
       rmSync(resolve('dist/assets/home-tour/placeholder'), { recursive: true, force: true })
     },
   }

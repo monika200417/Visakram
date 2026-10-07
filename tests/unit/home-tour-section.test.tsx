@@ -52,8 +52,18 @@ function expectStaticBlock() {
   // Stills only: no film is requested, nothing is pinned
   expect(section.querySelector('video')).toBeNull()
   expect(section.querySelector('[data-home-tour-media]')).toBeNull()
+  // One card per chapter: its still where one exists, otherwise a quiet panel — never another chapter's image
+  const cards = Array.from(section.querySelectorAll('ol > li'))
+  expect(cards).toHaveLength(homeTourSequence.length)
+  homeTourSequence.forEach((chapter, i) => {
+    const img = cards[i]!.querySelector('img')
+    if (chapter.mobile) expect(img?.getAttribute('src')).toBe(chapter.mobile)
+    else {
+      expect(img).toBeNull()
+      expect(cards[i]!.querySelector('[data-fallback]')).not.toBeNull()
+    }
+  })
   const images = Array.from(section.querySelectorAll('img'))
-  expect(images.map((i) => i.getAttribute('src'))).toEqual(homeTourSequence.map((c) => c.poster))
   expect(images.every((i) => i.getAttribute('loading') === 'lazy')).toBe(true)
 }
 
@@ -104,15 +114,13 @@ describe('Home Tour section — the pinned film (desktop, motion ok)', () => {
     expect(section.querySelector('[data-home-tour-media]')).not.toBeNull()
   })
 
-  it('shows the first still and a muted clip, and requests only the current and next clips', async () => {
+  it('shows the first reference still, and requests no video while no production clips exist', async () => {
     await renderSection()
     const section = document.querySelector('#home-tour') as HTMLElement
     const first = homeTourSequence[0]!
-    expect(section.querySelector(`img[src="${first.poster}"]`)).not.toBeNull()
-    const videos = Array.from(section.querySelectorAll('video'))
-    expect(videos.length).toBeGreaterThan(0)
-    expect(videos.length).toBeLessThanOrEqual(3)
-    for (const v of videos) expect(v.muted).toBe(true)
+    expect(section.querySelector(`img[src="${first.still}"]`)).not.toBeNull()
+    // no production clips exist yet, so no video is requested at all
+    expect(section.querySelectorAll('video')).toHaveLength(0)
   })
 
   it('carries every chapter as text over the film (never replaced by it), with a journey station each', async () => {

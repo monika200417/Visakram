@@ -10,16 +10,23 @@ const chapters: HomeTourSceneChapter[] = ['a', 'b', 'c', 'd'].map((id, i) => ({
   index: `0${i + 1}`,
   title: `Chapter ${id}`,
   caption: `Caption for chapter ${id}.`,
-  poster: `/test/${id}.webp`,
+  still: `/test/${id}.webp`,
+  mobile: `/test/${id}.webp`,
+  fit: 'cover',
   video: `/test/${id}.mp4`,
   start: 2 * i,
   end: 2 * i + 4,
   scrollVh: 100,
-  placeholder: true,
+  reference: null,
+  source: null,
+  status: 'production',
+  brief: 'Test chapter.',
 }))
 const timeline = buildTimeline(chapters, 0.06)
+const listTimeline = (list: HomeTourSceneChapter[]) =>
+  list === chapters ? timeline : buildTimeline(list, 0.06)
 
-function setup(initial = 0) {
+function setup(initial = 0, list: HomeTourSceneChapter[] = chapters) {
   const progressRef = { current: { value: initial } }
   let driver: ((p: number) => void) | null = null
   const onReady = vi.fn((fn: ((p: number) => void) | null) => {
@@ -29,8 +36,8 @@ function setup(initial = 0) {
   const view = render(
     <Profiler id="media" onRender={() => commits.count++}>
       <HomeTourMedia
-        chapters={chapters}
-        timeline={timeline}
+        chapters={list}
+        timeline={listTimeline(list)}
         progressRef={progressRef}
         onReady={onReady}
       />
@@ -167,5 +174,41 @@ describe('HomeTourMedia', () => {
     expect(figure('a')!.querySelector('img')).toBeNull()
     expect(figure('a')!.querySelector('[data-fallback]')).not.toBeNull()
     expect(figure('a')!.style.visibility).toBe('visible')
+  })
+
+  it('shows only the still for a chapter whose clip has not been supplied (no video element at all)', () => {
+    const list = chapters.map((c, i) =>
+      i === 0 ? { ...c, video: null, status: 'reference-only' as const } : c,
+    )
+    const { figure, scrub } = setup(0, list)
+    expect(figure('a')!.querySelector('video')).toBeNull()
+    expect(figure('a')!.querySelector('img')!.getAttribute('src')).toBe('/test/a.webp')
+    expect(figure('a')!.dataset.mediaStatus).toBe('reference-only')
+    scrub(0.1) // scrolling through a still-only chapter is harmless
+    expect(figure('a')!.style.opacity).toBe('1')
+  })
+
+  it('shows a quiet panel, never a blank stage or a borrowed image, when a chapter has no media at all', () => {
+    const list = chapters.map((c, i) =>
+      i === 1 ? { ...c, video: null, still: null, mobile: null, status: 'missing' as const } : c,
+    )
+    const { figure, scrub } = setup(0, list)
+    scrub(0.4) // inside chapter b
+    expect(figure('b')!.querySelector('img')).toBeNull()
+    expect(figure('b')!.querySelector('video')).toBeNull()
+    expect(figure('b')!.querySelector('[data-fallback]')).not.toBeNull()
+    expect(figure('b')!.style.visibility).toBe('visible')
+    expect(figure('b')!.dataset.mediaStatus).toBe('missing')
+  })
+
+  it('hands off cleanly between two still-only chapters in both directions', () => {
+    const stills = chapters.map((c) => ({ ...c, video: null, status: 'reference-only' as const }))
+    const { figure, scrub } = setup(0, stills)
+    scrub(0.25)
+    const forward = Number(figure('b')!.style.opacity)
+    expect(forward).toBeCloseTo(0.5, 5)
+    scrub(0.4)
+    scrub(0.25)
+    expect(Number(figure('b')!.style.opacity)).toBeCloseTo(forward, 10)
   })
 })

@@ -53,6 +53,16 @@
   background: #0a0908;
 }
 
+.cardImage[data-fit='contain'] {
+  object-fit: contain;
+}
+
+.cardMissing {
+  background:
+    radial-gradient(120% 90% at 70% 35%, rgb(201 164 92 / 12%), transparent 60%),
+    linear-gradient(180deg, #17130f 0%, #0a0908 100%);
+}
+
 .chapterIndex {
   color: #c9a45c;
 }
@@ -136,6 +146,10 @@
   object-fit: cover;
 }
 
+.still[data-fit='contain'] {
+  object-fit: contain;
+}
+
 .video {
   opacity: 0;
   transition: opacity 400ms var(--ease-standard);
@@ -143,6 +157,20 @@
 
 .video[data-ready='true'] {
   opacity: 1;
+}
+
+/* Development-only label on a chapter whose production media has not been supplied. */
+.pending {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgb(244 241 234 / 38%);
+  text-align: center;
 }
 
 /* Last resort when even the still cannot load: a quiet warm panel, never blank. */

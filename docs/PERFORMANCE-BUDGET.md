@@ -791,7 +791,7 @@ First view  the first poster (WebP, ~100 KB) paints immediately; clips fade in o
 Encode      short keyframe spacing (about every 4-8 frames), no B-frames, so seeking is cheap
 Idle        zero work: clips are never played; seeks happen only when scroll progress changes
 Mobile/RM   static stills + captions, no clip download; Save-Data also gets stills
-Placeholder development media is stripped from production builds (see vite.config.ts)
+Reference stills are development-only: unused in production code and deleted from dist/ (see vite.config.ts; VITE_HOME_TOUR_ALLOW_PLACEHOLDERS=1 keeps them for a local preview)
 ```
 
 ---

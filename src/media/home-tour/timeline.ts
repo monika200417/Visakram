@@ -1,4 +1,4 @@
-import { HOME_TOUR_HANDOFF, homeTourSequence } from './manifest'
+import { HOME_TOUR_HANDOFF_VH, homeTourSequence } from './manifest'
 
 /**
  * The scroll timeline for the Home Tour: pure TypeScript, no DOM, no React.
@@ -43,10 +43,16 @@ const smooth = (t: number) => {
   return c * c * (3 - 2 * c)
 }
 
-export function buildTimeline(chapters: readonly TimelineInput[], handoff = HOME_TOUR_HANDOFF) {
+/**
+ * `handoffShare` is the width of a chapter handoff as a share of progress. By
+ * default it is a fixed scroll distance (HOME_TOUR_HANDOFF_VH viewport heights),
+ * so adding chapters never lengthens the crossfades.
+ */
+export function buildTimeline(chapters: readonly TimelineInput[], handoffShare?: number) {
   const n = chapters.length
   if (n === 0) throw new Error('A Home Tour timeline needs at least one chapter')
   const total = chapters.reduce((sum, c) => sum + c.scrollVh, 0)
+  const handoff = handoffShare ?? HOME_TOUR_HANDOFF_VH / total
 
   const from: number[] = []
   const to: number[] = []
@@ -116,3 +122,10 @@ export function buildTimeline(chapters: readonly TimelineInput[], handoff = HOME
 export type HomeTourTimeline = ReturnType<typeof buildTimeline>
 
 export const homeTourTimeline = buildTimeline(homeTourSequence)
+
+/** Each chapter's DERIVED normalized progress range (from its scroll weight), for QA and reports. */
+export const homeTourRanges = homeTourSequence.map((chapter, i) => ({
+  id: chapter.id,
+  from: homeTourTimeline.from[i]!,
+  to: homeTourTimeline.to[i]!,
+}))

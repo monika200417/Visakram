@@ -112,20 +112,28 @@ export function HomeTourMedia({ chapters, timeline, progressRef, onReady }: Home
             }}
             className={styles.figure}
             data-chapter={chapter.id}
+            data-media-status={chapter.status}
           >
-            {failure === 'poster' ? (
-              <div className={styles.fallback} data-fallback="true" />
-            ) : (
+            {chapter.still && failure !== 'poster' ? (
               <img
                 className={styles.still}
-                src={chapter.poster}
+                src={chapter.still}
                 alt=""
+                data-fit={chapter.fit}
                 decoding="async"
                 fetchPriority={i === 0 ? 'high' : 'auto'}
                 onError={() => fail(chapter.id, 'poster')}
               />
+            ) : (
+              <div className={styles.fallback} data-fallback="true">
+                {import.meta.env.DEV && chapter.status === 'missing' ? (
+                  <span className={styles.pending}>
+                    Production media required — {chapter.title}
+                  </span>
+                ) : null}
+              </div>
             )}
-            {failure === 'video' ? null : (
+            {chapter.video && failure !== 'video' ? (
               <video
                 ref={(node) => registerVideo(i, node)}
                 className={styles.video}
@@ -140,7 +148,7 @@ export function HomeTourMedia({ chapters, timeline, progressRef, onReady }: Home
                 }}
                 onError={() => fail(chapter.id, 'video')}
               />
-            )}
+            ) : null}
           </div>
         )
       })}

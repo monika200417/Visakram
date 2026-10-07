@@ -10,6 +10,27 @@ const chapters = [
 const timeline = buildTimeline(chapters, 0.1)
 
 describe('Home Tour timeline', () => {
+  it('uses a fixed scroll distance for handoffs by default, however many chapters there are', () => {
+    const two = buildTimeline([
+      { id: 'a', start: 0, end: 1, scrollVh: 200 },
+      { id: 'b', start: 0, end: 1, scrollVh: 200 },
+    ])
+    const four = buildTimeline(
+      ['a', 'b', 'c', 'd'].map((id) => ({ id, start: 0, end: 1, scrollVh: 200 })),
+    )
+    // handoff = 36 vh: its share of progress shrinks as the pin grows, its scroll distance does not
+    const width = (t: ReturnType<typeof buildTimeline>, total: number) => {
+      const b = t.to[0]!
+      let lo = b
+      while (t.frameAt(lo - 1e-4).layers.length === 2 && lo > 0) lo -= 1e-4
+      let hi = b
+      while (t.frameAt(hi + 1e-4).layers.length === 2 && hi < 1) hi += 1e-4
+      return (hi - lo) * total
+    }
+    expect(width(two, 400)).toBeCloseTo(36, -1)
+    expect(width(four, 800)).toBeCloseTo(36, -1)
+  })
+
   it('splits progress between chapters in proportion to their scroll length', () => {
     expect(timeline.from).toEqual([0, 0.5, 0.75])
     expect(timeline.to).toEqual([0.5, 0.75, 1])
