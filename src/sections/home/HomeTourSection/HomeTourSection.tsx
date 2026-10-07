@@ -48,29 +48,39 @@ export function HomeTourSection() {
       aria-labelledby="home-tour-heading"
       data-mode={tourActive ? 'tour' : 'static'}
     >
+      {/*
+        The pinned branch lives inside a React-owned wrapper. GSAP reparents the
+        pinned panel into a `.pin-spacer`, so when eligibility flips (the viewport
+        crosses 1024px, reduced motion toggles) React must remove this wrapper —
+        which still holds the spacer — not the panel, which is no longer a child
+        of the section. Removing the panel directly throws NotFoundError and
+        unmounts the whole app.
+      */}
       {tourActive ? (
-        <div ref={pinnedRef} className={styles.pinned}>
-          <div className={styles.stage}>
-            {isNear ? (
-              <MediaErrorBoundary onError={() => setHasError(true)}>
-                <HomeTourMedia
-                  chapters={homeTourSequence}
-                  timeline={homeTourTimeline}
-                  progressRef={progressRef}
-                  onReady={handleReady}
-                />
-              </MediaErrorBoundary>
-            ) : null}
+        <div>
+          <div ref={pinnedRef} className={styles.pinned}>
+            <div className={styles.stage}>
+              {isNear ? (
+                <MediaErrorBoundary onError={() => setHasError(true)}>
+                  <HomeTourMedia
+                    chapters={homeTourSequence}
+                    timeline={homeTourTimeline}
+                    progressRef={progressRef}
+                    onReady={handleReady}
+                  />
+                </MediaErrorBoundary>
+              ) : null}
+            </div>
+            <div className={styles.vignette} aria-hidden="true" />
+
+            <Container className={styles.container}>
+              <HomeTourIntro />
+              <HomeTourOverlay chapters={homeTourSequence} />
+              <p className={styles.disclaimer}>{homeTourDisclaimer}</p>
+            </Container>
+
+            <JourneyLine chapters={homeTourSequence} timeline={homeTourTimeline} />
           </div>
-          <div className={styles.vignette} aria-hidden="true" />
-
-          <Container className={styles.container}>
-            <HomeTourIntro />
-            <HomeTourOverlay chapters={homeTourSequence} />
-            <p className={styles.disclaimer}>{homeTourDisclaimer}</p>
-          </Container>
-
-          <JourneyLine chapters={homeTourSequence} timeline={homeTourTimeline} />
         </div>
       ) : (
         <Container>
