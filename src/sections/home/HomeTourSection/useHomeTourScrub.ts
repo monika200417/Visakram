@@ -83,6 +83,14 @@ export function useHomeTourScrub(
             end: `+=${homeTourPinPercent}%`,
             scrub: 1,
             pin: true,
+            // The Tour is the last pin on the page, so its start depends on the
+            // scroll space the Hero, Visakram Way and From Plan to Place pins add
+            // above it. ScrollTrigger measures in creation order, and after a
+            // breakpoint round trip React re-creates this trigger BEFORE GSAP
+            // re-forms those pins, so it was measured without them and kept a
+            // stale range. A negative priority sorts it after every default-priority
+            // trigger in every refresh, so it is always measured last.
+            refreshPriority: -1,
           },
         })
         tl.to(state, { value: 1, duration: 1 })
