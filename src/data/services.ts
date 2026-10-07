@@ -14,6 +14,9 @@ export type Service = {
    *  padded-out invented one. */
   description?: string
   image?: string
+  /** Alt text for `image`, supplied with it. Without one the image is
+   *  rendered as decorative (empty alt) rather than given invented text. */
+  imageAlt?: string
   highlights?: string[]
 }
 

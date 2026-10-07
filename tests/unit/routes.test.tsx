@@ -15,7 +15,7 @@ describe('routing', () => {
   it.each([
     ['/', 'Places that hold their ground.'],
     ['/projects', 'Projects'],
-    ['/services', 'Services'],
+    ['/services', 'Villas, apartments and residential construction.'],
     [
       '/about',
       '20+ years of construction experience, carried into a contemporary way of building.',

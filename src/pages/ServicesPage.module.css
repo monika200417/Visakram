@@ -1,0 +1,220 @@
+.eyebrow {
+  display: block;
+  color: var(--color-text-muted);
+}
+
+.index {
+  color: var(--color-accent-strong);
+}
+
+.sectionHeading {
+  margin-top: var(--space-5);
+  font-size: var(--text-display-l);
+  max-width: 20ch;
+}
+
+/* --- 01 Intro --- */
+.hero {
+  padding-block: var(--space-9) var(--space-8);
+}
+
+.heroInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.heroHeading {
+  margin-top: var(--space-5);
+  font-size: var(--text-display-l);
+  max-width: 18ch;
+  overflow-wrap: break-word;
+}
+
+.heroSupporting {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+  max-width: 48ch;
+}
+
+/* --- 02 Overview: a ruled index, one row per service --- */
+.overview {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--color-border);
+}
+
+.overviewList {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+}
+
+.overviewItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.overviewItem:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.overviewLink {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: var(--space-4);
+  row-gap: var(--space-2);
+  align-items: baseline;
+  padding-block: var(--space-5);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.overviewTitle {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h3);
+  line-height: var(--leading-snug);
+  transition: color var(--motion-ui) var(--ease-standard);
+}
+
+.overviewDescription {
+  grid-column: 2 / 3;
+  color: var(--color-text-muted);
+  max-width: 48ch;
+}
+
+.arrow {
+  grid-column: 3;
+  grid-row: 1;
+  color: var(--color-accent-strong);
+  transition: transform var(--motion-ui) var(--ease-standard);
+}
+
+.overviewLink:hover .overviewTitle,
+.overviewLink:focus-visible .overviewTitle {
+  color: var(--color-accent-strong);
+}
+
+.overviewLink:hover .arrow,
+.overviewLink:focus-visible .arrow {
+  transform: translateY(var(--space-1));
+}
+
+/* --- 04 Process / 05 Proof share the same quiet block rhythm --- */
+.block {
+  padding-block: var(--space-9);
+  border-top: 1px solid var(--color-border);
+}
+
+.steps {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.step {
+  border-top: 2px solid var(--color-border);
+  padding-top: var(--space-5);
+}
+
+.step:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.stepTitle {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-h3);
+}
+
+.stepDescription {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  max-width: 34ch;
+}
+
+.stats {
+  margin: var(--space-6) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.stat {
+  margin: 0;
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-display-l);
+  line-height: var(--leading-tight);
+  color: var(--color-accent-strong);
+}
+
+.statLabel {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+}
+
+/* --- CTA --- */
+.cta {
+  padding-block: var(--space-9);
+  border-top: 1px solid var(--color-border);
+}
+
+.ctaInner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.ctaHeading {
+  font-size: var(--text-h2);
+  max-width: 20ch;
+}
+
+@media (min-width: 768px) {
+  .overviewLink {
+    grid-template-columns: 3rem minmax(0, 1fr) minmax(0, 1.2fr) auto;
+    column-gap: var(--space-5);
+    padding-block: var(--space-6);
+  }
+
+  .overviewDescription {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .arrow {
+    grid-column: 4;
+  }
+
+  .stats {
+    flex-direction: row;
+    gap: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .steps {
+    flex-direction: row;
+    gap: var(--space-5);
+  }
+
+  .step {
+    flex: 1;
+    border-top: 0;
+    border-left: 2px solid var(--color-border);
+    padding-top: 0;
+    padding-left: var(--space-5);
+  }
+
+  .step:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
