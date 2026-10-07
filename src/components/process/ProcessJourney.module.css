@@ -1,0 +1,133 @@
+/**
+ * The journey: one chapter per step along a vertical datum line. The default
+ * (no state attribute) is the finished journey — line drawn, every stage
+ * "reached" — so it reads completely without JavaScript or under reduced
+ * motion. useProcessJourney only adds `data-state`, which merely quiets the
+ * stages the line has not reached yet; text is never hidden.
+ */
+.journey {
+  position: relative;
+}
+
+.track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 4px;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.progress {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--color-accent);
+  transform-origin: top;
+}
+
+.stages {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-block: var(--space-8);
+  padding-left: var(--space-7);
+  /* An anchor jump lands the stage above the progress line (which tracks 60%
+     of the viewport), so the stage you jumped to is the one marked active. */
+  scroll-margin-top: 40svh;
+}
+
+/* The datum marker where the line meets each stage. */
+.stage::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(var(--space-8) + 0.5rem);
+  width: 10px;
+  height: 10px;
+  background: var(--color-accent);
+  border: 2px solid var(--color-accent);
+  transition:
+    background-color var(--motion-ui) var(--ease-standard),
+    border-color var(--motion-ui) var(--ease-standard);
+}
+
+.index {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-display-l);
+  line-height: var(--leading-tight);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-accent-strong);
+  transition: color var(--motion-ui) var(--ease-standard);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.meta {
+  color: var(--color-text-muted);
+  transition: color var(--motion-ui) var(--ease-standard);
+}
+
+.title {
+  font-size: var(--text-h2);
+  overflow-wrap: break-word;
+}
+
+.description {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+  max-width: 40ch;
+}
+
+/* Stages the line has not reached yet: quieter marker and numeral only. */
+.stage[data-state='pending']::before {
+  background: var(--color-bg);
+  border-color: var(--color-stone);
+}
+
+.stage[data-state='pending'] .index {
+  color: var(--color-stone);
+}
+
+.stage[data-state='active'] .meta {
+  color: var(--color-accent-strong);
+}
+
+@media (min-width: 768px) {
+  .stage {
+    display: grid;
+    grid-template-columns: clamp(6rem, 16vw, 14rem) minmax(0, 1fr);
+    column-gap: var(--space-6);
+    align-items: start;
+    padding-left: var(--space-8);
+  }
+
+  .index {
+    font-size: var(--text-display-xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .stage {
+    padding-block: var(--space-9);
+  }
+
+  .stage::before {
+    top: calc(var(--space-9) + 1rem);
+  }
+}

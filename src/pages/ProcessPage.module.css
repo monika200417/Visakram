@@ -1,0 +1,155 @@
+.eyebrow {
+  display: block;
+  color: var(--color-text-muted);
+}
+
+.index {
+  color: var(--color-accent-strong);
+}
+
+.sectionHeading {
+  margin-top: var(--space-5);
+  font-size: var(--text-display-l);
+  max-width: 20ch;
+}
+
+/* --- 01 Intro --- */
+.hero {
+  padding-block: var(--space-9) var(--space-8);
+}
+
+.heroInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.heroHeading {
+  margin-top: var(--space-5);
+  font-size: var(--text-display-l);
+  max-width: 16ch;
+  overflow-wrap: break-word;
+}
+
+.heroSupporting {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+  max-width: 48ch;
+}
+
+/* --- 02 Overview: the sequence at a glance, linking to each stage --- */
+.overview {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--color-border);
+}
+
+.overviewList {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+}
+
+.overviewItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.overviewItem:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.overviewLink {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: var(--space-4);
+  align-items: baseline;
+  padding-block: var(--space-4);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.overviewTitle {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h3);
+  line-height: var(--leading-snug);
+  transition: color var(--motion-ui) var(--ease-standard);
+}
+
+.arrow {
+  color: var(--color-accent-strong);
+  transition: transform var(--motion-ui) var(--ease-standard);
+}
+
+.overviewLink:hover .overviewTitle,
+.overviewLink:focus-visible .overviewTitle {
+  color: var(--color-accent-strong);
+}
+
+.overviewLink:hover .arrow,
+.overviewLink:focus-visible .arrow {
+  transform: translateY(var(--space-1));
+}
+
+/* --- 03 Journey --- */
+.journeySection {
+  padding-top: var(--space-9);
+  border-top: 1px solid var(--color-border);
+}
+
+.journeyIntro {
+  margin-bottom: var(--space-4);
+}
+
+/* --- CTA --- */
+.cta {
+  padding-block: var(--space-9);
+  border-top: 1px solid var(--color-border);
+}
+
+.ctaInner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.ctaHeading {
+  font-size: var(--text-h2);
+  max-width: 20ch;
+}
+
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .overviewList {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .overviewItem,
+  .overviewItem:last-child {
+    border-top: 0;
+    border-bottom: 0;
+  }
+
+  .overviewLink {
+    grid-template-columns: 1fr auto;
+    row-gap: var(--space-3);
+    padding-block: var(--space-5);
+  }
+
+  .overviewLink .index {
+    grid-column: 1 / -1;
+  }
+
+  .arrow {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
