@@ -2,29 +2,54 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
+  background: var(--color-ink);
 }
 
-.layer {
+/*
+ * The poster and the canvas fill the hero identically — both `cover` the same
+ * 16:9 frame around the same focal point — so when the canvas fades in over the
+ * poster nothing moves. The 16:9 frame fills a desktop hero with next to no
+ * crop; on a taller screen it crops the sides and the focal point keeps the
+ * house in view.
+ */
+.poster {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  will-change: opacity, transform;
-}
-
-/* Static default: scene 1 visible, rest hidden. This is also the complete
-   mobile / reduced-motion state — see useHeroSceneScrub. */
-.layer:first-child {
-  opacity: 1;
-}
-
-.image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: var(--hero-focal-x, 50%) 50%;
 }
 
+/* Not rendered at all where the film never runs (narrow screens, reduced motion). */
+.canvas {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--motion-ui) var(--ease-standard);
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .canvas {
+    display: block;
+  }
+}
+
+.stage[data-film='ready'] .canvas {
+  opacity: 1;
+}
+
+/*
+ * The copy sits lower-left, so the shade follows it: a soft horizontal fall-off from the left
+ * edge over the existing top-to-bottom grade, leaving the architecture on the right clear.
+ */
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(17 18 15 / 12%) 0%, rgb(17 18 15 / 50%) 100%);
+  background:
+    linear-gradient(90deg, rgb(17 18 15 / 52%) 0%, rgb(17 18 15 / 20%) 38%, rgb(17 18 15 / 0%) 62%),
+    linear-gradient(180deg, rgb(17 18 15 / 12%) 0%, rgb(17 18 15 / 50%) 100%);
 }

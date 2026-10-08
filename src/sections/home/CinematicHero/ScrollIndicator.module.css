@@ -39,3 +39,10 @@
     opacity: 0.8;
   }
 }
+
+/* The film hero is a full viewport tall (CinematicHero.module.css), so clear the in-flow header's height. */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .indicator {
+    bottom: calc(var(--space-7) + var(--header-height));
+  }
+}

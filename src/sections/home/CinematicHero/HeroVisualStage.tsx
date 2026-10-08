@@ -1,28 +1,35 @@
-import { heroScenes } from '../../../data/heroScenes'
-import { DevScenePlaceholder } from '../../../components/media/DevScenePlaceholder'
+import { heroFilm, heroPoster } from '../../../data/heroFilm'
 import styles from './HeroVisualStage.module.css'
 
 /**
- * Layered scene stack. Purely decorative — the meaningful hero content
- * lives in HeroContent as real text, so this whole stage is aria-hidden.
- * The first scene is opaque by default in CSS; every other layer starts
- * transparent. That default IS the complete mobile / reduced-motion
- * experience (a single static scene) — useHeroSceneScrub only overrides it
- * for desktop/tablet with motion allowed. Supports one scene, many layered
- * scenes, or (later) video in a scene's slot without changing this shape.
+ * The hero's picture: a poster still with a canvas laid over it. The poster is
+ * a plain <img> in the DOM from the first render — it is what the visitor sees
+ * immediately, the largest-contentful-paint candidate, and the complete
+ * experience wherever the film does not run (narrow screens, reduced motion,
+ * data-saver, or before the frames have loaded). On wide screens with motion
+ * allowed, useHeroSceneScrub fills the canvas from the hero frame sequence and
+ * flips `data-film` to "ready", which fades the canvas in over the identical
+ * first frame. Purely decorative — the real hero content is HeroContent — so
+ * the whole stage is aria-hidden.
  */
 export function HeroVisualStage() {
   return (
-    <div className={styles.stage} aria-hidden="true">
-      {heroScenes.map((scene) => (
-        <div key={scene.id} className={styles.layer} data-hero-layer>
-          {scene.image ? (
-            <img src={scene.image} alt="" className={styles.image} />
-          ) : (
-            <DevScenePlaceholder scene={scene} total={heroScenes.length} />
-          )}
-        </div>
-      ))}
+    <div
+      className={styles.stage}
+      style={{ ['--hero-focal-x' as string]: `${heroFilm.focalX * 100}%` }}
+      aria-hidden="true"
+      data-hero-stage
+    >
+      <img
+        src={heroPoster}
+        alt=""
+        width={heroFilm.width}
+        height={heroFilm.height}
+        className={styles.poster}
+        decoding="async"
+        fetchPriority="high"
+      />
+      <canvas className={styles.canvas} data-hero-canvas />
       <div className={styles.overlay} />
     </div>
   )

@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
+import { heroFilm, heroPoster } from '../../src/data/heroFilm'
 import { heroScenes } from '../../src/data/heroScenes'
 
 function renderHome() {
@@ -33,15 +34,32 @@ describe('homepage — cinematic hero', () => {
     expect(screen.getByText(/whatsapp.*pending client confirmation/i)).toBeInTheDocument()
   })
 
-  it('marks every hero scene as a development placeholder (auditable before launch)', () => {
-    renderHome()
-    for (const scene of heroScenes) {
-      expect(screen.getByText(new RegExp(scene.title, 'i'))).toBeInTheDocument()
-    }
+  it('opens on the hero poster: a real image in the DOM, fetched first, with no video and no frame sequence yet', () => {
     const { container } = renderHome()
-    expect(container.querySelectorAll('[data-dev-placeholder]').length).toBeGreaterThanOrEqual(
-      heroScenes.length,
-    )
+    const stage = container.querySelector('[data-hero-stage]') as HTMLElement
+    expect(stage).not.toBeNull()
+    const poster = stage.querySelector('img') as HTMLImageElement
+    expect(poster).toHaveAttribute('src', heroPoster)
+    expect(poster).toHaveAttribute('fetchpriority', 'high')
+    expect(poster).not.toHaveAttribute('loading', 'lazy')
+    expect(poster).toHaveAttribute('width', String(heroFilm.width))
+    expect(poster).toHaveAttribute('height', String(heroFilm.height))
+    expect(stage.querySelector('video')).toBeNull()
+    expect(stage.querySelector('canvas')).not.toBeNull()
+    // the canvas has not taken over: nothing has been decoded
+    expect(stage).not.toHaveAttribute('data-film')
+  })
+
+  it('shows a short chapter caption for every hero scene, hidden from assistive tech, with the headline unchanged', () => {
+    const { container } = renderHome()
+    const captions = Array.from(container.querySelectorAll('[data-caption]'))
+    expect(captions).toHaveLength(heroScenes.length)
+    heroScenes.forEach((scene, i) => {
+      expect(captions[i]!.textContent).toBe(`${scene.chapter} / ${scene.caption}`)
+    })
+    expect(captions[0]).toHaveAttribute('data-active', 'true')
+    expect(captions[0]!.closest('[aria-hidden="true"]')).not.toBeNull()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
   })
 
   it('hides the decorative visual stage from assistive tech', () => {

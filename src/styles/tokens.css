@@ -13,6 +13,8 @@
   --color-muted: #77766e;
   --color-terracotta: #a65d45;
   --color-terracotta-dark: #7f4433;
+  /* Architectural gold — hairlines and fine accents only (same value as the Visakram Way linework). */
+  --color-gold: #c9a45c;
 
   /* --- Color: light experience (default) --- */
   --color-bg: var(--color-paper);

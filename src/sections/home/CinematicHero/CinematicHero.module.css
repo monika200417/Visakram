@@ -24,3 +24,21 @@
   align-items: flex-end;
   padding-bottom: var(--space-9);
 }
+
+/*
+ * Where the hero film runs (wide screens, motion allowed) the hero is pinned at the
+ * top of the viewport once the in-flow header has scrolled away, so it is made a full
+ * viewport tall: pinned, it fills the screen with no blank band under it. Its content
+ * keeps the same place relative to the header-and-hero first view by adding the
+ * header's height to the bottom padding, so the first screen is unchanged and the
+ * extra 88px is simply more picture below the fold.
+ */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .hero {
+    min-height: max(560px, 100svh);
+  }
+
+  .contentWrap {
+    padding-bottom: calc(var(--space-9) + var(--header-height));
+  }
+}

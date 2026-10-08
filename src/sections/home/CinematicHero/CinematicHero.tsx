@@ -7,9 +7,10 @@ import { useHeroSceneScrub } from './useHeroSceneScrub'
 import styles from './CinematicHero.module.css'
 
 /**
- * Cinematic architectural arrival (Milestone 3). Scroll-driven, not a
- * background-video hero — see src/data/heroScenes.ts for the layered scene
- * system this is built on.
+ * Cinematic architectural arrival (Milestone 3). A poster still, and — on wide
+ * screens with motion allowed — a short film of the house scrubbed by the page
+ * scroll; see src/data/heroFilm.ts and useHeroSceneScrub. The headline and
+ * calls to action stay put throughout.
  */
 export function CinematicHero() {
   const sectionRef = useRef<HTMLElement>(null)
