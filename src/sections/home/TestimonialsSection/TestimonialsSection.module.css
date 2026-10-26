@@ -359,12 +359,6 @@
   color: var(--color-bay);
 }
 
-.where svg {
-  width: 0.8rem;
-  height: 0.8rem;
-  fill: currentColor;
-}
-
 /* A red rule that draws along the card's foot on hover. */
 .rule {
   position: absolute;

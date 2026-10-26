@@ -46,9 +46,7 @@ function Card({
       data-marquee-card
       // the repeated set only exists to make the loop seamless: hide it from assistive tech
       aria-hidden={decorative || undefined}
-      aria-label={
-        decorative ? undefined : `${item.project}, ${item.location}: review by ${item.name}`
-      }
+      aria-label={decorative ? undefined : `${item.project}: review by ${item.name}`}
     >
       <div className={styles.media}>
         <div className={styles.frame}>
@@ -81,12 +79,7 @@ function Card({
         <div className={styles.foot}>
           <span className={styles.name}>{item.name}</span>
           <span className={styles.designation}>{item.designation}</span>
-          <span className={styles.where}>
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M8 1.5a4.5 4.5 0 0 0-4.5 4.5c0 3.2 4.5 8.5 4.5 8.5S12.5 9.2 12.5 6A4.5 4.5 0 0 0 8 1.5zm0 6.2A1.7 1.7 0 1 1 8 4.3a1.7 1.7 0 0 1 0 3.4z" />
-            </svg>
-            {item.project} · {item.location}
-          </span>
+          <span className={styles.where}>{item.project}</span>
         </div>
         <span className={styles.rule} aria-hidden="true" />
       </div>

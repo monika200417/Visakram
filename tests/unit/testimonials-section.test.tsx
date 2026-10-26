@@ -74,7 +74,9 @@ describe('homepage — testimonials section', () => {
       expect(text).toContain(item.headline)
       expect(text).toContain(item.feedback)
       expect(text).toContain(item.project)
-      expect(text).toContain(item.location)
+      // the client's location is not shown on the card, only the project
+      expect(exposed[i]!.querySelector('span[class*=where]')!.textContent).toBe(item.project)
+      expect(exposed[i]!.getAttribute('aria-label')).not.toContain(item.location)
       expect(text).toContain(item.buildType)
       expect(
         exposed[i]!.querySelector(`[aria-label="Rated ${item.rating} out of 5"]`),
