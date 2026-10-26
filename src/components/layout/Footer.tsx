@@ -35,13 +35,8 @@ export function Footer() {
         </nav>
 
         <div className={styles.location}>
-          <span className={styles.heading}>Based in</span>
-          <p className="text-mono-label">
-            {site.locality}, {site.city}
-          </p>
-          <p className="text-mono-label">{site.region}</p>
           <span className={styles.heading}>Building across</span>
-          <p className="text-mono-label">{site.serviceAreas.join(' + ')}</p>
+          <p className="text-mono-label">{site.region}</p>
         </div>
 
         {contactLines.length > 0 && (

@@ -11,5 +11,4 @@ export const homeTourChapterCopy: Readonly<Record<string, string>> = {
   bedroom: 'A private retreat defined by warmth, proportion and natural light.',
   balcony: 'An open edge where the interior meets the coastal landscape.',
   'ocean-view': 'An uninterrupted relationship between home, horizon and sea.',
-  'final-reveal': 'A home shaped around the way life is meant to be lived.',
 }

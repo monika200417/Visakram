@@ -790,7 +790,15 @@ Footage     one clip per chapter; only previous + current + next are mounted, fa
 First view  the first poster (WebP, ~100 KB) paints immediately; clips fade in over it
 Encode      short keyframe spacing (about every 4-8 frames), no B-frames, so seeking is cheap
 Idle        zero work: clips are never played; seeks happen only when scroll progress changes
-Mobile/RM   static stills + captions, no clip download; Save-Data also gets stills
+Mobile/RM   reduced motion and Save-Data get stills + captions, no clip download
+Phones      (max-width 767px) scrub a lighter copy of the same film: home-tour-mobile.mp4, 960x540,
+            a keyframe every 3 frames, ~4 MB (the desktop film is 1080p, ~34 MB). preload="auto" so a
+            swipe never waits on a range request. The scrub follows the thumb closely (scrub 0.35 vs
+            1.2 on desktop), the hero dive skips its blur, and ScrollTrigger ignores the address-bar
+            resize so pins are not re-measured mid-scroll (see src/animations/gsap.ts)
+Stars       14 small gold stars (CSS only) at random places, new places each time scrolling starts; they twinkle only
+            while the film is being scrolled (data-moving, ~260 ms after the last scroll tick) and are paused and
+            faded out otherwise, so they cost nothing at rest. Hidden in still mode (reduced motion / Save-Data)
 Reference stills are development-only: unused in production code and deleted from dist/ (see vite.config.ts; VITE_HOME_TOUR_ALLOW_PLACEHOLDERS=1 keeps them for a local preview)
 ```
 

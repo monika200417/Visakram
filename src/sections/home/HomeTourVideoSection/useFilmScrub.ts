@@ -2,8 +2,12 @@ import { useLayoutEffect, type RefObject } from 'react'
 import { loadGsap } from '../../../animations/gsap'
 import {
   chapterIndexAtTime,
+  filmFitAtTime,
+  filmFitScale,
   filmProgressAtTime,
+  filmStatementTop,
   filmTimeAtProgress,
+  homeTourFilmFit,
   homeTourFilmScrollPercent,
 } from '../../../data/homeTourFilm'
 import { createFrameSeeker } from './createFrameSeeker'
@@ -43,14 +47,79 @@ export function useFilmScrub(
     loadGsap().then(({ gsap }) => {
       if (cancelled || !pinned.isConnected) return
 
+      // A thumb flick is already smooth, momentum and all, so a phone follows it closely: the film stops
+      // almost as soon as the scrolling does, rather than gliding on for another second.
+      const phone = window.matchMedia?.('(max-width: 767px)').matches === true
+
       const chapters = Array.from(pinned.querySelectorAll<HTMLElement>('[data-chapter]'))
       const seeker = createFrameSeeker(video)
       const state = { progress: 0 }
       let lastChapter = -1
       let lastPast = false
 
+      // Phones: draw the picture back over the last seconds until the whole logo fits (see homeTourFilmFit).
+      let fitScale = 1
+      let lastFit = -1
+      // How far up the last chapter's statement moves, once fitted, to stand just under the logo.
+      let statementLift = 0
+      const overlay = pinned.querySelector<HTMLElement>('[data-chapter-list]')?.parentElement
+      const measure = () => {
+        fitScale = filmFitScale(pinned.clientWidth, pinned.clientHeight)
+        statementLift = overlay
+          ? filmStatementTop(pinned.clientHeight, fitScale) - overlay.offsetTop
+          : 0
+        lastFit = -1
+      }
+      const applyFit = (time: number) => {
+        const fit = Math.round(filmFitAtTime(time) * 1000) / 1000
+        if (fit === lastFit) return
+        lastFit = fit
+        pinned.style.setProperty('--fit', (1 + (fitScale - 1) * fit).toFixed(4))
+        pinned.style.setProperty('--fit-edge', `${(homeTourFilmFit.edge * fit).toFixed(2)}%`)
+        pinned.style.setProperty(
+          '--fit-edge-bottom',
+          `${(homeTourFilmFit.edgeBottom * fit).toFixed(2)}%`,
+        )
+        pinned.style.setProperty('--fit-lift', `${(statementLift * fit).toFixed(1)}px`)
+        pinned.dataset.fit = String(fit > 0)
+      }
+
+      // Stars twinkle at random places while the film is being scrolled, and fade when it stops. Each new
+      // burst of scrolling puts them somewhere new.
+      const stars = Array.from(pinned.querySelectorAll<HTMLElement>('[data-star]'))
+      let moving = false
+      let restTimer = 0
+      let lastProgress: number | null = null
+      const scatter = () => {
+        for (const star of stars) {
+          star.style.left = `${(4 + Math.random() * 92).toFixed(1)}%`
+          star.style.top = `${(12 + Math.random() * 80).toFixed(1)}%`
+          star.style.setProperty('--star-size', `${(11 + Math.random() * 15).toFixed(1)}px`)
+          star.style.setProperty('--star-time', `${(0.9 + Math.random() * 1.4).toFixed(2)}s`)
+          star.style.setProperty('--star-delay', `${(-Math.random() * 2).toFixed(2)}s`)
+        }
+      }
+      const touchStars = (progress: number) => {
+        const first = lastProgress === null
+        if (progress === lastProgress) return
+        lastProgress = progress
+        if (first) return // the setup call, not scrolling
+        if (!moving) {
+          moving = true
+          scatter()
+          pinned.dataset.moving = 'true'
+        }
+        window.clearTimeout(restTimer)
+        restTimer = window.setTimeout(() => {
+          moving = false
+          pinned.dataset.moving = 'false'
+        }, 260)
+      }
+
       const render = (progress: number) => {
         seeker.seek(filmTimeAtProgress(progress))
+        if (phone) applyFit(filmTimeAtProgress(progress))
+        touchStars(progress)
 
         // The section's introduction, laid over the first frames, gives way once the film has begun.
         const past = progress > INTRO_PROGRESS
@@ -71,7 +140,13 @@ export function useFilmScrub(
         })
       }
 
+      if (phone) measure()
       render(filmProgressAtTime(0))
+      const onResize = () => {
+        measure()
+        render(state.progress)
+      }
+      if (phone) window.addEventListener('resize', onResize)
 
       const context = gsap.context(() => {
         gsap
@@ -83,7 +158,7 @@ export function useFilmScrub(
               // A long, soft follow: wheel notches and trackpad flicks arrive as jumps in scroll
               // position, and this glides the film through them so the camera never seems to stop
               // and start with each one.
-              scrub: 1.2,
+              scrub: phone ? 0.35 : 1.2,
               pin: true,
               anticipatePin: 1,
               invalidateOnRefresh: true,
@@ -110,6 +185,14 @@ export function useFilmScrub(
       cleanup = () => {
         context.revert()
         seeker.dispose()
+        window.removeEventListener('resize', onResize)
+        pinned.style.removeProperty('--fit')
+        pinned.style.removeProperty('--fit-edge')
+        pinned.style.removeProperty('--fit-edge-bottom')
+        pinned.style.removeProperty('--fit-lift')
+        window.clearTimeout(restTimer)
+        delete pinned.dataset.moving
+        delete pinned.dataset.fit
         delete pinned.dataset.live
         delete pinned.dataset.past
         chapters.forEach((chapter) => {

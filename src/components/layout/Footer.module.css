@@ -2,6 +2,14 @@
   margin-top: var(--space-10);
   background: var(--color-sandalwood);
   color: var(--color-ink);
+  /* the fixed WhatsApp button (56px, 16px from the edge) must not sit on the last line when scrolled to the end */
+  padding-bottom: 4.5rem;
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding-bottom: 0;
+  }
 }
 
 .grid {

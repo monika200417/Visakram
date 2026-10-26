@@ -31,7 +31,9 @@ describe('global shell', () => {
     renderAt('/')
     const footer = screen.getByRole('contentinfo')
     expect(within(footer).getByText(/visakram builders/i)).toBeInTheDocument()
-    expect(within(footer).getByText('Kommadi, Visakhapatnam')).toBeInTheDocument()
+    expect(within(footer).getByText('Building across')).toBeInTheDocument()
+    expect(within(footer).getByText('Andhra Pradesh')).toBeInTheDocument()
+    expect(footer.textContent).not.toMatch(/Kommadi|Vizianagaram/)
     for (const phone of site.phones) {
       expect(within(footer).getByRole('link', { name: phone })).toHaveAttribute(
         'href',

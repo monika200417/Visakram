@@ -16,6 +16,13 @@ export const homeTourFilm = {
    * same settings if the film is ever replaced.
    */
   src: '/assets/videos/home-tour.mp4',
+  /**
+   * The same film for phones: 960×540, a keyframe every 3 frames, no audio, about 4 MB instead of 34.
+   * A phone cannot seek a 1080p file fast enough to follow a thumb, and should not have to download it.
+   * Encode with: -vf scale=960:540 -c:v libx264 -profile:v main -crf 28 -g 3 -keyint_min 3 -sc_threshold 0
+   * -bf 0 -an -movflags +faststart.
+   */
+  srcMobile: '/assets/videos/home-tour-mobile.mp4',
   /** The video's own first frame, so nothing jumps when the video takes over. */
   poster: '/assets/videos/home-tour-poster.webp',
   /** Accessible name for the film frame: what it is, not what any one frame shows. */
@@ -32,6 +39,10 @@ export type HomeTourFilmChapter = {
   title: string
   /** Seconds into the video where the chapter begins; it ends where the next one begins. */
   start: number
+  /** The leading words of `title` that are set in Visakram orange; the rest is set in white. */
+  accent?: string
+  /** Only the title is shown: no index number, supporting line or rule. */
+  solo?: boolean
 }
 
 /**
@@ -47,8 +58,65 @@ export const homeTourFilmChapters: readonly HomeTourFilmChapter[] = [
   { index: '05', id: 'bedroom', title: 'Bedroom', start: 16.5 },
   { index: '06', id: 'balcony', title: 'Balcony', start: 18.0 },
   { index: '07', id: 'ocean-view', title: 'Ocean View', start: 19.5 },
-  { index: '08', id: 'final-reveal', title: 'Final Reveal', start: 22.4 },
+  {
+    index: '08',
+    id: 'final-reveal',
+    title: 'Brick by Brick We Build Trust',
+    accent: 'Brick by Brick',
+    solo: true,
+    start: 22.4,
+  },
 ]
+
+/**
+ * On a phone the film's 16:9 frame is cropped to the screen's height, which cuts the Visakram logo of
+ * the last frame (about 53% of the frame's width) off at both sides. Over the last seconds the picture
+ * is therefore drawn back from "fills the screen" to "the whole logo fits", with its top and bottom
+ * edges softened into the page. Pure numbers here; useFilmScrub applies them.
+ */
+export const homeTourFilmFit = {
+  /** Seconds into the film where the zoom-out begins and where the logo fits. */
+  from: 20.5,
+  to: 23,
+  /** How much of the frame's width the logo takes in the last frame. */
+  logoShare: 0.53,
+  /** How much of the screen's width the logo may take once it fits. */
+  screenShare: 0.82,
+  /** Per cent of the picture's height, at its top and at its bottom, softened once it fits. */
+  edge: 16,
+  edgeBottom: 8,
+  /** How far down the picture the logo ends (its "BUILDERS" line), as a share of the frame's height. */
+  logoBottom: 0.54,
+  /** Screen px between the foot of the logo and the statement set beside it. */
+  statementGap: 18,
+} as const
+
+/**
+ * Where the last chapter's statement starts on a phone, in screen px from the top of the stage: just under
+ * the foot of the logo, once the picture has been drawn back to `fitScale` and sits centred on the screen.
+ */
+export function filmStatementTop(screenHeight: number, fitScale: number): number {
+  const pictureHeight = screenHeight * fitScale
+  return (
+    (screenHeight - pictureHeight) / 2 +
+    homeTourFilmFit.logoBottom * pictureHeight +
+    homeTourFilmFit.statementGap
+  )
+}
+
+/** 0 (the picture fills the screen) to 1 (the logo fits) at a time into the film; eased at both ends. */
+export function filmFitAtTime(time: number): number {
+  const t = clamp01((time - homeTourFilmFit.from) / (homeTourFilmFit.to - homeTourFilmFit.from))
+  return t * t * (3 - 2 * t)
+}
+
+/** The scale (1 or less) at which the logo fits a screen of the given size, the picture being as tall as the screen. */
+export function filmFitScale(screenWidth: number, screenHeight: number): number {
+  const pictureWidth = (screenHeight * homeTourFilm.width) / homeTourFilm.height
+  const fit =
+    (screenWidth * homeTourFilmFit.screenShare) / (homeTourFilmFit.logoShare * pictureWidth)
+  return Math.min(1, fit)
+}
 
 export const homeTourFilmHeading = 'Home Tour'
 export const homeTourFilmTagline = 'Experience spaces beyond walls.'

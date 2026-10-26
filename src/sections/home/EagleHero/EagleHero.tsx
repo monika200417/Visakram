@@ -31,7 +31,7 @@ import {
   FADE_VH,
   SCROLL_DIVE,
 } from './heroConfig'
-import { useHeroCamera, useStageFit } from './useEagleHero'
+import { useFlightFollow, useHeroCamera, useStageFit } from './useEagleHero'
 import { flyToSection } from './flyToSection'
 import { useScrollDive } from './useScrollDive'
 import styles from './EagleHero.module.css'
@@ -70,6 +70,7 @@ export function EagleHero() {
   const landed = handoff || reducedMotion
 
   useStageFit(rootRef)
+  useFlightFollow(rootRef, stageRef, !landed)
   useHeroCamera(rootRef, handoff && !reducedMotion, scrolled)
   useScrollDive(
     { outer: outerRef, hero: rootRef, stage: stageRef, dive: diveRef, door: windowRef },

@@ -1,3 +1,5 @@
+import { existsSync, statSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
   chapterIndexAtProgress,
@@ -5,7 +7,11 @@ import {
   chapterProgressRange,
   filmProgressAtTime,
   filmTimeAtProgress,
+  filmFitAtTime,
+  filmFitScale,
+  filmStatementTop,
   homeTourFilm,
+  homeTourFilmFit,
   homeTourFilmChapters,
   homeTourFilmScrollPercent,
 } from '../../src/data/homeTourFilm'
@@ -19,6 +25,14 @@ describe('home tour film data', () => {
     expect(homeTourFilm.poster).toBe('/assets/videos/home-tour-poster.webp')
   })
 
+  it('has a lighter copy of the same film for phones, shipped with the site', () => {
+    expect(homeTourFilm.srcMobile).toBe('/assets/videos/home-tour-mobile.mp4')
+    const file = resolve(__dirname, '../../public', homeTourFilm.srcMobile.slice(1))
+    expect(existsSync(file)).toBe(true)
+    // a small fraction of the 1080p film (about 34 MB)
+    expect(statSync(file).size).toBeLessThan(8 * 1024 * 1024)
+  })
+
   it('has exactly the eight chapters of the film, in order, with the supplied boundaries', () => {
     expect(homeTourFilmChapters.map((c) => [c.index, c.title, c.start])).toEqual([
       ['01', 'Living', 0],
@@ -28,7 +42,7 @@ describe('home tour film data', () => {
       ['05', 'Bedroom', 16.5],
       ['06', 'Balcony', 18.0],
       ['07', 'Ocean View', 19.5],
-      ['08', 'Final Reveal', 22.4],
+      ['08', 'Brick by Brick We Build Trust', 22.4],
     ])
   })
 
@@ -85,7 +99,7 @@ describe('home tour film timing', () => {
     within(percent('Bedroom'), [64, 70])
     within(percent('Balcony'), [70, 75])
     within(percent('Ocean View'), [75, 87])
-    within(percent('Final Reveal'), [87, 100])
+    within(percent('Brick by Brick We Build Trust'), [87, 100])
   })
 
   it('covers the whole progress range with no gap or overlap between chapters', () => {
@@ -115,5 +129,46 @@ describe('home tour film timing', () => {
     )
     // percent of one viewport height of scroll for the shortest chapter (Balcony)
     expect(shortest).toBeGreaterThan(30)
+  })
+  it('draws the picture back on phones only over the last seconds, until the whole logo fits', () => {
+    expect(filmFitAtTime(0)).toBe(0)
+    expect(filmFitAtTime(homeTourFilmFit.from)).toBe(0)
+    expect(filmFitAtTime(homeTourFilmFit.to)).toBe(1)
+    expect(filmFitAtTime(homeTourFilm.duration)).toBe(1)
+    const mid = (homeTourFilmFit.from + homeTourFilmFit.to) / 2
+    expect(filmFitAtTime(mid)).toBeCloseTo(0.5, 6)
+    // the fit is complete before the last chapter has been on screen for long
+    expect(homeTourFilmFit.to - homeTourFilmChapters[7]!.start).toBeLessThan(1)
+  })
+
+  it('works out the scale at which the logo fits: a 390x844 phone must shrink it, a wide screen must not', () => {
+    const phone = filmFitScale(390, 844)
+    expect(phone).toBeGreaterThan(0.3)
+    expect(phone).toBeLessThan(0.6)
+    // at that scale the logo takes exactly the allowed share of the screen's width
+    const pictureWidth = (844 * 1920) / 1080
+    expect(pictureWidth * phone * homeTourFilmFit.logoShare).toBeCloseTo(
+      390 * homeTourFilmFit.screenShare,
+      6,
+    )
+    expect(filmFitScale(1920, 1080)).toBe(1)
+  })
+
+  it('sets the last chapter in two tones: the leading words in orange, the rest in white', () => {
+    const last = homeTourFilmChapters[7]!
+    expect(last.title).toBe('Brick by Brick We Build Trust')
+    expect(last.accent).toBe('Brick by Brick')
+    expect(last.title.startsWith(last.accent!)).toBe(true)
+    // only the statement: no index, supporting line or rule
+    expect(last.solo).toBe(true)
+  })
+
+  it('puts the last statement just under the foot of the logo, inside the screen', () => {
+    const scale = filmFitScale(390, 844)
+    const top = filmStatementTop(844, scale)
+    const pictureHeight = 844 * scale
+    const pictureTop = (844 - pictureHeight) / 2
+    expect(top).toBeGreaterThan(pictureTop + pictureHeight * homeTourFilmFit.logoBottom)
+    expect(top).toBeLessThan(pictureTop + pictureHeight)
   })
 })

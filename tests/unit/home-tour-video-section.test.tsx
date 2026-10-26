@@ -98,18 +98,33 @@ describe('Home Tour video section', () => {
     const items = Array.from(container.querySelectorAll('[data-chapter]'))
     expect(items).toHaveLength(homeTourFilmChapters.length)
     homeTourFilmChapters.forEach((chapter, i) => {
-      expect(items[i]!.textContent).toContain(chapter.index)
+      // the title reads as one phrase even where it is set in two tones
       expect(items[i]!.textContent).toContain(chapter.title)
+      if (chapter.solo) expect(items[i]!.textContent).not.toContain(chapter.index)
+      else expect(items[i]!.textContent).toContain(chapter.index)
     })
   })
 
-  it('gives every chapter its supporting line and a gold baseline, and no longer renders a progress rail', () => {
+  it('sets the last chapter as its statement alone, in two tones, with the supporting line and rule left out', () => {
+    const { container } = render(<HomeTourVideoSection />)
+    const last = Array.from(container.querySelectorAll<HTMLElement>('[data-chapter]')).at(-1)!
+    expect(last).toHaveAttribute('data-solo', 'true')
+    expect(last.textContent).toBe('Brick by Brick We Build Trust')
+    expect(last.querySelectorAll('span[class*=titleAccent]')).toHaveLength(1)
+    expect(last.querySelector('span[class*=titleAccent]')!.textContent).toBe('Brick by Brick')
+    expect(last.querySelector('span[class*=titleWhite]')!.textContent).toBe('We Build Trust')
+    expect(last.querySelector('span[class*=support]')).toBeNull()
+    expect(last.querySelector('span[class*=baseline]')).toBeNull()
+  })
+
+  it('gives every chapter but the last its supporting line and a gold baseline, and no longer renders a progress rail', () => {
     const { container } = render(<HomeTourVideoSection />)
     const items = Array.from(container.querySelectorAll<HTMLElement>('[data-chapter]'))
+    const withCopy = homeTourFilmChapters.filter((chapter) => !chapter.solo)
     homeTourFilmChapters.forEach((chapter, i) => {
-      expect(items[i]!.textContent).toContain(homeTourChapterCopy[chapter.id])
+      if (!chapter.solo) expect(items[i]!.textContent).toContain(homeTourChapterCopy[chapter.id])
     })
-    expect(Object.keys(homeTourChapterCopy)).toHaveLength(homeTourFilmChapters.length)
+    expect(Object.keys(homeTourChapterCopy)).toHaveLength(withCopy.length)
     expect(container.querySelectorAll('[data-tick]')).toHaveLength(0)
   })
 

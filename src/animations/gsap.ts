@@ -16,6 +16,10 @@ export function loadGsap(): Promise<{ gsap: Gsap }> {
     modulePromise = Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(
       ([{ gsap }, { ScrollTrigger }]) => {
         gsap.registerPlugin(ScrollTrigger)
+        // On phones the address bar slides away as the page scrolls, which resizes the window. Without this,
+        // every one of those resizes re-measures every pin mid-scroll and the page visibly jumps. Pinned
+        // stages are sized in svh, so they do not need the re-measure.
+        ScrollTrigger.config({ ignoreMobileResize: true })
         return { gsap }
       },
     )

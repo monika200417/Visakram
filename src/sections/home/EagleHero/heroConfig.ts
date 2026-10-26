@@ -33,6 +33,42 @@ export const CLIP_EYE = { x: 732, y: 224 }
 export const EYE_X = 1370
 export const EYE_Y = 432
 /**
+ * Where a narrow screen is centred while the clip plays, as [seconds into the clip, stage x]: the
+ * middle of the eagle's body, read off the footage every half second (it enters at the left, crosses
+ * the middle and perches with its head at about 640-730). A screen narrower than the 1920 stage shows
+ * only part of it, so the view follows the bird instead of waiting at the tower. After the handoff the
+ * view pans on to EYE_X.
+ */
+export const FLIGHT_PATH: ReadonlyArray<readonly [number, number]> = [
+  [0, 330],
+  [0.5, 560],
+  [1, 580],
+  [1.5, 720],
+  [2, 840],
+  [2.5, 900],
+  [3, 900],
+  [3.5, 840],
+  [4, 850],
+  [5, 860],
+  [6, 860],
+]
+
+/** The stage x the view is centred on `t` seconds into the clip (linear between the readings). */
+export function flightCentre(t: number): number {
+  const first = FLIGHT_PATH[0]!
+  const last = FLIGHT_PATH[FLIGHT_PATH.length - 1]!
+  if (t <= first[0]) return first[1]
+  if (t >= last[0]) return last[1]
+  for (let i = 1; i < FLIGHT_PATH.length; i += 1) {
+    const [t1, x1] = FLIGHT_PATH[i]!
+    if (t <= t1) {
+      const [t0, x0] = FLIGHT_PATH[i - 1]!
+      return x0 + ((x1 - x0) * (t - t0)) / (t1 - t0)
+    }
+  }
+  return last[1]
+}
+/**
  * The top of the tower's roof (its glass railing) on the stage, once the camera's slight push-in is
  * counted (the roof is at about y=323 on the stage itself; the 1.1x push about the stage's lower middle
  * lifts it to about 290). On a window wider than 16:9 the stage is cropped from the top, so

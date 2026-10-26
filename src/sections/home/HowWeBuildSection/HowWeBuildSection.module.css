@@ -10,6 +10,8 @@
   background: linear-gradient(180deg, var(--color-blush), var(--color-paper));
   padding-block: var(--space-9);
   border-top: 1px solid var(--color-border);
+  /* the cards start piled and fanned, and that pile pokes past the page edge: clip it so the page never scrolls sideways */
+  overflow-x: clip;
 }
 
 .heading {

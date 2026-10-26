@@ -14,7 +14,56 @@ import {
   UI_SHIFT_Y,
   UI_TILT_X,
   UI_TILT_Y,
+  flightCentre,
 } from './heroConfig'
+
+/**
+ * How far right of its resting place (centred on the tower, EYE_X) the stage must sit to be centred on
+ * `centreX` instead, in a w x h window. Zero on a window as wide as the stage; never shows an empty edge.
+ */
+function flightShift(w: number, h: number, centreX: number): number {
+  const s = Math.max(w / STAGE_W, h / STAGE_H)
+  const edge = (x: number) => Math.min(0, Math.max(w - STAGE_W * s, w / 2 - x * s))
+  return edge(centreX) - edge(EYE_X)
+}
+
+/**
+ * While the flight clip plays, keeps the eagle in view on a screen narrower than the scene: the stage is
+ * slid sideways to follow the bird, read from the clip's own time every frame (it can never drift from
+ * the footage). When the clip ends the inline shift is cleared and the stylesheet pans the stage across
+ * to the tower (EagleHero.module.css). Nothing re-renders.
+ */
+export function useFlightFollow(
+  root: RefObject<HTMLElement | null>,
+  stage: RefObject<HTMLElement | null>,
+  following: boolean,
+) {
+  useEffect(() => {
+    const el = root.current
+    const stageEl = stage.current
+    if (!following || !el || !stageEl) return
+    const video = el.querySelector('video')
+    let raf = 0
+    let shown = ''
+    const frame = () => {
+      const w = el.clientWidth
+      const h = el.clientHeight
+      if (w && h) {
+        const value = `${flightShift(w, h, flightCentre(video?.currentTime ?? 0)).toFixed(1)}px 0`
+        if (value !== shown) {
+          shown = value
+          stageEl.style.translate = value
+        }
+      }
+      raf = requestAnimationFrame(frame)
+    }
+    raf = requestAnimationFrame(frame)
+    return () => {
+      cancelAnimationFrame(raf)
+      stageEl.style.translate = ''
+    }
+  }, [root, stage, following])
+}
 
 /**
  * Sizes the 1920x1080 scene stage to cover the hero. Writes two CSS variables on the hero element
@@ -37,6 +86,8 @@ export function useStageFit(root: RefObject<HTMLElement | null>) {
       const left = Math.min(0, Math.max(w - STAGE_W * s, w / 2 - EYE_X * s))
       el.style.setProperty('--stage-scale', String(s))
       el.style.setProperty('--stage-left', `${left}px`)
+      // where the stage sits before the clip has moved (useFlightFollow takes over once it plays)
+      el.style.setProperty('--stage-flight-shift', `${flightShift(w, h, flightCentre(0))}px`)
       // bottom-anchored, the stage's top edge is at h - STAGE_H*s (above the window when it is cropped);
       // lower it, as far as it has room, until the eagle's head clears the header
       const top = h - STAGE_H * s

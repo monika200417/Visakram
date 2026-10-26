@@ -56,6 +56,15 @@ export function useSaveData(): boolean {
   return saveData
 }
 
+/** Phone-width screens get the light film. Read once: the film is not swapped mid-scrub if the window changes. */
+export function useIsPhone(): boolean {
+  const [phone] = useState(
+    () =>
+      typeof window !== 'undefined' && window.matchMedia?.('(max-width: 767px)').matches === true,
+  )
+  return phone
+}
+
 /**
  * Owns the video's network lifecycle. When the film is wanted, the `src` prop
  * is set but `preload="none"` means the browser fetches nothing on its own,

@@ -67,6 +67,10 @@ export function useScrollDive(
     const finale = heroEl.querySelector<HTMLElement>('[data-dive-finale]')
     if (!ui || !finale) return
 
+    // Blurring the whole zoomed scene is more than a phone's GPU can redraw every frame; the zoom and the
+    // dissolve into the tour's first frame are enough there.
+    const phone = window.matchMedia?.('(max-width: 767px)').matches === true
+
     let target = 0
     let cur = 0
     let raf = 0
@@ -101,7 +105,7 @@ export function useScrollDive(
       const p = clamp01(progress / diveShare)
       const fade = clamp01((progress - diveShare) / (1 - diveShare))
       const f = smooth(p)
-      const blur = 7 * Math.pow(Math.max(0, (p - 0.6) / 0.4), 1.6)
+      const blur = phone ? 0 : 7 * Math.pow(Math.max(0, (p - 0.6) / 0.4), 1.6)
       diveEl.style.transformOrigin = m.origin
       diveEl.style.transform =
         `translate(${(m.dx * f).toFixed(2)}px, ${(m.dy * f).toFixed(2)}px) ` +
