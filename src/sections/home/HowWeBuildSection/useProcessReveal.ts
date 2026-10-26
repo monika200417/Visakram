@@ -10,8 +10,8 @@ import { loadGsap, type GsapMatchMedia } from '../../../animations/gsap'
  * starts once a quarter of the row is on screen, scrolling in from either direction. The pile is set
  * up straight away (before the section is seen), so nothing jumps when it arrives.
  *
- * Every step is real text in normal document flow either way; with reduced motion the cards are simply
- * in place and nothing moves.
+ * Every step is real text in normal document flow either way; with reduced motion, and on phones
+ * (under 768px wide), the cards are simply in place and nothing moves.
  *
  * The pile is measured from layout (offsetLeft/offsetTop are untouched by transforms) and the numbers
  * are functions, so a resize or a change of column count (five across, two, one) re-aims the pile at
@@ -48,12 +48,15 @@ export function useProcessReveal(sectionRef: RefObject<HTMLElement | null>) {
         {
           reduced: '(prefers-reduced-motion: reduce)',
           full: '(prefers-reduced-motion: no-preference)',
+          phone: '(max-width: 767px)',
         },
         (context) => {
           const steps = q('[data-step]') as HTMLElement[]
-          const { reduced } = context.conditions as { reduced: boolean }
+          const { reduced, phone } = context.conditions as { reduced: boolean; phone: boolean }
 
-          if (reduced || steps.length === 0) {
+          // On a phone the cards are simply in place: the three-second deal is slow to wait for on a
+          // narrow screen, where the cards are stacked one under another.
+          if (reduced || phone || steps.length === 0) {
             gsap.set(steps, { clearProps: 'all' })
             return
           }
