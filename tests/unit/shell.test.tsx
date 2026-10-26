@@ -32,8 +32,13 @@ describe('global shell', () => {
     const footer = screen.getByRole('contentinfo')
     expect(within(footer).getByText(/visakram builders/i)).toBeInTheDocument()
     expect(within(footer).getByText('Building across')).toBeInTheDocument()
-    expect(within(footer).getByText('Andhra Pradesh')).toBeInTheDocument()
-    expect(footer.textContent).not.toMatch(/Kommadi|Vizianagaram/)
+    expect(within(footer).getAllByText('Andhra Pradesh').length).toBeGreaterThan(0)
+    // the supplied office address, with its PIN code
+    expect(within(footer).getByText('Office address')).toBeInTheDocument()
+    expect(
+      within(footer).getByText('Kommadi, Visakhapatnam, Andhra Pradesh - 530048'),
+    ).toBeInTheDocument()
+    expect(footer.textContent).not.toMatch(/Vizianagaram/)
     for (const phone of site.phones) {
       expect(within(footer).getByRole('link', { name: phone })).toHaveAttribute(
         'href',

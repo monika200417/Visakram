@@ -154,7 +154,7 @@ describe('home tour film timing', () => {
     expect(filmFitScale(1920, 1080)).toBe(1)
   })
 
-  it('sets the last chapter in two tones: the leading words in orange, the rest in white', () => {
+  it('sets the last chapter as a two-line lock-up: the leading words, then the rest', () => {
     const last = homeTourFilmChapters[7]!
     expect(last.title).toBe('Brick by Brick We Build Trust')
     expect(last.accent).toBe('Brick by Brick')
@@ -163,12 +163,13 @@ describe('home tour film timing', () => {
     expect(last.solo).toBe(true)
   })
 
-  it('puts the last statement just under the foot of the logo, inside the screen', () => {
+  it('puts the last statement just under the picture, away from the logo, inside the screen', () => {
     const scale = filmFitScale(390, 844)
     const top = filmStatementTop(844, scale)
     const pictureHeight = 844 * scale
     const pictureTop = (844 - pictureHeight) / 2
-    expect(top).toBeGreaterThan(pictureTop + pictureHeight * homeTourFilmFit.logoBottom)
-    expect(top).toBeLessThan(pictureTop + pictureHeight)
+    // under the picture, on the page, and still inside the screen
+    expect(top).toBeGreaterThan(pictureTop + pictureHeight)
+    expect(top).toBeLessThan(844)
   })
 })

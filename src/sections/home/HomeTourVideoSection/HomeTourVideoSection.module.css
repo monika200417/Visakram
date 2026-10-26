@@ -192,10 +192,11 @@
     );
   }
 
-  /* The last chapter is only its statement. Once the logo fits, the statement rises (--fit-lift) to stand just
-     under it: it starts at the top of the overlay and is lifted by the distance useFilmScrub measured. */
+  /* The last chapter is only its statement, set under the picture, on the page. It starts at the top of the
+     overlay and, as the logo fits, is lowered (--fit-lift) by the distance useFilmScrub measured. */
   .section[data-mode='film'] .chapter[data-solo='true'] {
-    align-self: start;
+    top: 0;
+    bottom: auto;
     transform: translateY(var(--fit-lift, 0px));
   }
 }
@@ -267,8 +268,11 @@
 
 /* --- Chapter overlay ----------------------------------------------------- */
 .overlay {
+  --pad-l: 6vw;
+  --pad-r: 6vw;
+
   position: absolute;
-  inset-inline: 6vw;
+  inset-inline: var(--pad-l) var(--pad-r);
   bottom: 8svh;
   z-index: 1;
   pointer-events: none;
@@ -289,6 +293,17 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+/* The last chapter is only its statement, centred across the whole screen at the foot of the film (on a phone,
+   under the picture: see the phone rules above). */
+.section[data-mode='film'] .chapter[data-solo='true'] {
+  position: absolute;
+  left: calc(-1 * var(--pad-l));
+  right: calc(-1 * var(--pad-r));
+  bottom: 0;
+  align-items: center;
+  text-align: center;
 }
 
 /* The rise is masked by clipping the bottom edge only, so the text shadow is never cut into a box. */
@@ -319,36 +334,38 @@
   display: block;
 }
 
-/* A two-tone title (the last chapter): the first words in Visakram orange, the rest in white, each on its own
-   line and set differently so the pair reads as a lock-up. White carries a soft dark edge so it holds on the bright sea. */
-.titleAccent,
-.titleWhite {
+/* The last chapter's statement is set a little smaller than the chapter names (about 15%). */
+.section[data-mode='film'] .chapter[data-solo='true'] .title {
+  font-size: clamp(1.4rem, 0.95rem + 2.9vw, 3.75rem);
+}
+
+/* The last chapter's title is a two-line lock-up in black, centred: the first words smaller, bold and widely spaced,
+   the rest larger. */
+.titleLead,
+.titleRest {
   display: block;
 }
 
 /* the narrowest phones: a little smaller, so the white line still fits on one line */
 @media (max-width: 340px) {
-  .titleWhite {
+  .titleRest {
     font-size: 0.95em;
     letter-spacing: 0.05em;
   }
 }
 
-.titleAccent {
-  color: var(--color-lac);
+.titleLead {
+  color: #111;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
 
-.titleWhite {
+.titleRest {
   margin-top: 0.12em;
-  color: #fff;
+  color: #111;
   font-size: 1.1em;
   font-weight: 600;
   letter-spacing: 0.08em;
-  text-shadow:
-    0 1px 2px rgb(24 20 14 / 55%),
-    0 2px 14px rgb(24 20 14 / 40%);
 }
 
 .support {
@@ -458,7 +475,8 @@
 
 @media (min-width: 768px) {
   .overlay {
-    inset-inline: 9vw 6vw;
+    --pad-l: 9vw;
+
     bottom: 10svh;
   }
 

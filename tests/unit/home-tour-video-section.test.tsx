@@ -110,9 +110,9 @@ describe('Home Tour video section', () => {
     const last = Array.from(container.querySelectorAll<HTMLElement>('[data-chapter]')).at(-1)!
     expect(last).toHaveAttribute('data-solo', 'true')
     expect(last.textContent).toBe('Brick by Brick We Build Trust')
-    expect(last.querySelectorAll('span[class*=titleAccent]')).toHaveLength(1)
-    expect(last.querySelector('span[class*=titleAccent]')!.textContent).toBe('Brick by Brick')
-    expect(last.querySelector('span[class*=titleWhite]')!.textContent).toBe('We Build Trust')
+    expect(last.querySelectorAll('span[class*=titleLead]')).toHaveLength(1)
+    expect(last.querySelector('span[class*=titleLead]')!.textContent).toBe('Brick by Brick')
+    expect(last.querySelector('span[class*=titleRest]')!.textContent).toBe('We Build Trust')
     expect(last.querySelector('span[class*=support]')).toBeNull()
     expect(last.querySelector('span[class*=baseline]')).toBeNull()
   })

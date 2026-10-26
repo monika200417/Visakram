@@ -13,6 +13,8 @@ export const site = {
   locality: 'Kommadi',
   city: 'Visakhapatnam',
   region: 'Andhra Pradesh',
+  /** PIN code of the office address, as supplied by the client. */
+  postalCode: '530048',
   serviceAreas: ['Visakhapatnam', 'Vizianagaram'],
   values: ['Quality', 'Timeliness', 'Transparency'],
   /** Client-stated figures; approved wording to be confirmed before launch. */

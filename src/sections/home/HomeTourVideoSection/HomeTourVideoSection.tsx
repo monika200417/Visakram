@@ -117,8 +117,8 @@ export function HomeTourVideoSection() {
                     <span className={styles.reveal}>
                       {chapter.accent && chapter.title.startsWith(chapter.accent) ? (
                         <>
-                          <span className={styles.titleAccent}>{chapter.accent}</span>{' '}
-                          <span className={styles.titleWhite}>
+                          <span className={styles.titleLead}>{chapter.accent}</span>{' '}
+                          <span className={styles.titleRest}>
                             {chapter.title.slice(chapter.accent.length).trim()}
                           </span>
                         </>

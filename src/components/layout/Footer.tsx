@@ -37,6 +37,10 @@ export function Footer() {
         <div className={styles.location}>
           <span className={styles.heading}>Building across</span>
           <p className="text-mono-label">{site.region}</p>
+          <span className={styles.heading}>Office address</span>
+          <p className="text-mono-label">
+            {site.locality}, {site.city}, {site.region} - {site.postalCode}
+          </p>
         </div>
 
         {contactLines.length > 0 && (

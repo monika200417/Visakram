@@ -39,7 +39,7 @@ export type HomeTourFilmChapter = {
   title: string
   /** Seconds into the video where the chapter begins; it ends where the next one begins. */
   start: number
-  /** The leading words of `title` that are set in Visakram orange; the rest is set in white. */
+  /** The leading words of `title`, set on a line of their own above the rest. */
   accent?: string
   /** Only the title is shown: no index number, supporting line or rule. */
   solo?: boolean
@@ -85,23 +85,18 @@ export const homeTourFilmFit = {
   /** Per cent of the picture's height, at its top and at its bottom, softened once it fits. */
   edge: 16,
   edgeBottom: 8,
-  /** How far down the picture the logo ends (its "BUILDERS" line), as a share of the frame's height. */
-  logoBottom: 0.54,
-  /** Screen px between the foot of the logo and the statement set beside it. */
+  /** Screen px between the foot of the picture and the statement set under it. */
   statementGap: 18,
 } as const
 
 /**
- * Where the last chapter's statement starts on a phone, in screen px from the top of the stage: just under
- * the foot of the logo, once the picture has been drawn back to `fitScale` and sits centred on the screen.
+ * Where the last chapter's statement starts on a phone, in screen px from the top of the stage: just under the
+ * foot of the picture, once it has been drawn back to `fitScale` and sits centred on the screen (so the
+ * statement lies on the page, away from the logo).
  */
 export function filmStatementTop(screenHeight: number, fitScale: number): number {
   const pictureHeight = screenHeight * fitScale
-  return (
-    (screenHeight - pictureHeight) / 2 +
-    homeTourFilmFit.logoBottom * pictureHeight +
-    homeTourFilmFit.statementGap
-  )
+  return (screenHeight + pictureHeight) / 2 + homeTourFilmFit.statementGap
 }
 
 /** 0 (the picture fills the screen) to 1 (the logo fits) at a time into the film; eased at both ends. */
