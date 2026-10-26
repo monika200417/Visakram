@@ -1,13 +1,14 @@
 import { homeTourChapters, type HomeTourChapter } from '../../data/homeTour'
 
 /**
- * Where each chapter's media lives, and how much scroll it gets. This file is
- * the ONLY place that knows about media files and timing: the section, the
- * media component, the scroll hook, the timeline and the journey line all read
- * the joined `homeTourSequence` below, so production clips and stills can be
- * dropped in here without touching any component.
+ * Where each chapter's media lives. This file is the ONLY place that knows about
+ * the Home Tour's media files: the homepage hero reads each chapter's still from
+ * the joined `homeTourSequence` below, so production stills can be dropped in
+ * here without touching any component. (The old scroll-driven Home Tour section
+ * that also read the clips and scroll weights has been removed; `video`, `start`,
+ * `end`, `scrollVh` and `brief` stay as data for planning the production media.)
  *
- * All nine chapters are in the timeline. A chapter's media comes in three
+ * All nine chapters have an entry. A chapter's media comes in three
  * honest states (`status`):
  *
  *  - `production`     — cleared production footage and poster (none yet).
@@ -28,8 +29,8 @@ export type HomeTourMediaEntry = {
   id: string
   /**
    * Scroll distance the chapter occupies, in viewport heights. Chapters share
-   * the pin in proportion to this, so tune pacing here, never in JSX. Their
-   * normalized progress ranges are DERIVED from it (see timeline.ts).
+   * the pin in proportion to this. Kept as data for the production media plan; the
+   * homepage hero does not use it.
    */
   scrollVh: number
   /** URL of the production clip, or null while it is still to be supplied. */
@@ -187,13 +188,6 @@ export const homeTourMedia: readonly HomeTourMediaEntry[] = [
 ]
 
 /**
- * How long (in viewport heights of scroll) a handoff between two chapters lasts.
- * Fixed in scroll distance, not in share of progress, so adding chapters never
- * makes the crossfades longer.
- */
-export const HOME_TOUR_HANDOFF_VH = 36
-
-/**
  * Whether development REFERENCE stills may be shown: always in `npm run dev`,
  * and in a production build only when VITE_HOME_TOUR_ALLOW_PLACEHOLDERS=1 (a
  * local preview; the same variable keeps the files in dist/ — see vite.config.ts).
@@ -271,6 +265,3 @@ export const homeTourSequence: readonly HomeTourSceneChapter[] = joinChapters(
   homeTourChapters,
   homeTourMedia,
 )
-
-/** The length of the pinned scroll, in viewport heights (a percentage, as ScrollTrigger's `end` expects). */
-export const homeTourPinPercent = homeTourSequence.reduce((sum, c) => sum + c.scrollVh, 0)

@@ -90,6 +90,13 @@ Typical duration:
 400–900ms
 ```
 
+**Heading transition (one for the whole site).** Every section and page heading (h1 / h2, except the
+home hero's own intro) uses `src/components/heading/Heading.tsx`: its words drop in from above, one
+after another (1.7s each, same easing and distance everywhere), every time the heading is scrolled
+into view, and replay on the next visit. Only the gap between words shrinks for a long heading (the
+whole sequence starts within 1.4s). Reduced motion shows the heading as is. Do not write a heading
+as a bare `<h2>`: use `<Heading as="h2">` so the transition stays consistent.
+
 ## Level 3 — Cinematic
 
 Large storytelling sequences.

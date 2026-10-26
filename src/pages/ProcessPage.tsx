@@ -11,6 +11,7 @@ import { primaryCta } from '../data/navigation'
 import { processSteps } from '../data/process'
 import { site } from '../data/site'
 import styles from './ProcessPage.module.css'
+import { Heading } from '../components/heading/Heading'
 
 const first = processSteps[0]
 const last = processSteps[processSteps.length - 1]
@@ -43,12 +44,11 @@ export function ProcessPage() {
       <section className={styles.hero} aria-labelledby="process-hero-heading">
         <Container>
           <div ref={heroRef} className={styles.heroInner}>
-            <p className={`text-mono-label ${styles.eyebrow}`}>01 — Process</p>
-            <h1 id="process-hero-heading" className={styles.heroHeading}>
+            <Heading as="h1" id="process-hero-heading" className={styles.heroHeading}>
               {first && last
                 ? `From ${first.title.toLowerCase()} to ${last.title.toLowerCase()}.`
                 : 'Our construction process.'}
-            </h1>
+            </Heading>
             <p className={styles.heroSupporting}>
               How {site.name} runs a project across {formatList(site.serviceAreas)}
               {hasSteps ? ` — in ${processSteps.length} stages` : ''}, guided by{' '}
@@ -63,10 +63,9 @@ export function ProcessPage() {
           {/* 02 — Overview: the whole sequence at a glance */}
           <section className={styles.overview} aria-labelledby="process-overview-heading">
             <Container>
-              <p className={`text-mono-label ${styles.eyebrow}`}>02 — Overview</p>
-              <h2 id="process-overview-heading" className={styles.sectionHeading}>
+              <Heading as="h2" id="process-overview-heading" className={styles.sectionHeading}>
                 The sequence.
-              </h2>
+              </Heading>
               <nav aria-label="Process stages">
                 <ol ref={overviewRef} className={styles.overviewList}>
                   {processSteps.map((step) => (
@@ -89,10 +88,9 @@ export function ProcessPage() {
           <section className={styles.journeySection} aria-labelledby="process-journey-heading">
             <Container>
               <div className={styles.journeyIntro}>
-                <p className={`text-mono-label ${styles.eyebrow}`}>03 — The Journey</p>
-                <h2 id="process-journey-heading" className={styles.sectionHeading}>
+                <Heading as="h2" id="process-journey-heading" className={styles.sectionHeading}>
                   Stage by stage.
-                </h2>
+                </Heading>
               </div>
               <ProcessJourney steps={processSteps} />
             </Container>
@@ -104,9 +102,9 @@ export function ProcessPage() {
       <section className={styles.cta} aria-labelledby="process-cta-heading">
         <Container>
           <div className={styles.ctaInner}>
-            <h2 id="process-cta-heading" className={styles.ctaHeading}>
+            <Heading as="h2" id="process-cta-heading" className={styles.ctaHeading}>
               Start a project.
-            </h2>
+            </Heading>
             <div className={styles.ctaActions}>
               <Button to={primaryCta.to} variant="primary">
                 {primaryCta.label}

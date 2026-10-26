@@ -1,0 +1,45 @@
+/*
+ * Shared loading treatment for homepage imagery: a quiet, slowly breathing stone field until the
+ * file arrives, then the picture fades in. The wrapper that holds it supplies the box, the
+ * aspect ratio and the hover zoom.
+ */
+.fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--motion-editorial) var(--ease-standard);
+}
+
+.fill[data-loaded='true'] {
+  opacity: 1;
+}
+
+.skeleton {
+  position: absolute;
+  inset: 0;
+  background: var(--color-stone);
+  animation: media-breathe 1.8s ease-in-out infinite;
+}
+
+@keyframes media-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+
+  .fill {
+    transition: none;
+  }
+}

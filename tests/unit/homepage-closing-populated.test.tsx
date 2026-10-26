@@ -18,6 +18,7 @@ const fixtureSite = {
   serviceAreas: ['Visakhapatnam', 'Vizianagaram'],
   values: ['Quality', 'Timeliness', 'Transparency'],
   stats: { yearsExperience: '20+', completedProjects: '25+', ongoingProjects: 5 },
+  phones: ['+91 90000 00000'],
   phone: '+91 90000 00000',
   whatsappNumber: '+91 90000 00001',
   email: undefined as string | undefined,
@@ -38,9 +39,20 @@ async function renderHome() {
   )
 }
 
+// the Start a Project chapter is kept but is not on the homepage, so it is rendered on its own
+async function renderStart() {
+  const { StartProjectSection } =
+    await import('../../src/sections/home/StartProjectSection/StartProjectSection')
+  return render(
+    <MemoryRouter>
+      <StartProjectSection />
+    </MemoryRouter>,
+  )
+}
+
 describe('homepage closing — once phone, WhatsApp and a closing image are confirmed', () => {
   it('offers the enquiry form, WhatsApp and Call as contact choices', async () => {
-    await renderHome()
+    await renderStart()
     const section = screen
       .getByRole('heading', { level: 2, name: 'Start your project.' })
       .closest('section') as HTMLElement
@@ -54,11 +66,11 @@ describe('homepage closing — once phone, WhatsApp and a closing image are conf
     )
     expect(
       within(choices).getByRole('link', { name: `Call ${fixtureSite.phone}` }),
-    ).toHaveAttribute('href', `tel:${fixtureSite.phone}`)
+    ).toHaveAttribute('href', 'tel:+919000000000')
   })
 
   it('builds a safe wa.me link — digits only, generic non-personal prefilled text', async () => {
-    await renderHome()
+    await renderStart()
     const section = screen
       .getByRole('heading', { level: 2, name: 'Start your project.' })
       .closest('section') as HTMLElement

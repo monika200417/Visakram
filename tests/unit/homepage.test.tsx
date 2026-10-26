@@ -1,9 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
-import { heroFilm, heroPoster } from '../../src/data/heroFilm'
-import { heroScenes } from '../../src/data/heroScenes'
 
 function renderHome() {
   return render(
@@ -13,81 +11,89 @@ function renderHome() {
   )
 }
 
-describe('homepage — cinematic hero', () => {
-  it('renders the real headline, supporting copy and primary CTA as text, not just inside decorative markup', () => {
-    renderHome()
-    const heading = screen.getByRole('heading', {
+describe('homepage — eagle hero', () => {
+  function getHero(container: HTMLElement) {
+    const hero = container.querySelector('section[aria-label="Visakram Builders"]') as HTMLElement
+    expect(hero).not.toBeNull()
+    return hero
+  }
+
+  it('renders the real headline, supporting copy and calls to action as text', () => {
+    const { container } = renderHome()
+    const hero = getHero(container)
+    const heading = within(hero).getByRole('heading', {
       level: 1,
-      name: 'Places that hold their ground.',
+      name: 'Different Spaces. One Vision.',
     })
     expect(heading).toBeInTheDocument()
-    const heroSection = heading.closest('section')
-    expect(heroSection).not.toBeNull()
     expect(
-      within(heroSection as HTMLElement).getByRole('link', { name: 'Start a Project' }),
-    ).toHaveAttribute('href', '/contact')
+      within(hero).getByText('Developing the Future of Living, Working & Connecting.'),
+    ).toBeInTheDocument()
+    expect(within(hero).getByRole('link', { name: 'Start a Project' })).toHaveAttribute(
+      'href',
+      '/contact',
+    )
+    expect(within(hero).getByRole('link', { name: /see what we.re building/i })).toHaveAttribute(
+      'href',
+      '/projects',
+    )
   })
 
-  it('does not fabricate a WhatsApp destination while the number is unverified', () => {
+  it('has a floating WhatsApp button that opens a chat with the first supplied number', () => {
     renderHome()
-    expect(screen.queryByRole('link', { name: /whatsapp/i })).not.toBeInTheDocument()
-    expect(screen.getByText(/whatsapp.*pending client confirmation/i)).toBeInTheDocument()
+    const button = screen.getByRole('link', { name: /chat with visakram builders on whatsapp/i })
+    expect(button.getAttribute('href')).toMatch(/^https:\/\/wa\.me\/919515452875\?text=/)
+    expect(button).toHaveAttribute('target', '_blank')
+    expect(button).toHaveAttribute('rel', expect.stringContaining('noopener'))
   })
 
-  it('opens on the hero poster: a real image in the DOM, fetched first, with no video and no frame sequence yet', () => {
+  it('plays the flight clip over the still of the eagle on the roof, and hides the clip from assistive tech', () => {
     const { container } = renderHome()
-    const stage = container.querySelector('[data-hero-stage]') as HTMLElement
-    expect(stage).not.toBeNull()
-    const poster = stage.querySelector('img') as HTMLImageElement
-    expect(poster).toHaveAttribute('src', heroPoster)
-    expect(poster).toHaveAttribute('fetchpriority', 'high')
-    expect(poster).not.toHaveAttribute('loading', 'lazy')
-    expect(poster).toHaveAttribute('width', String(heroFilm.width))
-    expect(poster).toHaveAttribute('height', String(heroFilm.height))
-    expect(stage.querySelector('video')).toBeNull()
-    expect(stage.querySelector('canvas')).not.toBeNull()
-    // the canvas has not taken over: nothing has been decoded
-    expect(stage).not.toHaveAttribute('data-film')
-  })
-
-  it('shows a short chapter caption for every hero scene, hidden from assistive tech, with the headline unchanged', () => {
-    const { container } = renderHome()
-    const captions = Array.from(container.querySelectorAll('[data-caption]'))
-    expect(captions).toHaveLength(heroScenes.length)
-    heroScenes.forEach((scene, i) => {
-      expect(captions[i]!.textContent).toBe(`${scene.chapter} / ${scene.caption}`)
+    const hero = getHero(container)
+    expect(within(hero).getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    const still = within(hero).getByRole('img', {
+      name: 'A white residential tower with the Visakram Builders sign, above a coastal city at sunrise',
     })
-    expect(captions[0]).toHaveAttribute('data-active', 'true')
-    expect(captions[0]!.closest('[aria-hidden="true"]')).not.toBeNull()
+    expect(still).toHaveAttribute('src', '/assets/eagle-hero/hero-city.webp')
+    const video = hero.querySelector('video') as HTMLVideoElement
+    expect(video).not.toBeNull()
+    expect(video.muted).toBe(true)
+    expect(video.closest('[aria-hidden="true"]')).not.toBeNull()
+    expect(hero).toHaveAttribute('data-phase', 'flight')
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
   })
 
-  it('hides the decorative visual stage from assistive tech', () => {
+  it('has an unmarked window on the big tower as the way in to the Home Tour, out of reach until the camera has settled', () => {
     const { container } = renderHome()
-    const stage = container.querySelector('[aria-hidden="true"]')
-    expect(stage).not.toBeNull()
+    const hero = getHero(container)
+    const door = within(hero).getByRole('link', { name: /step inside/i, hidden: true })
+    expect(door).toHaveAttribute('href', '#home-tour')
+    // still in flight: not in the tab order yet
+    expect(door).toHaveAttribute('tabindex', '-1')
   })
 
-  it('provides an accessible "Explore" link to the statement chapter', () => {
-    renderHome()
-    const explore = screen.getByRole('link', { name: 'Explore' })
-    expect(explore).toHaveAttribute('href', '#statement')
+  it('draws the wordmark as decoration, one group per letter, waiting out of sight until the clip ends', () => {
+    const { container } = renderHome()
+    const hero = getHero(container)
+    const wordmark = hero.querySelector('svg[aria-hidden="true"]')
+    expect(wordmark).not.toBeNull()
+    expect(wordmark?.querySelectorAll(':scope > g')).toHaveLength(8)
   })
 })
 
 describe('homepage — statement and proof', () => {
-  it('renders the statement using only verified business facts', () => {
+  it('renders the client-supplied statement and its supporting paragraph', () => {
     renderHome()
     const heading = screen.getByRole('heading', {
       level: 2,
-      name: /turn plans, materials and construction expertise/i,
+      name: 'Where Vision Shapes the Future.',
     })
     expect(heading).toBeInTheDocument()
     const statementSection = heading.closest('section')
     expect(statementSection).not.toBeNull()
     const scoped = within(statementSection as HTMLElement)
-    expect(scoped.getByText(/Kommadi, Visakhapatnam/)).toBeInTheDocument()
-    expect(scoped.getByText(/Visakhapatnam and Vizianagaram/)).toBeInTheDocument()
+    expect(scoped.getByText(/forward thinking real estate development company/)).toBeInTheDocument()
+    expect(scoped.getByText(/across Andhra Pradesh/)).toBeInTheDocument()
   })
 
   it('shows only the verified stats, with no invented figures', () => {
@@ -116,5 +122,42 @@ describe('homepage — statement and proof', () => {
       expect(level).toBeLessThanOrEqual(deepestSeen + 1)
       deepestSeen = Math.max(deepestSeen, level)
     }
+  })
+})
+
+describe('homepage — eagle hero under reduced motion', () => {
+  const original = window.matchMedia
+
+  afterEach(() => {
+    window.matchMedia = original
+  })
+
+  it('is the finished still: no clip, no camera pull-back, everything in place', () => {
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes('prefers-reduced-motion'),
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    })) as typeof window.matchMedia
+    const { container } = renderHome()
+    const hero = container.querySelector('section[aria-label="Visakram Builders"]') as HTMLElement
+    expect(hero).toHaveAttribute('data-still', 'true')
+    expect(hero).toHaveAttribute('data-phase', 'landed')
+    expect(hero.querySelector('video')).toBeNull()
+    expect(hero.querySelector('canvas')).toBeNull()
+    // the window is an ordinary link, reachable at once
+    expect(within(hero).getByRole('link', { name: /step inside/i })).toHaveAttribute(
+      'tabindex',
+      '0',
+    )
+    expect(
+      within(hero).getByRole('img', {
+        name: 'A white residential tower with the Visakram Builders sign, above a coastal city at sunrise',
+      }),
+    ).toBeInTheDocument()
   })
 })

@@ -71,39 +71,45 @@ The palette is intentionally restrained and architectural.
 
 ### Core palette
 
+Visakram brand guidelines 2026, **palette option 1** (shared with the eagle landing demo). Implemented in `src/styles/tokens.css`.
+
 | Token | Value | Usage |
 |---|---|---|
-| `--color-ink` | `#11120F` | Primary dark background / major headings |
-| `--color-charcoal` | `#24251F` | Secondary dark surfaces |
-| `--color-paper` | `#F4F1EA` | Primary light background |
-| `--color-white` | `#FFFFFF` | Clean surfaces / contrast |
-| `--color-stone` | `#D8D1C5` | Borders / subtle surfaces |
-| `--color-muted` | `#77766E` | Secondary text |
-| `--color-terracotta` | `#A65D45` | Primary accent / CTA |
-| `--color-terracotta-dark` | `#7F4433` | Accent hover / darkened state |
+| `--color-ink` | `#2E2B28` | Khondalite — primary dark background / headings / body text |
+| `--color-charcoal` | `#3D3935` | Secondary dark surfaces |
+| `--color-paper` | `#F4ECDC` | Primary light background |
+| `--color-white` | `#FBF7EE` | Clean surfaces |
+| `--color-sandalwood` / `--color-stone` | `#E8DCC8` | Sandalwood — type on dark sections |
+| `--color-sandalwood-dim` | `#CDBFA6` | Hairlines and fine accents on dark |
+| `--color-bay` | `#4A6360` | Bay Slate — secondary: small labels and rules on light pages |
+| `--color-muted` | `#6B6258` | Secondary text |
+| `--color-lac` | `#C4441F` | Lac Red — the one accent: CTAs, active states, small graphic details |
+| `--color-lac-deep` | `#9C3216` | Accent hover / small accent text on light pages |
 
-The terracotta accent is controlled, not dominant. Use it mainly for CTAs, small labels, active indicators, selected navigation states, and small graphic details.
+Lac Red is rationed — one accent at a time, never dominant. The earlier golden-hour (gold / neon orange) theme has been retired; the hero photography (`/assets/hero-mirage/*`) is still the golden-hour artwork until it is regenerated.
 
 ### Dark experience
 
+**Current use:** the homepage chapters (Visakram Way, From Plan to Place, Testimonials, Closing) and the footer now use the light experience below, so every page shares one cream ground. The dark tokens remain for media-led sections that sit over footage (the Home Tour film), where a dark overlay is needed for legibility.
+
 ```text
-Background: #11120F
-Surface:    #24251F
-Text:       #F4F1EA
-Muted:      #B4B1A8
-Border:     rgba(244, 241, 234, 0.16)
-Accent:     #A65D45
+Background: #2E2B28
+Surface:    #3D3935
+Text:       #F4ECDC
+Muted:      #CDBFA6
+Border:     rgba(205, 191, 166, 0.30)
+Accent:     #C4441F
 ```
 
 ### Light experience
 
 ```text
-Background: #F4F1EA
-Surface:    #FFFFFF
-Text:       #11120F
-Muted:      #77766E
-Border:     rgba(17, 18, 15, 0.14)
-Accent:     #A65D45
+Background: #F4ECDC
+Surface:    #FBF7EE
+Text:       #2E2B28
+Muted:      #6B6258
+Border:     rgba(46, 43, 40, 0.18)
+Accent:     #C4441F
 ```
 
 Do not introduce additional accent colors without a design reason.
@@ -116,11 +122,18 @@ Typography is one of the primary visual identities of the site.
 
 ### Type families
 
-**Display / Editorial — Playfair Display**
+> **Current decision (client request):** the whole site is set in **Josefin Sans**, the nearest
+> Google Font to the lettering of the Visakram logo (a geometric sans with pointed V, A and M and a
+> low x-height). All three tokens (`--font-display`, `--font-body`, `--font-mono` in
+> `src/styles/tokens.css`) point at it, and `index.html` loads only that family. The logo is an
+> image, so the exact typeface is not known: if the client names it, swap the three tokens and the
+> font link. The three roles below are the original system and are kept for reference.
+
+**Display / Editorial — Bitter**
 
 Use for hero headlines, major section statements, editorial project titles, and large storytelling moments.
 
-**Interface / Body — Manrope**
+**Interface / Body — PT Sans**
 
 Use for navigation, body copy, buttons, forms, project metadata, and supporting text.
 
@@ -488,14 +501,14 @@ Use documented facts.
 ```css
 :root {
   /* Colors */
-  --color-ink: #11120F;
-  --color-charcoal: #24251F;
-  --color-paper: #F4F1EA;
-  --color-white: #FFFFFF;
-  --color-stone: #D8D1C5;
-  --color-muted: #77766E;
-  --color-terracotta: #A65D45;
-  --color-terracotta-dark: #7F4433;
+  --color-ink: #2E2B28;
+  --color-charcoal: #3D3935;
+  --color-paper: #F4ECDC;
+  --color-white: #FBF7EE;
+  --color-stone: #E8DCC8;
+  --color-muted: #6B6258;
+  --color-lac: #C4441F;
+  --color-lac-deep: #9C3216;
 
   /* Layout */
   --container-max: 1440px;
@@ -508,8 +521,8 @@ Use documented facts.
   --radius-md: 4px;
 
   /* Typography */
-  --font-display: "Playfair Display", serif;
-  --font-body: "Manrope", sans-serif;
+  --font-display: "Bitter", Georgia, serif;
+  --font-body: "PT Sans", system-ui, sans-serif;
   --font-mono: "DM Mono", monospace;
 }
 ```

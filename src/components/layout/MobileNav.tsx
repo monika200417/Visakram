@@ -53,7 +53,14 @@ export function MobileNav({ id, open, onClose, items, cta, toggleRef }: MobileNa
   }, [open, onClose, toggleRef])
 
   return (
-    <div id={id} ref={panelRef} className={styles.panel} data-open={open} hidden={!open}>
+    <div
+      id={id}
+      ref={panelRef}
+      className={styles.panel}
+      data-open={open}
+      data-nav-panel
+      hidden={!open}
+    >
       <nav aria-label="Mobile" className={styles.nav}>
         <ul className={styles.list}>
           {items.map((item) => (

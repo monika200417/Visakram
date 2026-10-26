@@ -1,7 +1,7 @@
 .footer {
   margin-top: var(--space-10);
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: var(--color-sandalwood);
+  color: var(--color-ink);
 }
 
 .grid {
@@ -19,7 +19,7 @@
 }
 
 .tagline {
-  color: var(--color-text-muted-dark);
+  color: var(--color-muted);
   font-size: var(--text-small);
 }
 
@@ -29,7 +29,7 @@
   font-size: var(--text-mono-label);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--color-text-muted-dark);
+  color: var(--color-bay);
   margin-bottom: var(--space-3);
 }
 
@@ -44,16 +44,15 @@
 
 .list a {
   text-decoration: none;
-  color: var(--color-paper);
+  color: var(--color-ink);
 }
 
 .list a:hover {
-  color: var(--color-terracotta);
+  color: var(--color-lac-deep);
 }
 
-.location p,
-.location .heading {
-  color: var(--color-text-muted-dark);
+.location p {
+  color: var(--color-muted);
 }
 
 .location p + .heading {
@@ -61,15 +60,73 @@
 }
 
 .bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   padding-block: var(--space-5);
-  border-top: 1px solid var(--color-border-dark);
+  border-top: 1px solid rgb(46 43 40 / 18%);
 }
 
 .bottom p {
-  color: var(--color-text-muted-dark);
+  color: var(--color-muted);
+}
+
+/* Powered by Samify: a quiet credit, ink on the light footer, with a red underline on hover. */
+.credit {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  font-size: var(--text-small);
+}
+
+.powered {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.creditLink {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-ink);
+  border-bottom: 1px solid transparent;
+  transition:
+    color var(--motion-micro) var(--ease-standard),
+    border-color var(--motion-micro) var(--ease-standard);
+}
+
+.creditLink:hover,
+.creditLink:focus-visible {
+  color: var(--color-lac-deep);
+  border-bottom-color: var(--color-lac);
+}
+
+.creditDomain {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  font-weight: 400;
+  letter-spacing: var(--tracking-label);
+  color: var(--color-muted);
+}
+
+.creditLine {
+  color: var(--color-muted);
 }
 
 @media (min-width: 768px) {
+  .bottom {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
   .grid {
     grid-template-columns: repeat(4, 1fr);
   }

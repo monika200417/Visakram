@@ -43,25 +43,28 @@ describe('featured project — once real project data exists', () => {
       </MemoryRouter>,
     )
 
-    const heading = screen.getByRole('heading', { level: 2, name: 'Featured project.' })
+    // the featured project is the last card of the What We Build carousel
+    expect(
+      screen.queryByRole('heading', { level: 2, name: 'Featured project.' }),
+    ).not.toBeInTheDocument()
+    const heading = screen.getByRole('heading', { level: 2, name: 'What we build.' })
     const section = heading.closest('section') as HTMLElement
     const scoped = within(section)
+    const card = scoped
+      .getByRole('heading', { level: 3, name: 'Featured projects' })
+      .closest('li') as HTMLElement
 
-    expect(
-      scoped.getByRole('heading', { level: 3, name: testFixtureProject.name }),
-    ).toBeInTheDocument()
-    expect(scoped.getByText(testFixtureProject.location)).toBeInTheDocument()
-    expect(scoped.getByText('Villas')).toBeInTheDocument()
-    expect(scoped.getByText(testFixtureProject.description!)).toBeInTheDocument()
-    expect(scoped.getByRole('link', { name: /view project/i })).toHaveAttribute(
+    expect(within(card).getByText(new RegExp(testFixtureProject.name))).toBeInTheDocument()
+    expect(within(card).getByText(new RegExp(testFixtureProject.location))).toBeInTheDocument()
+    expect(within(card).getByRole('link')).toHaveAttribute(
       'href',
       `/projects/${testFixtureProject.slug}`,
     )
     // Real photography gets its real alt text, not a blank decorative one.
     expect(
-      scoped.getByRole('img', { name: testFixtureProject.media.hero!.alt }),
+      within(card).getByRole('img', { name: testFixtureProject.media.hero!.alt }),
     ).toBeInTheDocument()
-    // No "awaiting content" placeholder once real data exists.
-    expect(scoped.queryByText(/awaiting a client-approved project/i)).not.toBeInTheDocument()
+    // A real project is not marked as a preview
+    expect(card).not.toHaveAttribute('data-preview')
   })
 })

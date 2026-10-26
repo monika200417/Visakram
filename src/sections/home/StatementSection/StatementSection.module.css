@@ -1,25 +1,264 @@
+/*
+ * Statement + Proof. The statement and its supporting line down the left; on the right, the three
+ * verified figures as cards on a slowly twirling 3D ring. Below 1024px it stacks: copy, then the ring.
+ */
 .section {
   padding-block: var(--space-10);
   background: var(--color-bg);
 }
 
-.inner {
-  max-width: 52rem;
-}
-
-.eyebrow {
-  display: block;
-  color: var(--color-accent-strong);
-  margin-bottom: var(--space-5);
+.bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: center;
 }
 
 .heading {
   font-size: var(--text-h2);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.012em;
   margin-bottom: var(--space-6);
+  max-width: 20ch;
 }
 
 .supporting {
   font-size: var(--text-body-l);
+  line-height: 1.6;
   color: var(--color-text-muted);
   max-width: 46ch;
+}
+
+/* --- The ring of cards ------------------------------------------------------------------------- */
+.proof {
+  min-width: 0;
+}
+
+.scene {
+  --card-w: min(17rem, 68vw);
+  --card-h: calc(var(--card-w) * 1.4);
+  /* the ring's radius: tight, so neighbouring cards sit close together as it turns */
+  --radius: calc(var(--card-w) * 0.5);
+
+  display: grid;
+  place-items: center;
+  /* room for the front card, which the perspective makes larger than its box */
+  height: calc(var(--card-h) * 1.28 + var(--space-5));
+  perspective: 1500px;
+  perspective-origin: 50% 40%;
+}
+
+.ring {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  margin: 0;
+  transform-style: preserve-3d;
+  animation: twirl 16s linear infinite;
+}
+
+/* the ring holds still while a card is being looked at */
+.ring:hover,
+.ring:focus-within {
+  animation-play-state: paused;
+}
+
+@keyframes twirl {
+  from {
+    transform: rotateX(-7deg) rotateY(0deg);
+  }
+
+  to {
+    transform: rotateX(-7deg) rotateY(-360deg);
+  }
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-5);
+  overflow: hidden;
+  /* an arch: a doorway or window head, round at the top, square at the foot */
+  border-radius: calc(var(--card-w) / 2) calc(var(--card-w) / 2) var(--radius-md) var(--radius-md);
+  background: var(--color-charcoal);
+  color: #fff;
+  transform: rotateY(calc(var(--i) * 120deg)) translateZ(var(--radius));
+  /* a card seen from behind is not drawn: the ring reads as cards turning toward you */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow:
+    0 24px 48px -26px rgb(46 43 40 / 55%),
+    0 0 30px -10px rgb(212 175 55 / 50%);
+}
+
+/* The golden border: a gradient ring drawn inside the card's edge (the gradient shows only in the
+   4px between the outer and the inner shape). A bright glint slides along it, forever, like light
+   on polished gold. */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 4px;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    #7a5a14 0%,
+    #c9a032 22%,
+    #f6e3a1 36%,
+    #fff8dc 44%,
+    #f6e3a1 52%,
+    #c9a032 68%,
+    #7a5a14 100%
+  );
+  background-size: 260% 100%;
+  background-position: 100% 0;
+  animation: gold-shine 3.4s linear infinite;
+  /* keep only the ring: the whole box minus the content box */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+@keyframes gold-shine {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0% 0;
+  }
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: var(--pos, 50% 50%);
+  transition:
+    transform 900ms var(--ease-enter),
+    filter var(--motion-editorial) var(--ease-standard);
+}
+
+/* a dark fall-off from the foot of the card, so the figure reads over any photograph */
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(46 43 40 / 8%) 0%,
+    rgb(46 43 40 / 30%) 45%,
+    rgb(46 43 40 / 82%) 100%
+  );
+}
+
+/* Visakram orange (Lac Red): fades in over the photograph on hover */
+.tint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(196 68 31 / 78%) 0%, var(--color-lac) 100%);
+  opacity: 0;
+  transition: opacity 520ms var(--ease-standard);
+}
+
+.card:hover .tint {
+  opacity: 0.94;
+}
+
+.card:hover .photo {
+  transform: scale(1.08);
+  filter: grayscale(0.4);
+}
+
+.value,
+.label {
+  position: relative;
+}
+
+.value {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(3rem, 2rem + 3vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 18px rgb(46 43 40 / 40%);
+}
+
+.label {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 92%);
+}
+
+/* --- Desktop: copy left, the ring right ------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .bento {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    column-gap: var(--space-9);
+  }
+
+  .scene {
+    --card-w: 18rem;
+  }
+}
+
+/* --- Reduced motion: the cards do not turn; they sit side by side, flat ------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  /* the golden border stays, with its glint parked mid-way */
+  .card::after {
+    animation: none;
+    background-position: 50% 0;
+  }
+
+  .scene {
+    height: auto;
+    perspective: none;
+  }
+
+  .ring {
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: var(--space-4);
+    transform: none;
+    animation: none;
+    transform-style: flat;
+  }
+
+  .card {
+    position: relative;
+    inset: auto;
+    min-height: 15rem;
+    transform: none;
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+  }
+
+  .photo,
+  .tint {
+    transition: none;
+  }
+
+  .card:hover .photo {
+    transform: none;
+  }
 }

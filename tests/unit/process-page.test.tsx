@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
+import { expectOnlyVerifiedContactLinks } from '../helpers/contactLinks'
 import { ProcessJourney } from '../../src/components/process/ProcessJourney'
 import { primaryCta } from '../../src/data/navigation'
 import { processSteps, type ProcessStep } from '../../src/data/process'
@@ -99,11 +100,7 @@ describe('process page', () => {
       'href',
       '/services',
     )
-    for (const link of screen.getAllByRole('link')) {
-      const href = link.getAttribute('href') ?? ''
-      expect(href.startsWith('tel:')).toBe(false)
-      expect(href.startsWith('mailto:')).toBe(false)
-    }
+    expectOnlyVerifiedContactLinks()
   })
 
   it('sets the SEO-SPEC title and a description built from the approved steps and service area', () => {

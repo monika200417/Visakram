@@ -29,14 +29,14 @@ export function WayDefs() {
 
         {/* Metals */}
         <linearGradient id="way-brass" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#7d5f2a" />
-          <stop offset="0.45" stopColor="#f1dfae" />
-          <stop offset="1" stopColor="#9a7835" />
+          <stop offset="0" stopColor="#8c8170" />
+          <stop offset="0.45" stopColor="#f4ecdc" />
+          <stop offset="1" stopColor="#a89d86" />
         </linearGradient>
         <linearGradient id="way-copper" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#6e3d20" />
-          <stop offset="0.5" stopColor="#e09a63" />
-          <stop offset="1" stopColor="#8a4e2a" />
+          <stop offset="0" stopColor="#c4441f" />
+          <stop offset="0.5" stopColor="#c4441f" />
+          <stop offset="1" stopColor="#c4441f" />
         </linearGradient>
 
         {/* Light */}
@@ -49,25 +49,25 @@ export function WayDefs() {
           <stop offset="1" stopColor="#000" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="way-reflect" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#f1dfae" stopOpacity="0" />
-          <stop offset="0.5" stopColor="#f1dfae" stopOpacity="0.38" />
-          <stop offset="1" stopColor="#f1dfae" stopOpacity="0" />
+          <stop offset="0" stopColor="#f4ecdc" stopOpacity="0" />
+          <stop offset="0.5" stopColor="#f4ecdc" stopOpacity="0.38" />
+          <stop offset="1" stopColor="#f4ecdc" stopOpacity="0" />
         </linearGradient>
         <radialGradient id="way-warm" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#ffd890" stopOpacity="0.8" />
-          <stop offset="1" stopColor="#ffd890" stopOpacity="0" />
+          <stop offset="0" stopColor="#e8dcc8" stopOpacity="0.8" />
+          <stop offset="1" stopColor="#e8dcc8" stopOpacity="0" />
         </radialGradient>
         <linearGradient id="way-interior" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#6a4c2c" />
-          <stop offset="1" stopColor="#1e1710" />
+          <stop offset="0" stopColor="#4a4540" />
+          <stop offset="1" stopColor="#181614" />
         </linearGradient>
         <linearGradient id="way-lit" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffdf9d" stopOpacity="0.95" />
-          <stop offset="1" stopColor="#c98f45" stopOpacity="0.85" />
+          <stop offset="0" stopColor="#f4ecdc" stopOpacity="0.95" />
+          <stop offset="1" stopColor="#cdbfa6" stopOpacity="0.85" />
         </linearGradient>
         <linearGradient id="way-ground" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#201f1b" />
-          <stop offset="1" stopColor="#0b0b09" />
+          <stop offset="0" stopColor="#24211e" />
+          <stop offset="1" stopColor="#161412" />
         </linearGradient>
 
         {/* Generated material textures */}
@@ -96,7 +96,7 @@ export function WayDefs() {
           />
         </pattern>
         <pattern id="way-hatch" width="8" height="8" patternUnits="userSpaceOnUse">
-          <path d="M0 8 L8 0" stroke="rgb(244 241 234 / 22%)" strokeWidth="1" />
+          <path d="M0 8 L8 0" stroke="rgb(244 236 220 / 22%)" strokeWidth="1" />
         </pattern>
       </defs>
     </svg>

@@ -7,9 +7,9 @@
  * out-ranks the element defaults below.
  */
 .root {
-  --way-gold: #c9a45c;
-  --way-gold-soft: rgb(201 164 92 / 38%);
-  --way-gold-faint: rgb(201 164 92 / 16%);
+  --way-line: #cdbfa6;
+  --way-line-soft: rgb(205 191 166 / 38%);
+  --way-line-faint: rgb(205 191 166 / 16%);
 }
 
 .root line,
@@ -19,7 +19,7 @@
 .root rect,
 .root circle {
   fill: none;
-  stroke: rgb(244 241 234 / 34%);
+  stroke: rgb(244 236 220 / 34%);
   stroke-width: 1.2;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -34,85 +34,85 @@
 
 .root .faint,
 .root .faint * {
-  stroke: rgb(244 241 234 / 14%);
+  stroke: rgb(205 191 166 / 28%);
 }
 
 .root .line,
 .root .line * {
-  stroke: rgb(244 241 234 / 30%);
+  stroke: rgb(244 236 220 / 30%);
 }
 
 .root .strong,
 .root .strong * {
-  stroke: rgb(244 241 234 / 62%);
+  stroke: rgb(244 236 220 / 62%);
   stroke-width: 1.6;
 }
 
 .root .stone {
-  fill: rgb(244 241 234 / 8%);
-  stroke: rgb(244 241 234 / 40%);
+  fill: rgb(205 191 166 / 28%);
+  stroke: rgb(244 236 220 / 40%);
 }
 
 .root .concrete {
-  fill: rgb(216 209 197 / 11%);
-  stroke: rgb(244 241 234 / 46%);
+  fill: rgb(232 220 200 / 11%);
+  stroke: rgb(244 236 220 / 46%);
 }
 
 .root .glass {
-  fill: rgb(201 164 92 / 5%);
-  stroke: rgb(244 241 234 / 28%);
+  fill: rgb(205 191 166 / 5%);
+  stroke: rgb(244 236 220 / 28%);
 }
 
 .root .timber {
-  fill: rgb(166 93 69 / 30%);
-  stroke: rgb(244 241 234 / 26%);
+  fill: rgb(196 68 31 / 30%);
+  stroke: rgb(244 236 220 / 26%);
 }
 
 .root .lit {
-  fill: rgb(201 164 92 / 32%);
+  fill: rgb(205 191 166 / 32%);
   stroke: none;
 }
 
 .root .hatch {
   fill: url('#way-hatch');
-  stroke: rgb(244 241 234 / 40%);
+  stroke: rgb(244 236 220 / 40%);
 }
 
 .root .gold,
 .root .gold * {
-  stroke: var(--way-gold);
+  stroke: var(--way-line);
 }
 
 .root .goldSoft,
 .root .goldSoft * {
-  stroke: var(--way-gold-soft);
+  stroke: var(--way-line-soft);
 }
 
 .root .goldDash,
 .root .goldDash * {
-  stroke: var(--way-gold-soft);
+  stroke: var(--way-line-soft);
   stroke-dasharray: 5 7;
 }
 
 .root .dashed,
 .root .dashed * {
-  stroke: rgb(244 241 234 / 26%);
+  stroke: rgb(244 236 220 / 26%);
   stroke-dasharray: 5 7;
 }
 
 .root .goldThick,
 .root .goldThick * {
-  stroke: var(--way-gold);
+  stroke: var(--way-line);
   stroke-width: 2.2;
 }
 
 .root .dot {
-  fill: var(--way-gold);
+  fill: var(--way-line);
   stroke: none;
 }
 
 .root .tag {
-  fill: var(--way-gold);
+  fill: var(--way-line);
   stroke: none;
   font-family: var(--font-mono);
   font-size: 15px;
@@ -120,7 +120,7 @@
 }
 
 .root .tagName {
-  fill: rgb(244 241 234 / 70%);
+  fill: rgb(244 236 220 / 70%);
   stroke: none;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -130,7 +130,7 @@
 
 /* Shaded solids (IsoBox): hairline lit edges, optional generated texture. */
 .root .edge polygon {
-  stroke: rgb(255 240 210 / 30%);
+  stroke: rgb(244 236 220 / 30%);
   stroke-width: 0.8;
 }
 
@@ -140,7 +140,7 @@
 }
 
 .root .solid {
-  stroke: rgb(255 240 210 / 14%);
+  stroke: rgb(244 236 220 / 14%);
   stroke-width: 0.8;
 }
 
@@ -152,33 +152,33 @@
 /* A wide, faint underlay stroke gives gold lines their warm bloom without any filter. */
 .root .halo,
 .root .halo * {
-  stroke: rgb(201 164 92 / 14%);
+  stroke: rgb(205 191 166 / 14%);
   stroke-width: 7;
 }
 
 .root .brass {
   fill: url('#way-brass');
-  stroke: rgb(255 240 210 / 25%);
+  stroke: rgb(244 236 220 / 25%);
   stroke-width: 0.6;
 }
 
 .root .copper {
-  stroke: #f2a366;
+  stroke: #c4441f;
   stroke-width: 3;
 }
 
 .root .copperHalo {
-  stroke: rgb(242 163 102 / 20%);
+  stroke: rgb(196 68 31 / 20%);
   stroke-width: 10;
 }
 
 .root .copperThin {
-  stroke: #e48f55;
+  stroke: #c4441f;
   stroke-width: 2.2;
 }
 
 .root .label {
-  fill: rgb(244 241 234 / 88%);
+  fill: rgb(244 236 220 / 88%);
   stroke: none;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -196,11 +196,11 @@
 }
 
 .root .lightStrip {
-  fill: rgb(255 216 144 / 70%);
+  fill: rgb(232 220 200 / 70%);
   stroke: none;
 }
 
 .root .rivet {
-  fill: #d9bd7d;
+  fill: #cdbfa6;
   stroke: none;
 }

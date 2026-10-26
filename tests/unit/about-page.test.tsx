@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
+import { expectOnlyVerifiedContactLinks } from '../helpers/contactLinks'
 import { services } from '../../src/data/services'
 import { founders, founderBackgroundDisclaimer } from '../../src/data/founders'
 import { site } from '../../src/data/site'
@@ -135,15 +136,8 @@ describe('about page', () => {
       'href',
       primaryCta.to,
     )
-    // No fabricated phone/email anywhere on the page — site.phone and
-    // site.email are unverified and undefined, so no tel:/mailto: link
-    // should exist at all.
-    const allLinks = screen.getAllByRole('link')
-    for (const link of allLinks) {
-      const href = link.getAttribute('href') ?? ''
-      expect(href.startsWith('tel:')).toBe(false)
-      expect(href.startsWith('mailto:')).toBe(false)
-    }
+    // No invented phone/email anywhere on the page: only the client-supplied ones (in the footer).
+    expectOnlyVerifiedContactLinks()
   })
 
   it('sets document title and description from verified site data', () => {

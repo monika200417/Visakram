@@ -1,7 +1,8 @@
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from '../../src/app/App'
+import { expectOnlyVerifiedContactLinks } from '../helpers/contactLinks'
 import { ServiceDetail } from '../../src/components/service/ServiceDetail'
 import { primaryCta } from '../../src/data/navigation'
 import { processSteps } from '../../src/data/process'
@@ -52,6 +53,38 @@ function renderDetail(service: Service, relatedProjects: readonly Project[] = []
   )
 }
 
+/**
+ * jsdom implements no media playback. `play`/`pause` are spied on so a test can see
+ * whether a video was told to play or pause, and `matchMedia` is stubbed so reduced
+ * motion can be switched on.
+ */
+const originalMatchMedia = window.matchMedia
+let play: ReturnType<typeof vi.spyOn>
+let pause: ReturnType<typeof vi.spyOn>
+
+function setReducedMotion(reduced: boolean) {
+  window.matchMedia = ((query: string) => ({
+    matches: reduced && query.includes('reduce'),
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia
+}
+
+beforeEach(() => {
+  play = vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
+  pause = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
+})
+
+afterEach(() => {
+  window.matchMedia = originalMatchMedia
+  vi.restoreAllMocks()
+})
+
 describe('services page', () => {
   it('renders exactly one h1 with no skipped heading levels', () => {
     renderServices()
@@ -88,7 +121,7 @@ describe('services page', () => {
     services.forEach((service, i) => {
       const link = links[i]!
       expect(link).toHaveAttribute('href', `#${service.slug}`)
-      expect(within(link).getByText(service.title)).toBeInTheDocument()
+      expect(within(link).getByText(service.pageTitle ?? service.title)).toBeInTheDocument()
       expect(within(link).getByText(service.shortDescription)).toBeInTheDocument()
       expect(within(link).getByText(service.index)).toBeInTheDocument()
     })
@@ -100,8 +133,43 @@ describe('services page', () => {
       const section = container.querySelector(`section#${service.slug}`) as HTMLElement
       expect(section).not.toBeNull()
       const scoped = within(section)
-      expect(scoped.getByRole('heading', { level: 2, name: service.title })).toBeInTheDocument()
+      expect(
+        scoped.getByRole('heading', { level: 2, name: service.pageTitle ?? service.title }),
+      ).toBeInTheDocument()
       expect(scoped.getByText(service.shortDescription)).toBeInTheDocument()
+    }
+  })
+
+  it('names the Apartments section "Apartments & High-Rise" on this page only', () => {
+    const apartments = services.find((service) => service.slug === 'apartments')!
+    // the page heading differs from the service's name, which the rest of the site keeps using
+    expect(apartments.pageTitle).toBe('Apartments & High-Rise')
+    expect(apartments.title).toBe('Apartments')
+    renderServices()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Apartments & High-Rise' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { level: 2, name: 'Apartments' })).not.toBeInTheDocument()
+    // the overview link on the same page agrees with the section heading
+    const nav = screen.getByRole('navigation', { name: 'Services' })
+    expect(within(nav).getByText('Apartments & High-Rise')).toBeInTheDocument()
+  })
+
+  it('gives the Apartments section its portrait video, in place of the placeholder', () => {
+    const apartments = services.find((service) => service.slug === 'apartments')!
+    expect(apartments.video?.src).toBe('/assets/videos/apartments-highraise.mp4')
+
+    const { container } = renderServices()
+    const section = container.querySelector('section#apartments') as HTMLElement
+    const video = section.querySelector('video') as HTMLVideoElement
+    expect(video).not.toBeNull()
+    expect(video).toHaveAttribute('src', apartments.video!.src)
+    expect(within(section).queryByText(/Dev placeholder/)).not.toBeInTheDocument()
+    // the other two services are untouched: no video, still their placeholders
+    for (const slug of ['villas', 'residential-construction']) {
+      const other = container.querySelector(`section#${slug}`) as HTMLElement
+      expect(other.querySelector('video')).toBeNull()
+      expect(within(other).getByText(/Dev placeholder/)).toBeInTheDocument()
     }
   })
 
@@ -117,8 +185,15 @@ describe('services page', () => {
 
       const section = container.querySelector(`section#${service.slug}`) as HTMLElement
       const scoped = within(section)
-      // Image slot falls back to the obvious dev placeholder, never a fake photo.
-      expect(scoped.getByText(`Dev placeholder · ${service.title}`)).toBeInTheDocument()
+      // The media slot holds the service's own video where one is supplied; otherwise
+      // it falls back to the obvious dev placeholder, never a fake photo.
+      if (service.video) {
+        expect(scoped.queryByText(/Dev placeholder/)).not.toBeInTheDocument()
+      } else {
+        expect(
+          scoped.getByText(`Dev placeholder · ${service.pageTitle ?? service.title}`),
+        ).toBeInTheDocument()
+      }
       expect(scoped.queryAllByRole('img')).toHaveLength(0)
       // No empty headings, lists or labels left behind for the missing fields.
       expect(scoped.queryByText('What we provide')).not.toBeInTheDocument()
@@ -162,11 +237,7 @@ describe('services page', () => {
       'href',
       primaryCta.to,
     )
-    for (const link of screen.getAllByRole('link')) {
-      const href = link.getAttribute('href') ?? ''
-      expect(href.startsWith('tel:')).toBe(false)
-      expect(href.startsWith('mailto:')).toBe(false)
-    }
+    expectOnlyVerifiedContactLinks()
   })
 
   it('sets the SEO-SPEC title and a description built from verified site data', () => {
@@ -184,7 +255,9 @@ describe('services page', () => {
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2, name: 'What we build.' })).toBeInTheDocument()
     for (const service of services) {
-      expect(screen.getByRole('heading', { level: 2, name: service.title })).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', { level: 2, name: service.pageTitle ?? service.title }),
+      ).toBeInTheDocument()
     }
     expect(screen.getByRole('heading', { level: 2, name: 'Start a project.' })).toBeInTheDocument()
   })
@@ -241,5 +314,90 @@ describe('ServiceDetail', () => {
   it('treats an empty highlights array the same as none', () => {
     renderDetail({ ...populatedFixture, highlights: [] })
     expect(screen.queryByText('What we provide')).not.toBeInTheDocument()
+  })
+})
+
+describe('ServiceDetail video', () => {
+  const videoFixture: Service = {
+    slug: 'test-fixture-video',
+    index: '09',
+    category: 'apartment',
+    title: 'Test Fixture',
+    pageTitle: 'Test Fixture & More',
+    shortDescription: 'Test fixture short description.',
+    video: { src: '/test-fixture.mp4', poster: '/test-fixture-poster.jpg' },
+  }
+
+  const videoOf = (container: HTMLElement) => container.querySelector('video') as HTMLVideoElement
+
+  it('is a silent, looping, inline, control-free video that autoplays', () => {
+    const { container } = renderDetail(videoFixture)
+    const video = videoOf(container)
+    expect(video).toHaveAttribute('src', '/test-fixture.mp4')
+    expect(video).toHaveAttribute('poster', '/test-fixture-poster.jpg')
+    expect(video.muted).toBe(true)
+    expect(video).toHaveAttribute('loop')
+    expect(video).toHaveAttribute('playsinline')
+    expect(video).not.toHaveAttribute('controls')
+    // playback is the native attribute's job: a script play() at mount is rejected by
+    // the browser for an off-screen video, and would cancel the attribute's own start
+    expect(video).toHaveAttribute('autoplay')
+    expect(video).toHaveAttribute('preload', 'auto')
+    expect(play).not.toHaveBeenCalled()
+  })
+
+  it('is decorative (aria-hidden) unless a description was supplied with it', () => {
+    const decorative = renderDetail(videoFixture)
+    expect(videoOf(decorative.container)).toHaveAttribute('aria-hidden', 'true')
+    decorative.unmount()
+
+    const described = renderDetail({
+      ...videoFixture,
+      video: { src: '/test-fixture.mp4', alt: 'Test fixture description' },
+    })
+    expect(videoOf(described.container)).toHaveAttribute('aria-label', 'Test fixture description')
+    expect(videoOf(described.container)).not.toHaveAttribute('aria-hidden')
+  })
+
+  it('stays on its first frame or poster under reduced motion: no autoplay, metadata only, paused', () => {
+    setReducedMotion(true)
+    const { container } = renderDetail(videoFixture)
+    const video = videoOf(container)
+    expect(video).not.toHaveAttribute('autoplay')
+    expect(video).toHaveAttribute('preload', 'metadata')
+    expect(pause).toHaveBeenCalled()
+    expect(play).not.toHaveBeenCalled()
+  })
+
+  it('sits in the existing media box, marked as a video slot, with the page heading', () => {
+    const { container } = renderDetail(videoFixture)
+    const box = container.querySelector('[data-media="video"]') as HTMLElement
+    expect(box).not.toBeNull()
+    expect(box.querySelector('video')).not.toBeNull()
+    expect(screen.queryByText(/Dev placeholder/)).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Test Fixture & More' }),
+    ).toBeInTheDocument()
+  })
+
+  it('prefers a video over an image; with neither it falls back to the image, then the placeholder', () => {
+    const both = renderDetail({ ...videoFixture, image: '/test-fixture.jpg' })
+    expect(both.container.querySelector('video')).not.toBeNull()
+    expect(both.container.querySelector('img')).toBeNull()
+    both.unmount()
+
+    const imageOnly = renderDetail({
+      ...videoFixture,
+      video: undefined,
+      image: '/test-fixture.jpg',
+    })
+    expect(imageOnly.container.querySelector('video')).toBeNull()
+    expect(imageOnly.container.querySelector('img')).toHaveAttribute('src', '/test-fixture.jpg')
+    expect(imageOnly.container.querySelector('[data-media]')).toBeNull()
+    imageOnly.unmount()
+
+    const bare = renderDetail({ ...videoFixture, video: undefined })
+    expect(bare.container.querySelector('video')).toBeNull()
+    expect(screen.getByText('Dev placeholder · Test Fixture & More')).toBeInTheDocument()
   })
 })

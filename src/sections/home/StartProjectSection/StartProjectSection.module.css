@@ -1,4 +1,5 @@
 .section {
+  background: linear-gradient(180deg, var(--color-paper), #ece0c8);
   padding-block: var(--space-9);
   border-top: 1px solid var(--color-border);
 }
@@ -7,11 +8,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
-}
-
-.eyebrow {
-  display: block;
-  color: var(--color-text-muted);
 }
 
 .heading {

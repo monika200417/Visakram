@@ -16,9 +16,11 @@ describe('data layer', () => {
     expect(getFeaturedProject()).toBeUndefined()
   })
 
-  it('leaves unconfirmed business details undefined', () => {
-    expect(site.phone).toBeUndefined()
-    expect(site.whatsappNumber).toBeUndefined()
+  it('has the client-supplied phone numbers, email and WhatsApp number, and leaves the unconfirmed details undefined', () => {
+    expect(site.phones).toEqual(['+91 95154 52875', '+91 95154 52876', '+91 95737 60438'])
+    expect(site.phone).toBe(site.phones[0])
+    expect(site.email).toBe('hello@visakrambuilders.com')
+    expect(site.whatsappNumber).toBe(site.phones[0])
     expect(site.siteUrl).toBeUndefined()
     expect(site.aboutImage).toBeUndefined()
   })

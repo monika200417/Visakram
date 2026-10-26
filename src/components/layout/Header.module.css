@@ -1,8 +1,23 @@
+/* One header everywhere, sticky. Transparent over the first page (the homepage hero) and a semi-opaque
+   cream bar from the second page on (see [data-solid] below); the open mobile menu has its own ground.
+   Its ink is black: the menu links, the menu button and the dark logo. */
 .header {
-  position: relative;
+  --header-ink: #000;
+
+  position: sticky;
+  top: 0;
   z-index: 100;
-  background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  border-bottom: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: var(--header-ink);
+}
+
+/* The open mobile menu is a modal state: the bar takes the ivory of its panel so the two read as one. */
+.header[data-menu-open] {
+  background: rgb(244 236 220);
+  color: var(--header-ink);
 }
 
 .bar {
@@ -33,7 +48,7 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   text-decoration: none;
-  color: var(--color-text-muted);
+  color: var(--header-ink);
   padding-block: var(--space-2);
   border-bottom: 1px solid transparent;
   transition:
@@ -42,11 +57,11 @@
 }
 
 .link:hover {
-  color: var(--color-text);
+  color: var(--header-ink);
 }
 
 .link.active {
-  color: var(--color-text);
+  color: var(--header-ink);
   border-color: var(--color-accent);
 }
 
@@ -126,4 +141,95 @@
   .toggle {
     display: none;
   }
+}
+
+/* --- Brand: the mark ---------------------- */
+.brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.mark {
+  /* the logo is cropped above its small slogan line, so it is about 2.23 times as wide as it is tall;
+     41px / 51px keep the name the same size as before */
+  --mark-h: 41px;
+
+  position: relative;
+  display: block;
+  height: var(--mark-h);
+  width: calc(var(--mark-h) * 2.23);
+  transform-origin: left center;
+  animation: mark-reveal 700ms var(--ease-enter) both;
+}
+
+.markGold,
+.markDark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity var(--motion-editorial) var(--ease-standard);
+}
+
+/* The ivory bar shows the dark mark; over the hero the gold one. */
+.markGold {
+  opacity: 0;
+}
+
+.markDark {
+  opacity: 1;
+}
+
+@keyframes mark-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (min-width: 1024px) {
+  .mark {
+    --mark-h: 51px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    animation: none;
+  }
+}
+
+/* --- A faint light halo behind the black type, so it reads over any picture ------------- */
+.header .link {
+  text-shadow: 0 1px 8px rgb(244 236 220 / 70%);
+}
+
+/* The semi-opaque navigation bar: cream, a little see-through, softly blurred, with a hairline under
+   it. It is there on every page except the first (the homepage's hero), and on the homepage from the
+   second page down; Header.tsx sets data-solid. It fades in rather than appearing. */
+.header {
+  transition:
+    background-color var(--motion-ui) var(--ease-standard),
+    box-shadow var(--motion-ui) var(--ease-standard);
+}
+
+.header[data-solid='true'] {
+  background: rgb(244 236 220 / 82%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 rgb(46 43 40 / 10%);
+}
+
+/* The call to action is solid neon over any ground, so it never needs a container behind it. */
+.header .desktopCta {
+  box-shadow: 0 6px 22px -6px var(--color-lac-glow);
 }

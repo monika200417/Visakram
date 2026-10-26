@@ -12,6 +12,7 @@ import { projects } from '../data/projects'
 import { services } from '../data/services'
 import { site } from '../data/site'
 import styles from './ServicesPage.module.css'
+import { Heading } from '../components/heading/Heading'
 
 const stats = [
   { value: site.stats.yearsExperience, label: 'Years of experience' },
@@ -51,10 +52,9 @@ export function ServicesPage() {
       <section className={styles.hero} aria-labelledby="services-hero-heading">
         <Container>
           <div ref={heroRef} className={styles.heroInner}>
-            <p className={`text-mono-label ${styles.eyebrow}`}>01 — Services</p>
-            <h1 id="services-hero-heading" className={styles.heroHeading}>
+            <Heading as="h1" id="services-hero-heading" className={styles.heroHeading}>
               Villas, apartments and residential construction.
-            </h1>
+            </Heading>
             <p className={styles.heroSupporting}>
               {site.name} builds across {formatList(site.serviceAreas)} — guided by{' '}
               {formatList(site.values).toLowerCase()} at every stage.
@@ -66,17 +66,18 @@ export function ServicesPage() {
       {/* 02 — Overview: an index of the services, linking to each one below */}
       <section className={styles.overview} aria-labelledby="services-overview-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>02 — Overview</p>
-          <h2 id="services-overview-heading" className={styles.sectionHeading}>
+          <Heading as="h2" id="services-overview-heading" className={styles.sectionHeading}>
             What we build.
-          </h2>
+          </Heading>
           <nav aria-label="Services">
             <ol ref={overviewRef} className={styles.overviewList}>
               {services.map((service) => (
                 <li key={service.slug} className={styles.overviewItem}>
                   <a href={`#${service.slug}`} className={styles.overviewLink}>
                     <span className={`text-mono-label ${styles.index}`}>{service.index}</span>
-                    <span className={styles.overviewTitle}>{service.title}</span>
+                    <span className={styles.overviewTitle}>
+                      {service.pageTitle ?? service.title}
+                    </span>
                     <span className={styles.overviewDescription}>{service.shortDescription}</span>
                     <span className={styles.arrow} aria-hidden="true">
                       ↓
@@ -102,10 +103,9 @@ export function ServicesPage() {
       {/* 04 — The approved process every project follows (src/data/process.ts) */}
       <section className={styles.block} aria-labelledby="services-process-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>04 — Process</p>
-          <h2 id="services-process-heading" className={styles.sectionHeading}>
+          <Heading as="h2" id="services-process-heading" className={styles.sectionHeading}>
             How every project runs.
-          </h2>
+          </Heading>
           <ol ref={processRef} className={styles.steps}>
             {processSteps.map((step) => (
               <li key={step.title} className={styles.step}>
@@ -121,7 +121,6 @@ export function ServicesPage() {
       {/* 05 — Proof: the client-stated figures, as on the homepage */}
       <section className={styles.block} aria-label={`${site.name} in numbers`}>
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>05 — Proof</p>
           <dl ref={proofRef} className={styles.stats}>
             {stats.map((stat) => (
               <div key={stat.label} className={styles.stat}>
@@ -137,9 +136,9 @@ export function ServicesPage() {
       <section className={styles.cta} aria-labelledby="services-cta-heading">
         <Container>
           <div className={styles.ctaInner}>
-            <h2 id="services-cta-heading" className={styles.ctaHeading}>
+            <Heading as="h2" id="services-cta-heading" className={styles.ctaHeading}>
               Start a project.
-            </h2>
+            </Heading>
             <Button to={primaryCta.to} variant="primary">
               {primaryCta.label}
             </Button>

@@ -13,7 +13,7 @@ type ProjectCardProps = {
  * only fields the project actually has — title, location, category, year
  * and a hero image when one exists. When it doesn't, falls back to the
  * same DevImagePlaceholder convention used elsewhere in the app
- * (FeaturedProjectSection, BuildCategoryRow) rather than a generic icon or
+ * (FeaturedProjectSection, BuildCategoryCard) rather than a generic icon or
  * a silently blank box, so a missing photo is always obvious and
  * auditable, never mistaken for one that was simply omitted.
  */

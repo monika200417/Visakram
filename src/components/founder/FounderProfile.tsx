@@ -7,7 +7,7 @@ import styles from './FounderProfile.module.css'
 type FounderProfileProps = {
   founder: Founder
   /** Alternates the media/text side on desktop, mirroring the editorial
-   *  row pattern used elsewhere (BuildCategoryRow, ProjectCard). */
+   *  row pattern used elsewhere (BuildCategoryCard, ProjectCard). */
   align?: 'start' | 'end'
 }
 

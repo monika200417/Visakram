@@ -5,6 +5,7 @@ import { useRevealOnScroll } from '../../../animations/useRevealOnScroll'
 import { primaryCta } from '../../../data/navigation'
 import { site } from '../../../data/site'
 import styles from './ClosingSection.module.css'
+import { Heading } from '../../../components/heading/Heading'
 
 type ClosingImage = { src: string; alt: string }
 
@@ -51,14 +52,19 @@ export function ClosingSection({ image = site.closingImage }: ClosingSectionProp
         </>
       ) : null}
 
+      {/* The top of the band, in the space above the statement: a button that is not live yet. */}
+      <Container className={styles.container}>
+        <button type="button" className={styles.soon} disabled>
+          <span>Operational segments</span>
+          <span className={styles.soonTag}>Coming soon</span>
+        </button>
+      </Container>
+
       <Container className={styles.container}>
         <div ref={revealRef} className={styles.inner}>
-          <p className={`text-mono-label ${styles.eyebrow}`}>
-            {site.name} — {site.city}
-          </p>
-          <h2 id="closing-heading" className={styles.heading}>
+          <Heading as="h2" id="closing-heading" className={styles.heading}>
             Let&rsquo;s build what lasts.
-          </h2>
+          </Heading>
           <div className={styles.cta}>
             <Button to={primaryCta.to} variant="primary">
               {primaryCta.label}

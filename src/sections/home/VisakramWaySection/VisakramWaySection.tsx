@@ -5,6 +5,7 @@ import { useVisakramWayScrub } from './useVisakramWayScrub'
 import { WayDefs } from './WayDefs'
 import { WayVisual } from './WayVisual'
 import styles from './VisakramWaySection.module.css'
+import { Heading } from '../../../components/heading/Heading'
 
 /**
  * Chapter 06 — The Visakram Way
@@ -66,9 +67,9 @@ export function VisakramWaySection() {
         <Container className={styles.container}>
           <div className={styles.copy}>
             <div className={styles.head}>
-              <h2 id="visakram-way-heading" className={styles.heading}>
+              <Heading as="h2" id="visakram-way-heading" className={styles.heading}>
                 The Visakram Way
-              </h2>
+              </Heading>
               <p className={styles.tagline}>Three principles. One architectural story.</p>
             </div>
 

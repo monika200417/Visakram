@@ -49,15 +49,34 @@ export const fromPlanToPlaceStages: readonly FromPlanToPlaceStage[] = [
   },
 ]
 
-/**
- * Upper bound (exclusive, on the normalized 0→1 scene progress) of each
- * stage in `fromPlanToPlaceStages`, in order. PLAN 0–0.15, FOUNDATION
- * 0.15–0.30, STRUCTURE 0.30–0.50, FLOORS 0.50–0.65, FACADE 0.65–0.85,
- * PLACE 0.85–1.
- */
-export const fromPlanToPlaceStageEnds: readonly number[] = [0.15, 0.3, 0.5, 0.65, 0.85, 1]
+/** The editorial introduction to the chapter, shown exactly as written. */
+export const fromPlanToPlaceCaption =
+  'How raw blueprints transform into living spaces: an illustrative walkthrough of our delivery methodology.'
 
-/** Which stage is current at a given normalized scene progress. */
+/**
+ * The chapter's visual: one supplied walkthrough video that autoplays on a loop, silent.
+ * It is the original file, played as-is — never scrubbed, never cut into frames. The poster
+ * is the video's own first frame (a 1280×720 WebP, ~50 KB), shown until the video plays and
+ * wherever it does not (reduced motion).
+ */
+export const fromPlanToPlaceVideo = {
+  src: '/assets/videos/plan-to-place.mp4',
+  poster: '/assets/videos/plan-to-place-poster.webp',
+  width: 1280,
+  height: 720,
+  /** Accessible name: what it is, not what any one frame shows. */
+  label:
+    'An illustrative walkthrough of a building taking shape, from a site plan to a completed tower.',
+} as const
+
+/**
+ * Upper bound (exclusive, on the normalized 0→1 scroll progress through the pinned
+ * chapter) of each stage in `fromPlanToPlaceStages`, in order: six equal parts, so each
+ * methodology stage is emphasised for the same stretch of scroll.
+ */
+export const fromPlanToPlaceStageEnds: readonly number[] = [1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6, 1]
+
+/** Which stage is current at a given normalized scroll progress. */
 export function getActiveStageIndex(progress: number): number {
   const last = fromPlanToPlaceStageEnds.length - 1
   for (let i = 0; i < last; i++) {
@@ -67,10 +86,8 @@ export function getActiveStageIndex(progress: number): number {
 }
 
 /**
- * Required wherever this chapter's visual is rendered
- * (Milestone 10 §6 — "This is NOT a real Visakram project reconstruction").
- * The scene is a procedural architectural massing study, not a
- * reconstruction of any named, located or dated Visakram project.
+ * Required wherever this chapter's visual is rendered. The walkthrough is an illustrative
+ * construction sequence, not a depiction of any named, located or dated Visakram project.
  */
 export const fromPlanToPlaceDisclaimer =
-  'An illustrative construction sequence — a conceptual massing study, not a rendering of a specific Visakram Builders project.'
+  'An illustrative construction sequence — not a depiction of a specific Visakram Builders project.'

@@ -10,11 +10,11 @@ export type HomeTourChapter = {
  * Home Tour — the nine editorial chapters of ONE villa, in the order the tour
  * visits them. This is copy only: which chapters currently have footage, and
  * where their clips and posters live, is src/media/home-tour/manifest.ts, so
- * production media can be swapped in without touching this file or the section.
+ * production media can be swapped in without touching this file.
  * Titles and captions are the approved editorial lines; nothing here is a claim
  * about any Visakram project, and the villa is deliberately unbranded (see
  * `homeTourDisclaimer`). No media or 3D code is imported here, so it can ship
- * in the main bundle for the static fallback and the overlay.
+ * in the main bundle.
  */
 export const homeTourChapters: readonly HomeTourChapter[] = [
   {

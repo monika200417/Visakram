@@ -4,39 +4,55 @@
  * Components must reference these variables rather than hardcoding values.
  */
 :root {
-  /* --- Color: core palette (DESIGN-SYSTEM.md §3) --- */
-  --color-ink: #11120f;
-  --color-charcoal: #24251f;
-  --color-paper: #f4f1ea;
-  --color-white: #ffffff;
-  --color-stone: #d8d1c5;
-  --color-muted: #77766e;
-  --color-terracotta: #a65d45;
-  --color-terracotta-dark: #7f4433;
-  /* Architectural gold — hairlines and fine accents only (same value as the Visakram Way linework). */
-  --color-gold: #c9a45c;
+  /* --- Color: core palette — Visakram brand guidelines 2026, palette option 1 --- */
+  /* Sandalwood is the ground and the type on dark; Khondalite is the ink and the dark sections;
+     Bay Slate is the secondary (small labels, the far skyline); Lac Red is the one accent,
+     rationed — never dominant. */
+  --color-ink: #2e2b28; /* Khondalite */
+  --color-charcoal: #3d3935;
+  --color-paper: #f4ecdc;
+  --color-white: #fbf7ee;
+  --color-stone: #e8dcc8; /* Sandalwood: light type on the dark sections */
+  --color-muted: #6b6258;
+  /* Lac Red is the one Visakram orange, used everywhere orange appears (fills, rules, glows, borders and
+     small text). It has no lighter or deeper variants: --color-lac-hot and --color-lac-deep are aliases of it. */
+  --color-lac: #c4441f;
+  --color-lac-hot: var(--color-lac); /* one orange: no lighter shade */
+  --color-lac-glow: rgb(196 68 31 / 45%);
+  --color-lac-deep: var(--color-lac); /* one orange: no deeper shade */
+  --color-blush: #efe3cf;
+  --color-peach: #e8dcc8;
+  /* Sandalwood: type on the dark sections... */
+  --color-sandalwood: #e8dcc8;
+  /* ...and its dimmer shade, for hairlines and fine accents on dark. */
+  --color-sandalwood-dim: #cdbfa6;
+  /* Bay Slate: small labels and rules on the light pages. */
+  --color-bay: #4a6360;
 
   /* --- Color: light experience (default) --- */
   --color-bg: var(--color-paper);
   --color-surface: var(--color-white);
   --color-text: var(--color-ink);
+  /* Display type (headings) on the light pages is Khondalite. */
+  --color-heading: var(--color-ink);
   --color-text-muted: var(--color-muted);
-  --color-border: rgb(17 18 15 / 14%);
-  --color-accent: var(--color-terracotta);
-  --color-accent-strong: var(--color-terracotta-dark);
-  --color-on-accent: var(--color-paper);
+  --color-border: rgb(46 43 40 / 18%);
+  --color-accent: var(--color-lac);
+  --color-accent-strong: var(--color-lac-deep);
+  /* light type on Lac Red */
+  --color-on-accent: #fffaf0;
 
   /* --- Color: dark experience (opt-in via [data-theme="dark"]) --- */
   --color-bg-dark: var(--color-ink);
   --color-surface-dark: var(--color-charcoal);
   --color-text-dark: var(--color-paper);
-  --color-text-muted-dark: #b4b1a8;
-  --color-border-dark: rgb(244 241 234 / 16%);
+  --color-text-muted-dark: #cdbfa6;
+  --color-border-dark: rgb(205 191 166 / 30%);
 
   /* --- Typography --- */
-  --font-display: 'Playfair Display', 'Iowan Old Style', Georgia, serif;
-  --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-display: 'Josefin Sans', 'Century Gothic', 'Avenir Next', sans-serif;
+  --font-body: 'Josefin Sans', 'Century Gothic', 'Avenir Next', system-ui, sans-serif;
+  --font-mono: 'Josefin Sans', 'Century Gothic', 'Avenir Next', system-ui, sans-serif;
 
   /* Fluid type scale: desktop values from DESIGN-SYSTEM.md §4, scaled down for mobile. */
   --text-display-xl: clamp(2.75rem, 1.6rem + 5.5vw, 8rem);

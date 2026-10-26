@@ -1,12 +1,28 @@
 import { assertUniqueIdentifiers } from './validate'
 import type { Project } from './projects'
 
+/**
+ * A silent, looping video for a service's media area. It is shown whole inside
+ * the existing media box at its own proportions (portrait stays portrait), never
+ * cropped or stretched.
+ */
+export type ServiceVideo = {
+  src: string
+  /** A still shown until playback starts, and kept if it never does. */
+  poster?: string
+  /** Accessible description, supplied with the video. Without one it is decorative. */
+  alt?: string
+}
+
 export type Service = {
   slug: string
   index: string
   /** Matches Project['category'] so a project can key back to its service. */
   category: Project['category']
+  /** The service's name everywhere on the site (Home, About, the project filter, the contact form). */
   title: string
+  /** The heading used on the /services page itself, where it differs from `title`. */
+  pageTitle?: string
   /** Used on the homepage "What We Build" chapter — keep it to one line. */
   shortDescription: string
   /** Reserved for the future /services page. Left undefined until the
@@ -17,6 +33,8 @@ export type Service = {
   /** Alt text for `image`, supplied with it. Without one the image is
    *  rendered as decorative (empty alt) rather than given invented text. */
   imageAlt?: string
+  /** Shown in place of `image` when present. */
+  video?: ServiceVideo
   highlights?: string[]
 }
 
@@ -44,8 +62,10 @@ export const services: readonly Service[] = [
     index: '02',
     category: 'apartment',
     title: 'Apartments',
+    pageTitle: 'Apartments & High-Rise',
     shortDescription:
       'Multi-unit residential buildings, held to the same standard of oversight and finish as a single home.',
+    video: { src: '/assets/videos/apartments-highraise.mp4' },
   },
   {
     slug: 'residential-construction',

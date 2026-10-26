@@ -2,7 +2,12 @@ import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
-import { fromPlanToPlaceStages, fromPlanToPlaceDisclaimer } from '../../src/data/fromPlanToPlace'
+import {
+  fromPlanToPlaceCaption,
+  fromPlanToPlaceDisclaimer,
+  fromPlanToPlaceStages,
+  fromPlanToPlaceVideo,
+} from '../../src/data/fromPlanToPlace'
 
 /**
  * jsdom has no real WebGL and the shared `matchMedia` polyfill
@@ -23,15 +28,15 @@ function renderHome() {
 }
 
 function getSection() {
-  const heading = screen.getByRole('heading', { level: 2, name: 'From plan to place.' })
+  const heading = screen.getByRole('heading', { level: 2, name: 'Turning Land into Legacy.' })
   return heading.closest('section') as HTMLElement
 }
 
 describe('homepage — from plan to place', () => {
-  it('renders the chapter with its eyebrow and heading', () => {
+  it('renders the chapter with its heading and no numbered side label', () => {
     renderHome()
     const section = getSection()
-    expect(within(section).getByText('07 — From Plan to Place')).toBeInTheDocument()
+    expect(within(section).queryByText('07 — From Scratch to Shape')).not.toBeInTheDocument()
   })
 
   it('renders all six stages, sourced from data, in order', () => {
@@ -54,18 +59,44 @@ describe('homepage — from plan to place', () => {
     renderHome()
     const section = getSection()
     expect(within(section).getByText(fromPlanToPlaceDisclaimer)).toBeInTheDocument()
-    expect(fromPlanToPlaceDisclaimer.toLowerCase()).toContain('not a rendering of a specific')
+    expect(fromPlanToPlaceDisclaimer.toLowerCase()).toContain('not a depiction of a specific')
   })
 
-  it('renders the static HTML/CSS fallback visual, never a blank canvas, when canvas is not eligible', () => {
+  it('opens with the supplied caption, exactly as written', () => {
     renderHome()
     const section = getSection()
-    // No <canvas> — jsdom's matchMedia stub always reports "not desktop /
-    // reduced motion", so the static fallback (six CSS-only glyphs) is
-    // what actually renders here, exactly like the real reduced-motion,
-    // mobile and no-WebGL cases.
+    expect(fromPlanToPlaceCaption).toBe(
+      'How raw blueprints transform into living spaces: an illustrative walkthrough of our delivery methodology.',
+    )
+    expect(within(section).getByText(fromPlanToPlaceCaption)).toBeInTheDocument()
+  })
+
+  it('shows the supplied walkthrough video, silent, looping, inline and control-free — never a 3D canvas', () => {
+    renderHome()
+    const section = getSection()
     expect(section.querySelector('canvas')).not.toBeInTheDocument()
-    expect(section.querySelectorAll('[aria-hidden="true"] > div').length).toBeGreaterThanOrEqual(6)
+    const video = section.querySelector('video') as HTMLVideoElement
+    expect(video).not.toBeNull()
+    expect(video.muted).toBe(true)
+    expect(video).toHaveAttribute('loop')
+    expect(video).toHaveAttribute('playsinline')
+    expect(video).toHaveAttribute('autoplay')
+    expect(video).not.toHaveAttribute('controls')
+    expect(video).toHaveAttribute('poster', fromPlanToPlaceVideo.poster)
+    expect(video).toHaveAttribute('width', String(fromPlanToPlaceVideo.width))
+    expect(video).toHaveAttribute('height', String(fromPlanToPlaceVideo.height))
+    expect(video.closest('[role="img"]')).toHaveAttribute('aria-label', fromPlanToPlaceVideo.label)
+  })
+
+  it('does not download the video until the chapter is near the viewport', () => {
+    renderHome()
+    const section = getSection()
+    // jsdom has no IntersectionObserver, so the chapter fails open and the video is allowed —
+    // what matters here is that the file named is the supplied one and it is never preloaded.
+    const video = section.querySelector('video') as HTMLVideoElement
+    expect(video).toHaveAttribute('preload', 'none')
+    const src = video.getAttribute('src')
+    if (src) expect(src).toBe(fromPlanToPlaceVideo.src)
   })
 
   it('keeps a logical heading structure inside the chapter (h2 then h3s only)', () => {
@@ -83,14 +114,14 @@ describe('homepage — from plan to place', () => {
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
   })
 
-  it('sits between the Visakram Way and How We Build chapters', () => {
+  it('follows the Visakram Way chapter and comes before Testimonials', () => {
     renderHome()
     const headings = screen.getAllByRole('heading', { level: 2 }).map((el) => el.textContent)
     const wayIndex = headings.indexOf('The Visakram Way')
-    const planIndex = headings.indexOf('From plan to place.')
-    const buildIndex = headings.indexOf('How we build.')
+    const planIndex = headings.indexOf('Turning Land into Legacy.')
+    const testimonialsIndex = headings.indexOf('What our clients say.')
     expect(wayIndex).toBeGreaterThanOrEqual(0)
     expect(planIndex).toBeGreaterThan(wayIndex)
-    expect(buildIndex).toBeGreaterThan(planIndex)
+    expect(testimonialsIndex).toBeGreaterThan(planIndex)
   })
 })

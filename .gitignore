@@ -27,3 +27,9 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Not part of the site build
+eagle/
+.claude/
+.vercel
+docs/reference/home-tour/hometour.mp4

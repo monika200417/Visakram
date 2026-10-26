@@ -28,6 +28,28 @@
   object-fit: cover;
 }
 
+/*
+ * A video is shown whole inside the same media box: `contain` fits it by its own
+ * proportions, centred both ways, so a portrait video is never cropped into the
+ * landscape rectangle and never stretched. What is left of the box is just its
+ * existing stone fill.
+ */
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Stacked (below the two-column layout) the box would be a wide, short strip, which
+   would shrink a portrait video to a sliver; give it a portrait-friendly box instead. */
+@media (max-width: 1023px) {
+  .visual[data-media='video'] {
+    aspect-ratio: 4 / 5;
+    max-height: 80svh;
+  }
+}
+
 .text {
   display: flex;
   flex-direction: column;
@@ -42,6 +64,8 @@
 .title {
   font-size: var(--text-h2);
   overflow-wrap: break-word;
+  /* Balanced lines, so a compound like "High-Rise" is not split at its hyphen. */
+  text-wrap: balance;
 }
 
 .lede {

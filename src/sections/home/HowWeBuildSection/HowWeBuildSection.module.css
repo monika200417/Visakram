@@ -1,36 +1,153 @@
+/*
+ * How We Build — the five approved steps as premium cards. Each card is white with a hairline edge
+ * and a soft long shadow; the top half is its picture and the bottom half its text, a line icon in an ink
+ * medallion sits on the seam between them, and on hover the card lifts, a red rule draws across its top edge and the
+ * medallion turns Visakram orange. All five cards are the same size. They are dealt out of a pile
+ * when the section scrolls in (useProcessReveal animates the <li>, so the hover lift lives on the card
+ * inside it).
+ */
 .section {
+  background: linear-gradient(180deg, var(--color-blush), var(--color-paper));
   padding-block: var(--space-9);
   border-top: 1px solid var(--color-border);
-}
-
-.eyebrow {
-  display: block;
-  color: var(--color-text-muted);
 }
 
 .heading {
   margin-top: var(--space-5);
   font-size: var(--text-display-l);
-  max-width: 16ch;
+  max-width: 20ch;
 }
 
 .steps {
+  position: relative; /* the pile is measured from here (offsetLeft) */
   list-style: none;
   margin: var(--space-8) 0 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
 }
 
 .step {
-  border-top: 2px solid var(--color-border);
-  padding-top: var(--space-5);
+  display: flex;
+  min-width: 0;
 }
 
-.step:first-child {
-  border-top: 0;
-  padding-top: 0;
+/* --- The card ----------------------------------------------------------------------------------- */
+.card {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  display: grid;
+  grid-template-rows: 1fr 1fr; /* the picture is the top half, the text the bottom half */
+  min-height: 24rem;
+  overflow: hidden;
+  border: 1px solid rgb(46 43 40 / 10%);
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgb(205 191 166 / 38%) 0%, transparent 58%),
+    linear-gradient(165deg, #fff 0%, var(--color-white) 60%, #f6eddc 100%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 1px 2px rgb(46 43 40 / 6%),
+    0 22px 44px -28px rgb(46 43 40 / 40%);
+  transition:
+    transform 520ms var(--ease-enter),
+    box-shadow 520ms var(--ease-standard),
+    border-color 360ms var(--ease-standard);
+}
+
+/* the red rule: a short stub at rest, drawn across the whole top edge on hover */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 0;
+  z-index: 2;
+  width: 3.25rem;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-lac), var(--color-lac-hot));
+  transition: width 640ms var(--ease-enter);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: rgb(196 68 31 / 40%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 2px 4px rgb(46 43 40 / 8%),
+    0 34px 56px -28px rgb(46 43 40 / 50%),
+    0 0 0 4px rgb(196 68 31 / 7%);
+}
+
+.card:hover::before {
+  width: 100%;
+}
+
+/* the picture: the top half of the card */
+.media {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-enter);
+}
+
+.card:hover .photo {
+  transform: scale(1.07);
+}
+
+/* the text: the bottom half of the card */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+  padding: var(--space-6) var(--space-5) var(--space-5);
+}
+
+/* the medallion, sitting on the seam between the picture and the text */
+.icon {
+  position: absolute;
+  z-index: 3;
+  top: calc(50% - 1.625rem);
+  left: var(--space-5);
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #3d3935 0%, var(--color-ink) 100%);
+  color: var(--color-sandalwood);
+  box-shadow:
+    0 0 0 4px rgb(46 43 40 / 6%),
+    0 10px 22px -10px rgb(46 43 40 / 55%);
+  transition:
+    background 420ms var(--ease-standard),
+    color 420ms var(--ease-standard),
+    box-shadow 420ms var(--ease-standard),
+    transform 520ms var(--ease-enter);
+}
+
+.icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.card:hover .icon {
+  background: linear-gradient(145deg, var(--color-lac-hot) 0%, var(--color-lac) 100%);
+  color: #fff;
+  box-shadow:
+    0 0 0 4px rgb(196 68 31 / 14%),
+    0 12px 26px -10px rgb(196 68 31 / 70%);
+  transform: rotate(-6deg) scale(1.06);
 }
 
 .index {
@@ -38,32 +155,64 @@
 }
 
 .stepTitle {
-  margin: var(--space-2) 0 0;
+  margin: 0;
   font-size: var(--text-h3);
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
 }
 
 .stepDescription {
-  margin-top: var(--space-2);
+  margin: var(--space-1) 0 0;
   color: var(--color-text-muted);
-  max-width: 32ch;
+  line-height: 1.6;
+  max-width: 34ch;
 }
 
-@media (min-width: 1024px) {
+/* --- Tablet: two columns -------------------------------------------------------------------------- */
+@media (min-width: 640px) {
   .steps {
-    flex-direction: row;
-    gap: var(--space-5);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .step {
-    flex: 1;
-    border-top: 0;
-    border-left: 2px solid var(--color-border);
-    padding-top: 0;
-    padding-left: var(--space-5);
+  .card {
+    min-height: 26rem;
+  }
+}
+
+/* --- Desktop: five across, all the same size ------------------------------------------------------ */
+@media (min-width: 1100px) {
+  .steps {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-4);
   }
 
-  .step:first-child {
-    border-left: 0;
-    padding-left: 0;
+  .card {
+    min-height: 28rem;
+  }
+
+  .body {
+    padding-inline: var(--space-4);
+  }
+
+  .icon {
+    left: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card::before,
+  .photo,
+  .icon {
+    transition: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+
+  .card:hover .photo,
+  .card:hover .icon {
+    transform: none;
   }
 }

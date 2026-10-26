@@ -29,5 +29,7 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/unit/**/*.test.{ts,tsx}'],
     css: false,
+    // The "populated" tests re-import the whole app per test, which is slow under a parallel run.
+    testTimeout: 20000,
   },
 })

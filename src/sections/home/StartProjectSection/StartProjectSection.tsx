@@ -6,8 +6,10 @@ import { useRevealOnScroll } from '../../../animations/useRevealOnScroll'
 import { primaryCta } from '../../../data/navigation'
 import { site } from '../../../data/site'
 import { buildWhatsAppUrl } from '../../../utils/buildWhatsAppUrl'
+import { telHref } from '../../../utils/telHref'
 import { formatList } from '../../../utils/formatList'
 import styles from './StartProjectSection.module.css'
+import { Heading } from '../../../components/heading/Heading'
 
 /**
  * Chapter 13 — Start a Project
@@ -38,10 +40,9 @@ export function StartProjectSection() {
       <Container>
         <div ref={revealRef} className={styles.inner}>
           <div className={styles.lead}>
-            <p className={`text-mono-label ${styles.eyebrow}`}>13 — Start a Project</p>
-            <h2 id="start-a-project-heading" className={styles.heading}>
+            <Heading as="h2" id="start-a-project-heading" className={styles.heading}>
               Start your project.
-            </h2>
+            </Heading>
             <p className={styles.supporting}>
               Share the details of your villa, apartment or residential construction project — we
               build across {formatList(site.serviceAreas)}.
@@ -80,7 +81,7 @@ export function StartProjectSection() {
               ) : null}
               {site.phone ? (
                 <li className={styles.channel}>
-                  <a href={`tel:${site.phone}`} className={styles.channelLink}>
+                  <a href={telHref(site.phone)} className={styles.channelLink}>
                     <span className={styles.channelLabel}>Call {site.phone}</span>
                     <span className={styles.arrow} aria-hidden="true">
                       →

@@ -1,112 +1,115 @@
 .section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-blush), var(--color-paper));
   padding-block: var(--space-9);
   border-top: 1px solid var(--color-border);
 }
 
-.inner {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
+/* A photograph of a site worker facing the sunrise and the cranes covering the whole section, edge to
+   edge. It is a background (not an image in the page), made translucent with opacity so the cream
+   shows through and the text stays readable. */
+.section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('/assets/images/building-across-bg.png') center 30% / cover no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.eyebrow {
-  display: block;
-  color: var(--color-text-muted);
+/* The same cream, brushed over the picture from the text's side, so the words are never set on the
+   busiest part of the photograph. */
+.section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, transparent 20%, rgb(244 236 220 / 55%) 100%);
+  pointer-events: none;
+}
+
+.inner {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lead {
+  max-width: 34rem;
+}
+
+/* The heading and its arrow share one box, so the arrow runs the full width of the heading. */
+.title {
+  width: fit-content;
+  font-size: var(--text-h2);
+  max-width: 16ch;
 }
 
 .heading {
-  margin-top: var(--space-5);
-  font-size: var(--text-h2);
-  max-width: 16ch;
+  font-size: inherit;
   overflow-wrap: break-word;
 }
 
-.facts {
-  margin: 0;
-  border-top: 1px solid var(--color-border);
+/* The supplied feathered arrow (black, transparent background) between the heading and the statement. */
+.arrow {
+  display: block;
+  width: 0;
+  min-width: 100%;
+  height: auto;
+  margin-top: var(--space-4);
 }
 
-.row {
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: var(--space-3);
-  padding-block: var(--space-5);
-  border-bottom: 1px solid var(--color-border);
+/* The arrow waits off the left edge of the screen, out of sight, and slides in to its place with a small settle when
+   data-slide is set on its box (LocalPresenceSection.tsx); it replays each time the section is scrolled back to. */
+.arrow {
+  opacity: 0;
+  transform: translateX(var(--slide-from, -100vw));
 }
 
-.term {
-  color: var(--color-text-muted);
+.title[data-slide='true'] .arrow {
+  animation: arrow-slide 1.8s cubic-bezier(0.22, 1.15, 0.36, 1) 0.45s both;
 }
 
-.based,
-.areasCell {
-  margin: 0;
-  min-width: 0;
+@keyframes arrow-slide {
+  from {
+    opacity: 0;
+    transform: translateX(var(--slide-from, -100vw));
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.based {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.basedPrimary {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-h3);
-  line-height: var(--leading-snug);
-}
-
-.basedSecondary {
-  color: var(--color-text-muted);
+.statement {
+  margin: var(--space-4) 0 0;
+  max-width: 40ch;
   font-size: var(--text-body-l);
+  line-height: 1.65;
+  color: var(--color-text);
 }
 
-.areas {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.area {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-4);
-}
-
-.index {
-  color: var(--color-accent-strong);
-}
-
-.areaName {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-h3);
-  line-height: var(--leading-snug);
-  overflow-wrap: break-word;
-  min-width: 0;
-}
-
-@media (min-width: 768px) {
-  .row {
-    grid-template-columns: minmax(8rem, 1fr) 3fr;
-    column-gap: var(--space-5);
-    align-items: baseline;
+/* Reduced motion: the arrow is simply there. */
+@media (prefers-reduced-motion: reduce) {
+  .arrow {
+    opacity: 1;
+    transform: none;
   }
 }
 
-@media (min-width: 1024px) {
+@media (max-width: 767px) {
   .inner {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    column-gap: var(--space-9);
-    align-items: start;
+    justify-content: flex-start;
   }
 
-  .facts {
-    margin-top: var(--space-4);
+  .section::after {
+    background: linear-gradient(180deg, rgb(244 236 220 / 35%), rgb(244 236 220 / 60%));
   }
 }

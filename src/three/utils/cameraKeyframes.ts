@@ -26,6 +26,14 @@ export const cameraKeyframes: readonly CameraKeyframe[] = [
 
 export const cameraLookAt: readonly [number, number, number] = [-0.15, 1.85, 0]
 
+/**
+ * How far the whole camera path sits from the look-at target, as a multiple of the
+ * keyframe distances above. Every keyframe keeps its own direction and fov (angle,
+ * perspective and the animation are unchanged); only the distance grows, so more of
+ * the building fits inside the frame.
+ */
+const CAMERA_PULLBACK = 1.6
+
 /** Interpolates position + fov between the two keyframes bracketing `progress` (0–1). */
 export function sampleCamera(progress: number): {
   position: [number, number, number]
@@ -43,12 +51,13 @@ export function sampleCamera(progress: number): {
   const span = to.progress - from.progress
   const t = span > 0 ? (clamped - from.progress) / span : 0
 
+  const at = (axis: 0 | 1 | 2) => {
+    const interpolated = from.position[axis] + (to.position[axis] - from.position[axis]) * t
+    return cameraLookAt[axis] + (interpolated - cameraLookAt[axis]) * CAMERA_PULLBACK
+  }
+
   return {
-    position: [
-      from.position[0] + (to.position[0] - from.position[0]) * t,
-      from.position[1] + (to.position[1] - from.position[1]) * t,
-      from.position[2] + (to.position[2] - from.position[2]) * t,
-    ],
+    position: [at(0), at(1), at(2)],
     fov: from.fov + (to.fov - from.fov) * t,
   }
 }

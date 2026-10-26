@@ -2,6 +2,12 @@
  * Verified business facts only (docs/CLAUDE.md §1, §4).
  * Fields that are not yet confirmed by the client are left undefined on purpose.
  */
+/**
+ * The phone numbers supplied by the client (written 9515452875, 9515452876 and +91 95737 60438; the first
+ * two are given the same +91 country code as the third).
+ */
+const phones = ['+91 95154 52875', '+91 95154 52876', '+91 95737 60438'] as const
+
 export const site = {
   name: 'Visakram Builders',
   locality: 'Kommadi',
@@ -16,10 +22,14 @@ export const site = {
     ongoingProjects: 5,
   },
 
-  // --- Awaiting client confirmation. Do not guess. ---
-  phone: undefined as string | undefined,
-  whatsappNumber: undefined as string | undefined,
-  email: undefined as string | undefined,
+  // --- Phone numbers and email: supplied by the client. WhatsApp uses the first number (client request). ---
+  /** All the client-supplied phone numbers, in the order given. */
+  phones,
+  /** The first phone number (used where a single number is shown). */
+  phone: phones[0] as string | undefined,
+  /** The WhatsApp number: the first phone number supplied, as the client asked. */
+  whatsappNumber: phones[0] as string | undefined,
+  email: 'hello@visakrambuilders.com' as string | undefined,
   streetAddress: undefined as string | undefined,
   /** Production domain is unconfirmed (see docs/SEO-SPEC.md §14–15). */
   siteUrl: undefined as string | undefined,

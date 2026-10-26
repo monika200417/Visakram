@@ -546,6 +546,8 @@ Footage is added chapter by chapter (the first two are Exterior and Staircase).
 Real video on desktop (motion allowed); everything else gets a static block of
 stills with the chapters as text.
 
+**Current film (supplied Oct 2026):** a single 25.9 s, 1920×1080 walkthrough that starts inside the living room (there is no exterior shot). The shipped chapters are read off that footage and live in `src/data/homeTourFilm.ts`: 01 Living → 02 Kitchen → 03 Staircase → 04 Hallway → 05 Bedroom → 06 Balcony → 07 Ocean View → 08 Final Reveal (the Visakram mark over the sea). The list above is the original plan; the footage is the source of truth.
+
 ## Rules
 
 - No free camera, mouse-look, head bob, game movement or cuts.

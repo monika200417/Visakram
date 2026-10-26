@@ -1,0 +1,121 @@
+.section {
+  background: linear-gradient(180deg, var(--color-paper), var(--color-blush));
+  padding-block: var(--space-9);
+  border-top: 1px solid var(--color-border);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.heading {
+  font-size: clamp(2.75rem, 1.3rem + 5.2vw, 6rem);
+  line-height: 1;
+}
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.tile {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 14rem;
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-accent-strong);
+  border-radius: 6px;
+  background: rgb(255 252 245 / 70%);
+  transition:
+    transform var(--motion-editorial) var(--ease-standard),
+    box-shadow var(--motion-editorial) var(--ease-standard);
+}
+
+.tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgb(46 43 40 / 12%);
+}
+
+/* The tile's own picture, faint under the cream until the tile is hovered. */
+.photo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.22;
+  transition: opacity var(--motion-editorial) var(--ease-standard);
+}
+
+.tile:hover .photo {
+  opacity: 1;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background: var(--color-accent-strong);
+  color: var(--color-paper);
+}
+
+.icon svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.name {
+  transition: text-shadow var(--motion-editorial) var(--ease-standard);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h3);
+  line-height: var(--leading-snug);
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+/* Over the clear picture the name has no backing, just a light shine around the letters so it stays readable. */
+.tile:hover .name {
+  text-shadow:
+    0 0 2px rgb(255 252 245 / 100%),
+    0 0 8px rgb(255 252 245 / 95%),
+    0 0 18px rgb(255 252 245 / 85%);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    transition: none;
+  }
+
+  .tile:hover {
+    transform: none;
+  }
+
+  .photo,
+  .name {
+    transition: none;
+  }
+}

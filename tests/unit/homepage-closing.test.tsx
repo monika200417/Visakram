@@ -21,19 +21,27 @@ function section(name: string | RegExp) {
   return screen.getByRole('heading', { level: 2, name }).closest('section') as HTMLElement
 }
 
-describe('homepage closing — Chapters 12, 13 and 14', () => {
-  it('renders all three chapters as h2s, after Customer Stories and in order', () => {
+function renderStart() {
+  return render(
+    <MemoryRouter>
+      <StartProjectSection />
+    </MemoryRouter>,
+  )
+}
+
+describe('homepage closing — Chapters 12 and 14', () => {
+  it('renders both chapters as h2s, after Testimonials and in order', () => {
     renderHome()
-    const stories = screen.getByRole('heading', { level: 2, name: 'Customer stories.' })
-    const local = screen.getByRole('heading', { level: 2, name: /^Building across/ })
-    const start = screen.getByRole('heading', { level: 2, name: 'Start your project.' })
+    const stories = screen.getByRole('heading', { level: 2, name: 'What our clients say.' })
+    const local = screen.getByRole('heading', { level: 2, name: /^Building Across/ })
     const closing = screen.getByRole('heading', { level: 2, name: 'Let’s build what lasts.' })
 
     const follows = (a: Element, b: Element) =>
       Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING)
     expect(follows(stories, local)).toBe(true)
-    expect(follows(local, start)).toBe(true)
-    expect(follows(start, closing)).toBe(true)
+    expect(follows(local, closing)).toBe(true)
+    // the Start a Project chapter is not on the homepage
+    expect(screen.queryByRole('heading', { name: 'Start your project.' })).not.toBeInTheDocument()
 
     // still exactly one h1 on the page, and no heading level skipped by the new chapters
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
@@ -50,7 +58,7 @@ describe('homepage closing — Chapters 12, 13 and 14', () => {
 
   it('leaves no placeholder text or dev markers in the new chapters', () => {
     renderHome()
-    for (const heading of [/^Building across/, 'Start your project.', 'Let’s build what lasts.']) {
+    for (const heading of [/^Building Across/, 'Let’s build what lasts.']) {
       const el = section(heading)
       expect(el.querySelector('[data-dev-placeholder]')).toBeNull()
       expect(el.textContent).not.toMatch(/pending|awaiting|placeholder|lorem/i)
@@ -59,39 +67,41 @@ describe('homepage closing — Chapters 12, 13 and 14', () => {
 })
 
 describe('Chapter 12 — Local Presence', () => {
-  it('states the verified base and service areas from site.ts, and nothing more', () => {
+  it('shows only the client-supplied statement, without the base or the area list', () => {
     renderHome()
-    const el = section(/^Building across/)
+    const el = section(/^Building Across/)
     const scoped = within(el)
 
-    expect(scoped.getByText('12 — Local Presence')).toBeInTheDocument()
     expect(
-      scoped.getByRole('heading', {
-        level: 2,
-        name: `Building across ${site.serviceAreas.join(' and ')}.`,
-      }),
+      scoped.getByRole('heading', { level: 2, name: 'Building Across Andhra Pradesh.' }),
     ).toBeInTheDocument()
-    expect(scoped.getByText(`${site.locality}, ${site.city}`)).toBeInTheDocument()
-    expect(scoped.getByText(site.region)).toBeInTheDocument()
-
-    const areas = scoped.getAllByRole('listitem').map((li) => li.textContent)
-    expect(areas).toEqual(site.serviceAreas.map((area, i) => `0${i + 1}${area}`))
+    expect(scoped.getByText(/Driven by visionary development/)).toBeInTheDocument()
+    expect(scoped.getByText(/how Andhra Pradesh lives, works, and grows/)).toBeInTheDocument()
+    // the earlier base-and-areas panel is gone
+    expect(scoped.queryAllByRole('listitem')).toHaveLength(0)
+    expect(scoped.queryByText(site.locality)).not.toBeInTheDocument()
+    expect(el.textContent).not.toMatch(/Kommadi|Vizianagaram/)
   })
 
   it('invents no map, distance, office, branch or per-area figure', () => {
     renderHome()
-    const el = section(/^Building across/)
+    const el = section(/^Building Across/)
     expect(within(el).queryAllByRole('img')).toHaveLength(0)
-    expect(el.querySelector('svg, canvas, iframe')).toBeNull()
+    expect(el.querySelector('canvas, iframe')).toBeNull()
+    // the only drawing is the decorative arrow between the heading and the statement
+    expect(
+      Array.from(el.querySelectorAll('svg')).every(
+        (svg) => svg.getAttribute('aria-hidden') === 'true',
+      ),
+    ).toBe(true)
     expect(el.textContent).not.toMatch(/\bkm\b|miles?|minutes?|office|branch|headquarter/i)
-    // the only digits are the 01/02 list indexes and the "12" chapter number
-    expect((el.textContent ?? '').replace(/12 — Local Presence|0[12]/g, '')).not.toMatch(/\d/)
+    expect(el.textContent ?? '').not.toMatch(/\d/)
   })
 })
 
-describe('Chapter 13 — Start a Project', () => {
+describe('Chapter 13 — Start a Project (section kept, not on the homepage)', () => {
   it('uses the existing primary CTA into the existing contact experience', () => {
-    renderHome()
+    renderStart()
     const el = section('Start your project.')
     expect(within(el).getByRole('link', { name: primaryCta.label })).toHaveAttribute(
       'href',
@@ -102,21 +112,20 @@ describe('Chapter 13 — Start a Project', () => {
     expect(el.querySelector('form, input, textarea, select')).toBeNull()
   })
 
-  it('shows no phone, WhatsApp or email channel while those are unverified — and no broken links', () => {
-    renderHome()
+  it('offers the first supplied phone number and WhatsApp on it — and no broken links', () => {
+    renderStart()
     const el = section('Start your project.')
-    expect(site.phone).toBeUndefined()
-    expect(site.whatsappNumber).toBeUndefined()
-    expect(within(el).queryByRole('list', { name: 'Contact choices' })).not.toBeInTheDocument()
+    expect(site.whatsappNumber).toBe(site.phone)
     for (const link of within(el).getAllByRole('link')) {
       const href = link.getAttribute('href') ?? ''
-      expect(href).not.toMatch(/^(tel:|mailto:|https:\/\/wa\.me)/)
+      if (href.includes('wa.me')) expect(href).toMatch(/^https:\/\/wa\.me\/919515452875/)
       expect(href).not.toMatch(/undefined|null/)
     }
+    expect(within(el).getByRole('link', { name: `Call ${site.phone}` })).toBeInTheDocument()
   })
 
   it('makes no price, budget, response-time or availability claim', () => {
-    renderHome()
+    renderStart()
     const text = section('Start your project.').textContent ?? ''
     expect(text).not.toMatch(
       /₹|\brs\.?\b|price|pricing|budget|free\b|quote|within|hours?|respond|reply|available|guarantee/i,

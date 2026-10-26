@@ -1,0 +1,79 @@
+.section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-paper), var(--color-blush));
+  padding-block: var(--space-9);
+  border-top: 1px solid var(--color-border);
+}
+
+/* The Visakram logo as a watermark: one large mark centred behind the story, kept very faint with
+   opacity and blended into the cream with multiply. A background, not an image in the page. */
+.section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('/assets/brand/visakram-logo-dark.svg') center / min(92%, 1100px) auto no-repeat;
+  opacity: 0.07;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  max-width: 52rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.heading {
+  font-size: var(--text-h2);
+  max-width: 18ch;
+  overflow-wrap: break-word;
+}
+
+.tagline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h3);
+  line-height: var(--leading-snug);
+  color: var(--color-accent-strong);
+}
+
+.lead {
+  margin: var(--space-4) 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-body-l);
+  line-height: var(--leading-snug);
+  max-width: 34ch;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-size: var(--text-body-l);
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+
+.body p {
+  margin: 0;
+}
+
+.closing {
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h3);
+  line-height: var(--leading-snug);
+  max-width: 28ch;
+}

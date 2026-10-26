@@ -2,52 +2,28 @@ import { useLayoutEffect, type RefObject } from 'react'
 import { loadGsap, type GsapMatchMedia } from '../../../animations/gsap'
 import { getActiveStageIndex } from '../../../data/fromPlanToPlace'
 
-type ProgressRef = RefObject<{ value: number }>
+/**
+ * The internal 0→1 progress finishes at this fraction of the pin's own scroll
+ * distance; the remainder holds the last stage briefly before the pin releases, so the
+ * final stage is never yanked away the instant it is reached.
+ */
+const HOLD_START = 0.9
 
 /**
- * The internal 0→1 animation finishes at this fraction of the pin's own
- * scroll distance; the remainder holds the completed PLACE composition
- * (camera + construction progress both stay clamped at 1) before the pin
- * releases, so the finished building is never yanked away the instant it
- * completes — "hold the final PLACE composition briefly, then release
- * naturally into the next section."
- */
-const HOLD_START = 0.88
-
-/**
- * Drives the From Plan to Place chapter's scroll story (Milestone 10 §8,
- * §9, §22; revised §22 to fix a pinned-viewport overflow bug). Desktop +
- * no-reduced-motion only, mirroring useVisakramWayScrub / useHeroSceneScrub:
- * a single controlled pin, scrubbed by native scroll (`scrub: 1`), never
- * scroll-jacked. Mobile and reduced motion never run this hook at all —
- * FromPlanToPlaceSection renders the static HTML/CSS fallback for those
- * instead, so this hook has nothing to do there.
+ * Drives the From Plan to Place chapter's scroll emphasis. Desktop +
+ * no-reduced-motion only, mirroring useVisakramWayScrub / useHeroSceneScrub: a single
+ * controlled pin, scrubbed by native scroll (`scrub: 1`), never scroll-jacked. Mobile,
+ * tablet and reduced motion never run this at all — every stage is simply shown in full.
  *
- * `panelRef` is the ~100svh pinned viewport (FromPlanToPlaceSection's
- * `.pinnedViewport` wrapper around the visual + stage-text composition),
- * not the outer `<section>`. The outer section holds the chapter's
- * intro copy (eyebrow/heading/disclaimer) in normal flow above the panel
- * and supplies the scroll distance GSAP's pin spacer needs — but it is
- * itself taller than one viewport, so pinning it directly (the previous
- * approach) left part of the composition permanently off-screen for the
- * whole scrub. Pinning the viewport-sized panel instead means everything
- * inside it is always fully on screen, at any tested viewport size, by
- * construction (see FromPlanToPlaceSection.module.css's desktop block).
- *
- * On every scrub tick this writes a normalized 0–1 progress value into
- * `progressRef.current.value` (read by BuildingScene's useFrame loop) and
- * toggles a `data-active` attribute on the matching HTML stage item —
- * both are direct, imperative mutations. Neither ever calls setState, so
- * scrolling this chapter never triggers a React render
- * (docs/ANIMATION-SYSTEM.md §29 non-negotiable #8). Text, camera and
- * construction geometry all read the same `progressRef` value (via
- * `activeIndex`, computed from it below), so they can never drift out of
- * sync with each other.
+ * `panelRef` is the ~100svh pinned viewport (the section's `.pinnedViewport`: title,
+ * caption, the six stages and the video together), so everything in it is always fully
+ * on screen while pinned. On every scrub tick this moves a `data-active` attribute (and
+ * `aria-current`) onto the stage that scroll position maps to — a direct, imperative
+ * mutation that never calls setState, so scrolling the chapter never triggers a React
+ * render (docs/ANIMATION-SYSTEM.md §29 non-negotiable #8). It does not touch the video,
+ * which autoplays on its own.
  */
-export function useFromPlanToPlaceScrub(
-  panelRef: RefObject<HTMLElement | null>,
-  progressRef: ProgressRef,
-) {
+export function useFromPlanToPlaceScrub(panelRef: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => {
     const panel = panelRef.current
     if (!panel || typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -67,45 +43,37 @@ export function useFromPlanToPlaceScrub(
         const items = q('[data-stage-item]')
         if (items.length === 0) return
 
-        let lastActiveIndex = -1
-
-        // Opt the list into the stacked single-stage layout. Only set while
-        // this (desktop, motion-ok) branch is active, so the static
-        // fallback and reduced motion keep the plain readable list.
+        // Opt the list into the single-open-stage layout. Only set while this (desktop,
+        // motion-ok) branch is active, so every other visit keeps the plain full list.
         const list = panel.querySelector('[data-stage-list]')
         list?.setAttribute('data-scrubbing', 'true')
 
-        // Initialize before the first scrub tick so there is no flash of
-        // every stage stacked/visible before GSAP/ScrollTrigger settles.
-        items.forEach((item, index) => {
-          const active = index === 0
-          item.setAttribute('data-active', String(active))
-          item.setAttribute('aria-hidden', String(!active))
-        })
-        lastActiveIndex = 0
+        const setActive = (activeIndex: number) => {
+          items.forEach((item, index) => {
+            const active = index === activeIndex
+            item.setAttribute('data-active', String(active))
+            if (active) item.setAttribute('aria-current', 'step')
+            else item.removeAttribute('aria-current')
+          })
+        }
+
+        // Initialize before the first scrub tick so there is no flash of every stage open.
+        let lastActiveIndex = 0
+        setActive(0)
 
         gsap.timeline({
           scrollTrigger: {
             trigger: panel,
             start: 'top top',
-            end: '+=160%',
+            end: '+=220%',
             scrub: 1,
             pin: true,
             onUpdate: (self) => {
-              // The internal animation reaches 1 at HOLD_START of the
-              // pin's own scroll distance, then stays clamped at 1 for
-              // the rest — the "brief hold" on the finished composition.
-              const animatedProgress = Math.min(1, self.progress / HOLD_START)
-              progressRef.current.value = animatedProgress
-
-              const activeIndex = Math.min(items.length - 1, getActiveStageIndex(animatedProgress))
+              const progress = Math.min(1, self.progress / HOLD_START)
+              const activeIndex = Math.min(items.length - 1, getActiveStageIndex(progress))
               if (activeIndex === lastActiveIndex) return
               lastActiveIndex = activeIndex
-              items.forEach((item, index) => {
-                const active = index === activeIndex
-                item.setAttribute('data-active', String(active))
-                item.setAttribute('aria-hidden', String(!active))
-              })
+              setActive(activeIndex)
             },
           },
         })
@@ -114,7 +82,7 @@ export function useFromPlanToPlaceScrub(
           list?.removeAttribute('data-scrubbing')
           items.forEach((item) => {
             item.removeAttribute('data-active')
-            item.removeAttribute('aria-hidden')
+            item.removeAttribute('aria-current')
           })
         }
       })
@@ -124,5 +92,5 @@ export function useFromPlanToPlaceScrub(
       cancelled = true
       mm?.revert()
     }
-  }, [panelRef, progressRef])
+  }, [panelRef])
 }

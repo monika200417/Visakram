@@ -49,7 +49,7 @@ h4 {
   font-family: var(--font-display);
   font-weight: 600;
   line-height: var(--leading-tight);
-  color: var(--color-text);
+  color: var(--color-heading);
 }
 
 h1 {
@@ -73,6 +73,8 @@ small,
 }
 
 .text-mono-label {
+  /* gold-toned by default; sections set their own colour where the ground needs a different one */
+  color: var(--color-bay);
   font-family: var(--font-mono);
   font-size: var(--text-mono-label);
   letter-spacing: var(--tracking-label);
@@ -147,4 +149,21 @@ button {
   border: 1px dashed var(--color-accent);
   padding: var(--space-3) var(--space-4);
   display: inline-block;
+}
+
+/* The site cursor (components/cursor/SiteCursor.tsx) replaces the arrow once a mouse has moved.
+   data-cursor is set on <html> by that component only on devices with a real pointer. Text fields
+   keep the native I-beam. */
+html[data-cursor='on'],
+html[data-cursor='on'] * {
+  cursor: none;
+}
+
+html[data-cursor='on']
+  :is(
+    input:not([type='button'], [type='submit'], [type='checkbox'], [type='radio']),
+    textarea,
+    select
+  ) {
+  cursor: text;
 }

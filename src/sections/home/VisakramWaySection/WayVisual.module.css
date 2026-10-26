@@ -2,28 +2,28 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background-color: #0c0b09;
+  background-color: #1a1816;
 }
 
 /* Per-chapter atmosphere: warm key light over a near-black environment. */
 .quality {
   background-image:
-    radial-gradient(ellipse at 76% 40%, rgb(201 164 92 / 15%), transparent 56%),
-    linear-gradient(180deg, #0d0c0a, #16130e);
+    radial-gradient(ellipse at 76% 40%, rgb(205 191 166 / 15%), transparent 56%),
+    linear-gradient(180deg, #1a1816, #24211e);
 }
 
 .timeliness {
   background-image:
-    radial-gradient(ellipse at 92% 6%, rgb(222 150 64 / 36%), transparent 48%),
-    radial-gradient(ellipse at 68% 46%, rgb(201 164 92 / 9%), transparent 62%),
-    linear-gradient(180deg, #0b0a08, #15110b 75%);
+    radial-gradient(ellipse at 92% 6%, rgb(196 68 31 / 36%), transparent 48%),
+    radial-gradient(ellipse at 68% 46%, rgb(205 191 166 / 9%), transparent 62%),
+    linear-gradient(180deg, #181614, #22201d 75%);
 }
 
 .transparency {
   background-image:
-    radial-gradient(ellipse at 72% 30%, rgb(201 164 92 / 15%), transparent 54%),
+    radial-gradient(ellipse at 72% 30%, rgb(205 191 166 / 15%), transparent 54%),
     radial-gradient(circle at 24% 86%, rgb(118 138 88 / 7%), transparent 42%),
-    linear-gradient(180deg, #0d0d0a, #16140e);
+    linear-gradient(180deg, #1a1816, #24211e);
 }
 
 .media {
@@ -46,7 +46,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at 66% 46%, rgb(214 166 84 / 20%), transparent 60%);
+  background: radial-gradient(ellipse at 66% 46%, rgb(205 191 166 / 20%), transparent 60%);
 }
 
 /* Static film grain gives every surface tooth (plain alpha noise — no blend mode, so nothing re-blends per frame). */

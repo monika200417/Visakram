@@ -1,140 +1,208 @@
-.section {
-  padding-block: var(--space-9);
-  background: var(--color-ink);
-  color: var(--color-paper);
-}
-
-.container {
-  position: relative;
-}
-
-.eyebrow {
-  display: block;
-  color: var(--color-stone);
-}
-
-.heading {
-  margin-top: var(--space-5);
-  font-size: var(--text-display-l);
-  color: var(--color-paper);
-  max-width: 18ch;
-}
-
-.disclaimer {
-  margin-top: var(--space-4);
-  max-width: 48ch;
-  font-size: var(--text-small);
-  color: var(--color-stone);
-  line-height: var(--leading-normal);
-}
-
 /*
- * The pinned cinematic viewport (Milestone 10 §22 revision — "pinned
- * cinematic storytelling chapter", fixing a bug where the previously-
- * pinned element (the whole `<section>`, taller than one viewport once
- * the eyebrow/heading/disclaimer/6 stages/large visual were all
- * counted) left part of the composition permanently off-screen for the
- * whole pinned scroll). On mobile/tablet this is an unstyled wrapper —
- * no height, no flex — so `.stage` below it lays out exactly as it
- * always has: one normal, fully-static, scrolling block, no pin
- * involved at all. At desktop widths (below) it becomes the element
- * useFromPlanToPlaceScrub actually pins, capped to ~100svh so its own
- * content can never be taller than the screen while pinned. The outer
- * `<section>` supplies the scroll distance: it stays in normal flow,
- * carries the intro copy above this viewport, and — once GSAP inserts
- * its pin spacer here — extends well past one viewport so the scrub has
- * room to breathe.
+ * From Plan to Place — an editorial two-column composition. Left: the chapter's title,
+ * its caption and the six methodology stages as a quiet timeline. Right: the supplied
+ * walkthrough video at its own 16:9 shape, the visual anchor. Below 768px everything
+ * stacks (title and caption, the video, then the stages); from 768px the columns sit
+ * side by side; from 1024px, with motion allowed, the whole composition is one pinned
+ * viewport (see useFromPlanToPlaceScrub) and the stage emphasis follows the scroll.
  */
+.section {
+  --plan-gold: var(--color-lac-deep);
+
+  padding-block: var(--space-9);
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
 .pinnedViewport {
+  /* Unstyled below 1024px: a plain wrapper, no height, no pin. */
 }
 
 .stage {
-  margin-top: var(--space-8);
   display: flex;
   flex-direction: column;
   gap: var(--space-7);
 }
 
+/* Narrow screens: the title and caption, the video, then the stages. */
+.copy {
+  display: contents;
+}
+
+.intro {
+  order: 1;
+}
+
 .visual {
+  order: 2;
+}
+
+.list {
+  order: 3;
+}
+
+.heading {
+  margin-top: var(--space-4);
+  font-size: clamp(2.25rem, 1.4rem + 3.2vw, 3.75rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  color: var(--color-ink);
+  max-width: 14ch;
+}
+
+.caption {
+  margin-top: var(--space-4);
+  max-width: 40ch;
+  font-size: var(--text-body-l);
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+/* --- The video -------------------------------------------------------- */
+.visual {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.media {
   position: relative;
-  height: 56vh;
-  min-height: 340px;
-  border: 1px solid rgb(244 241 234 / 14%);
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-charcoal);
+  border: 1px solid rgb(46 43 40 / 18%);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   background: var(--color-charcoal);
 }
 
-.visual canvas {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
+.disclaimer {
+  max-width: 56ch;
+  font-size: var(--text-small);
+  line-height: var(--leading-normal);
+  color: var(--color-muted);
 }
 
+/* --- The six stages --------------------------------------------------- */
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 .item {
-  border-top: 1px solid rgb(244 241 234 / 14%);
-  padding-top: var(--space-5);
-  opacity: 1;
-  transition: opacity var(--motion-ui) var(--ease-standard);
+  position: relative;
+  padding-left: var(--space-5);
 }
 
-.item:first-child {
-  border-top: 0;
-  padding-top: 0;
+/* The timeline rule: a faint line for every stage, and a red one that draws on the current stage. */
+.item::before,
+.item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.item::before {
+  background: rgb(46 43 40 / 18%);
+}
+
+.item::after {
+  background: var(--color-lac);
+  box-shadow: 0 0 10px var(--color-lac-glow);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform var(--motion-editorial) var(--ease-enter);
 }
 
 .itemIndex {
-  color: var(--color-terracotta);
+  display: block;
+  color: var(--color-muted);
+  transition: color var(--motion-editorial) var(--ease-standard);
 }
 
 .itemTitle {
-  margin: var(--space-2) 0 0;
+  margin: var(--space-1) 0 0;
   font-size: var(--text-h3);
-  color: var(--color-paper);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.itemBody {
+  display: grid;
+  grid-template-rows: 1fr;
 }
 
 .itemDescription {
+  overflow: hidden;
+  min-height: 0;
   margin-top: var(--space-2);
-  color: var(--color-stone);
-  font-size: var(--text-body-l);
-  max-width: 46ch;
+  max-width: 44ch;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* --- Tablet: columns side by side, nothing pinned, every stage in full --- */
+@media (min-width: 768px) {
+  .section {
+    padding-block: var(--space-10);
+  }
+
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(240px, 36%) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-6);
+  }
+
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+    min-width: 0;
+  }
+
+  .intro,
+  .list,
+  .visual {
+    order: 0;
+  }
+
+  /* The tall list scrolls past while the video stays in view beside it. */
+  .visual {
+    position: sticky;
+    top: var(--space-6);
+  }
 }
 
 /*
- * Desktop layout: the visual is the dominant object (~62% of the row),
- * the stage text is a narrower editorial column (~38%). Every element
- * from `.pinnedViewport` down to `.visual`/`.list` is given a definite,
- * fully-resolved height in this block (100svh -> 100% -> 100% -> 100%),
- * so the whole composition is *structurally* incapable of exceeding the
- * pinned viewport at any tested size — this is not tuned to specific
- * numbers, it is guaranteed by the box model. This replaces the
- * previous approach, where `.visual` claimed an independent
- * viewport-relative height (72vh, capped 560–780px) that had nothing to
- * do with how tall the pinned element actually was. The building/camera
- * are unchanged; only how much screen real estate this pane is given
- * changed.
- *
- * DOM order keeps .visual first for a sane reading order without
- * JS/GSAP, so the wide/narrow split is assigned purely with explicit
- * grid-column placement rather than reordering markup.
- *
- * Only one stage's title/description is visible at a time, stacked in
- * the exact same fixed editorial spot (`.item[data-active='true']`).
- * useFromPlanToPlaceScrub toggles which one via the same `data-active`
- * attribute it already wrote (now also mirrored to `aria-hidden`), so
- * text, camera and construction stage are always driven by the same
- * progress value and can never fall out of sync with each other —
- * there is no separate "list scrolls past a sticky column" mechanism
- * left to desync.
+ * Desktop with motion: one pinned viewport. The visual runs to the container's right
+ * edge, so the video carries most of the weight (about 60% of the row); the stages
+ * are a narrower column on the left, and only the current stage is open — the others
+ * stay visible as a quieter heading, so the whole column always fits the screen.
  */
 @media (min-width: 1024px) {
+  .section {
+    padding-block: 0;
+  }
+
   .pinnedViewport {
     height: 100svh;
     display: flex;
@@ -143,68 +211,111 @@
   .pinnedContainer {
     height: 100%;
     display: grid;
-    padding-block: var(--space-6);
+    /* the sticky site header covers the top of the pinned viewport, so the composition starts below it */
+    padding-block: calc(var(--header-height) + var(--space-1)) var(--space-4);
   }
 
   .stage {
-    margin-top: 0;
-    display: grid;
-    grid-template-columns: minmax(280px, 38%) 1fr;
-    align-items: stretch;
-    gap: var(--space-9);
     height: 100%;
     width: 100%;
+    grid-template-columns: minmax(300px, 36%) minmax(0, 1fr);
+    gap: var(--space-7);
+  }
+
+  .copy {
+    justify-content: center;
+    gap: var(--space-4);
+    height: 100%;
+  }
+
+  .stage {
+    align-items: center;
   }
 
   .visual {
-    grid-column: 2;
-    grid-row: 1;
-    height: 100%;
-    min-height: 320px;
+    position: static;
+    margin-right: calc(-1 * var(--page-padding));
+  }
+
+  .heading {
+    max-width: none;
+    font-size: clamp(1.75rem, 0.9rem + 1.7vw, 3rem);
+  }
+
+  .caption {
+    font-size: var(--text-body);
+    line-height: 1.5;
+  }
+
+  .itemTitle {
+    font-size: clamp(1.125rem, 0.9rem + 0.7vw, 1.5rem);
+  }
+
+  .itemDescription {
+    font-size: var(--text-small);
   }
 
   .list {
-    grid-column: 1;
-    grid-row: 1;
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    gap: var(--space-2);
   }
 
   /*
-   * Single-stage editorial viewport. Applies only while the scrub hook is
-   * live (`data-scrubbing`), so reduced motion / no-JS keep the plain
-   * readable list. Every item is absolutely stacked in the same spot —
-   * none contribute layout height — and only the `data-active='true'` one
-   * is visible. Inactive items are also aria-hidden (set by the hook), so
-   * assistive tech reads just the current stage.
+   * Live only while the scrub hook is (data-scrubbing), so reduced motion and no-JS keep
+   * every stage open. The current stage is full strength with a red rule; the others are
+   * quieter and closed to their heading; the entering stage opens with a small rise, a
+   * fade and a blur that sharpens.
    */
   .list[data-scrubbing='true'] .item {
-    border-top: 0;
-    padding-top: 0;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    opacity: 0;
-    transform: translateY(calc(-50% + 12px));
-    pointer-events: none;
-    transition:
-      opacity 480ms var(--ease-standard),
-      transform 480ms var(--ease-standard);
+    opacity: 0.4;
+    transition: opacity var(--motion-editorial) var(--ease-standard);
   }
 
   .list[data-scrubbing='true'] .item[data-active='true'] {
     opacity: 1;
-    transform: translateY(-50%);
-    pointer-events: auto;
+  }
+
+  .list[data-scrubbing='true'] .item[data-active='true']::after {
+    transform: scaleY(1);
+  }
+
+  .list[data-scrubbing='true'] .item[data-active='true'] .itemIndex {
+    color: var(--plan-gold);
+  }
+
+  .list[data-scrubbing='true'] .itemBody {
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--motion-editorial) var(--ease-standard);
+  }
+
+  .list[data-scrubbing='true'] .item[data-active='true'] .itemBody {
+    grid-template-rows: 1fr;
+  }
+
+  .list[data-scrubbing='true'] .itemDescription {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+    transition:
+      opacity var(--motion-ui) var(--ease-standard),
+      transform var(--motion-ui) var(--ease-standard),
+      filter var(--motion-ui) var(--ease-standard);
+  }
+
+  .list[data-scrubbing='true'] .item[data-active='true'] .itemDescription {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+    transition-duration: var(--motion-editorial);
+    transition-timing-function: var(--ease-enter);
+    transition-delay: 0.15s;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .item {
+  .item::after,
+  .itemIndex,
+  .itemBody,
+  .itemDescription {
     transition: none;
   }
 }

@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
+import { site } from '../../src/data/site'
+import { telHref } from '../../src/utils/telHref'
 
 function renderAt(path: string) {
   return render(
@@ -25,14 +27,22 @@ describe('global shell', () => {
     expect(within(header).getByRole('link', { name: 'Start a Project' })).toBeInTheDocument()
   })
 
-  it('renders the footer without inventing unverified contact details', () => {
+  it('renders the footer with the client-supplied phone numbers and email, and nothing else', () => {
     renderAt('/')
     const footer = screen.getByRole('contentinfo')
     expect(within(footer).getByText(/visakram builders/i)).toBeInTheDocument()
     expect(within(footer).getByText('Kommadi, Visakhapatnam')).toBeInTheDocument()
-    // Phone/email are undefined in src/data/site.ts until verified — must not appear.
-    expect(within(footer).queryByRole('link', { name: /tel:/i })).not.toBeInTheDocument()
-    expect(within(footer).queryByText(/@/)).not.toBeInTheDocument()
+    for (const phone of site.phones) {
+      expect(within(footer).getByRole('link', { name: phone })).toHaveAttribute(
+        'href',
+        telHref(phone),
+      )
+    }
+    expect(within(footer).getByRole('link', { name: site.email as string })).toHaveAttribute(
+      'href',
+      `mailto:${site.email}`,
+    )
+    expect(within(footer).queryByRole('link', { name: /whatsapp/i })).not.toBeInTheDocument()
   })
 
   it('keeps the skip link as the first focusable element', () => {
@@ -66,5 +76,18 @@ describe('global shell', () => {
   it('does not duplicate the h1 across pages with the shell mounted', () => {
     renderAt('/services')
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
+})
+
+describe('footer credit', () => {
+  it('credits Samify with a safe external link and a call to action', () => {
+    renderAt('/')
+    const footer = screen.getByRole('contentinfo')
+    const link = within(footer).getByRole('link', { name: /powered by samify/i })
+    expect(link).toHaveAttribute('href', 'https://samify.co.in/')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link.getAttribute('rel')).toContain('noopener')
+    expect(within(footer).getByText('samify.co.in')).toBeInTheDocument()
+    expect(within(footer).getByText(/visit samify to build your website/i)).toBeInTheDocument()
   })
 })

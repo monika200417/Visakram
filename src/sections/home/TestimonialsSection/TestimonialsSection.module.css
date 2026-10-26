@@ -1,0 +1,425 @@
+/*
+ * Testimonials — a light band of tall photo cards drifting right to left. Each card is a
+ * photograph with its stars, build type and a ringed monogram pinned to it, and
+ * a white panel below carrying the headline, the feedback and who said it. Alternate cards
+ * sit a little lower, so the strip reads as a skyline rather than a row.
+ */
+.section {
+  --card-w: clamp(17.5rem, 82vw, 25rem);
+  --card-gap: var(--space-5);
+
+  padding-block: var(--space-9) var(--space-10);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  overflow: hidden;
+  border-top: 1px solid rgb(46 43 40 / 18%);
+}
+
+/* --- Header ----------------------------------------------------------- */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.heading {
+  margin-top: var(--space-4);
+  font-size: clamp(2.25rem, 1.4rem + 3.2vw, 4rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.014em;
+  color: var(--color-ink);
+  max-width: 18ch;
+}
+
+.sub {
+  margin-top: var(--space-4);
+  max-width: 46ch;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.counter {
+  min-width: 5.5ch;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  letter-spacing: var(--tracking-label);
+  color: var(--color-muted);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 1px solid var(--color-lac);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-lac);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-ui) var(--ease-standard),
+    border-color var(--motion-ui) var(--ease-standard),
+    color var(--motion-ui) var(--ease-standard),
+    transform var(--motion-micro) var(--ease-standard);
+}
+
+.button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.button .solid {
+  fill: currentColor;
+  stroke: none;
+}
+
+.button:hover {
+  background: var(--color-lac);
+  border-color: var(--color-lac);
+  color: #fff;
+}
+
+.button:active {
+  transform: scale(0.94);
+}
+
+/* --- Progress hairline -------------------------------------------------- */
+.progress {
+  position: relative;
+  height: 1px;
+  margin: var(--space-6) var(--page-padding) var(--space-5);
+  background: rgb(46 43 40 / 18%);
+}
+
+.progressBar {
+  position: absolute;
+  inset: 0;
+  background: var(--color-lac);
+  box-shadow: 0 0 10px var(--color-lac-glow);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* --- The strip ----------------------------------------------------------- */
+.viewport {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--space-6) var(--space-7);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  /* the strip fades into the page at both edges */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+
+.viewport[data-dragging='true'] {
+  cursor: grabbing;
+}
+
+.track {
+  display: flex;
+  gap: var(--card-gap);
+  width: max-content;
+  padding-inline: var(--page-padding);
+  will-change: transform;
+}
+
+/* --- A card --------------------------------------------------------------- */
+.card {
+  position: relative;
+  flex: 0 0 var(--card-w);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border: 1px solid rgb(46 43 40 / 18%);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition:
+    transform var(--motion-editorial) var(--ease-enter),
+    border-color var(--motion-ui) var(--ease-standard),
+    box-shadow var(--motion-editorial) var(--ease-standard);
+}
+
+/* The skyline rhythm. */
+.card:nth-child(even) {
+  margin-top: var(--space-6);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--color-lac);
+  box-shadow:
+    0 28px 48px -24px rgb(46 43 40 / 35%),
+    0 0 28px -6px var(--color-lac-glow);
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 3 / 2;
+}
+
+/* The photograph is clipped; the avatar hangs below it, so the media box itself is not. */
+.frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1400ms var(--ease-enter);
+}
+
+.media::before {
+  /* keeps the badge and stars legible on bright photographs */
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgb(46 43 40 / 52%) 0%,
+    rgb(74 99 96 / 12%) 38%,
+    rgb(74 99 96 / 0%) 100%
+  );
+  pointer-events: none;
+}
+
+.card:hover .photo {
+  transform: scale(1.07);
+}
+
+.badge {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-4);
+  left: var(--space-4);
+  padding: 0.35rem 0.7rem;
+  background: var(--color-ink);
+  color: var(--color-sandalwood-dim);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.stars {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: inline-flex;
+  gap: 2px;
+  filter: drop-shadow(0 1px 6px rgb(0 0 0 / 55%));
+}
+
+.stars svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.starOn {
+  fill: var(--color-sandalwood-dim);
+}
+
+.starOff {
+  fill: rgb(244 236 220 / 28%);
+}
+
+.avatar {
+  position: absolute;
+  z-index: 3;
+  left: var(--space-5);
+  bottom: calc(-1 * var(--space-6));
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-sandalwood-dim);
+  box-shadow: 0 0 0 4px var(--color-white);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.tone_terracotta {
+  background: var(--color-lac);
+  color: var(--color-paper);
+}
+
+.tone_gold {
+  background: var(--color-sandalwood-dim);
+  color: var(--color-ink);
+}
+
+.tone_stone {
+  background: var(--color-stone);
+  color: var(--color-ink);
+}
+
+.tone_paper {
+  background: var(--color-paper);
+  color: var(--color-lac-deep);
+}
+
+.body {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: calc(var(--space-6) + var(--space-3)) var(--space-5) var(--space-5);
+}
+
+.index {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-5);
+  color: var(--color-muted);
+}
+
+.quote {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.05rem + 0.5vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.feedback {
+  margin: 0;
+  font-size: var(--text-small);
+  line-height: 1.7;
+  color: var(--color-muted);
+}
+
+.foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: var(--space-4);
+  border-top: 1px solid rgb(46 43 40 / 18%);
+}
+
+.name {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.designation {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.where {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-bay);
+}
+
+.where svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  fill: currentColor;
+}
+
+/* A red rule that draws along the card's foot on hover. */
+.rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--color-lac);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--motion-cinematic) var(--ease-enter);
+}
+
+.card:hover .rule {
+  transform: scaleX(1);
+}
+
+/* --- Wider screens ---------------------------------------------------------- */
+@media (min-width: 768px) {
+  .section {
+    --card-w: 23rem;
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-8);
+  }
+
+  .controls {
+    flex-shrink: 0;
+    padding-bottom: var(--space-2);
+  }
+}
+
+@media (min-width: 1280px) {
+  .section {
+    --card-w: 25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .photo,
+  .rule,
+  .button {
+    transition: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+
+  .card:hover .photo {
+    transform: none;
+  }
+}

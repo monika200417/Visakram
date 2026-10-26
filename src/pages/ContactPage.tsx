@@ -5,9 +5,11 @@ import { useRevealOnScroll } from '../animations/useRevealOnScroll'
 import { useDocumentMeta } from '../hooks/useDocumentMeta'
 import { buildContactSeo } from '../utils/contactSeo'
 import { buildWhatsAppUrl } from '../utils/buildWhatsAppUrl'
+import { telHref } from '../utils/telHref'
 import { formatList } from '../utils/formatList'
 import { site } from '../data/site'
 import styles from './ContactPage.module.css'
+import { Heading } from '../components/heading/Heading'
 
 /**
  * /contact — Milestone 9. The site's primary conversion page: a real,
@@ -44,10 +46,9 @@ export function ContactPage() {
         <Container>
           <div ref={heroRef} className={styles.heroGrid}>
             <div className={styles.heroContext}>
-              <p className={`text-mono-label ${styles.eyebrow}`}>01 — Start a Project</p>
-              <h1 id="contact-hero-heading" className={styles.heroHeading}>
+              <Heading as="h1" id="contact-hero-heading" className={styles.heroHeading}>
                 Start a project.
-              </h1>
+              </Heading>
               <p className={styles.heroSupporting}>
                 Share the details of your villa, apartment or residential construction project below
                 — we build across {formatList(site.serviceAreas)}.
@@ -69,19 +70,18 @@ export function ContactPage() {
       {hasDirectContact && (
         <section className={styles.section} aria-labelledby="contact-direct-heading">
           <Container>
-            <p className={`text-mono-label ${styles.eyebrow}`}>02 — Reach Us Directly</p>
             <div ref={directRef} className={styles.directInner}>
-              <h2 id="contact-direct-heading" className={styles.sectionHeading}>
+              <Heading as="h2" id="contact-direct-heading" className={styles.sectionHeading}>
                 Prefer to talk directly?
-              </h2>
+              </Heading>
               <ul className={styles.directList}>
-                {site.phone && (
-                  <li>
-                    <a href={`tel:${site.phone}`} className={styles.directLink}>
-                      Call {site.phone}
+                {site.phones.map((phone) => (
+                  <li key={phone}>
+                    <a href={telHref(phone)} className={styles.directLink}>
+                      Call {phone}
                     </a>
                   </li>
-                )}
+                ))}
                 {whatsappUrl && (
                   <li>
                     <a
@@ -110,13 +110,10 @@ export function ContactPage() {
       {/* 03 — Service area */}
       <section className={styles.section} aria-labelledby="contact-area-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>
-            {hasDirectContact ? '03' : '02'} — Where We Build
-          </p>
           <div ref={areaRef} className={styles.areaInner}>
-            <h2 id="contact-area-heading" className={styles.sectionHeading}>
+            <Heading as="h2" id="contact-area-heading" className={styles.sectionHeading}>
               {formatList(site.serviceAreas)}.
-            </h2>
+            </Heading>
             <p className={styles.supporting}>
               {site.name} currently takes on villa, apartment and residential construction projects
               across {formatList(site.serviceAreas)}.

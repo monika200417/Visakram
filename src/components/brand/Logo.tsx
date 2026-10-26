@@ -3,11 +3,11 @@ import styles from './Logo.module.css'
 
 const LOGO_SRC = {
   dark: '/assets/brand/visakram-logo-dark.svg',
-  light: '/assets/brand/visakram-logo-light.svg',
+  light: '/assets/brand/visakram-builders-white.svg',
 } as const
 
 type LogoProps = {
-  /** 'dark' = dark mark for light backgrounds. 'light' = light/gold mark for dark backgrounds. */
+  /** 'dark' = dark mark for light backgrounds. 'light' = white mark for dark backgrounds. */
   variant?: 'dark' | 'light'
   className?: string
 }
@@ -24,7 +24,12 @@ export function Logo({ variant = 'dark', className }: LogoProps) {
       className={[styles.logo, className].filter(Boolean).join(' ')}
       aria-label="Visakram Builders — home"
     >
-      <img src={LOGO_SRC[variant]} alt="Visakram Builders" width={1323} height={672} />
+      <img
+        src={LOGO_SRC[variant]}
+        alt="Visakram Builders"
+        width={variant === 'light' ? 1304 : 1323}
+        height={variant === 'light' ? 581 : 594}
+      />
     </Link>
   )
 }

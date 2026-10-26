@@ -10,12 +10,10 @@ import {
 } from '../../src/data/homeTour'
 import {
   homeTourMedia,
-  homeTourPinPercent,
   homeTourSequence,
   joinChapters,
   resolveStill,
 } from '../../src/media/home-tour/manifest'
-import { homeTourRanges, homeTourTimeline } from '../../src/media/home-tour/timeline'
 
 describe('Home Tour chapter data', () => {
   it('has the nine chapters in tour order with consistent numbering', () => {
@@ -49,10 +47,9 @@ describe('Home Tour chapter data', () => {
 })
 
 describe('Home Tour media manifest — all nine chapters', () => {
-  it('puts every chapter in the timeline, in tour order, each with its own entry', () => {
+  it('puts every chapter in tour order, each with its own entry', () => {
     expect(homeTourSequence.map((c) => c.id)).toEqual(homeTourChapters.map((c) => c.id))
     expect(homeTourMedia).toHaveLength(9)
-    expect(homeTourTimeline.count).toBe(9)
   })
 
   it('takes its order from the editorial chapters, not from the manifest', () => {
@@ -134,11 +131,6 @@ describe('Home Tour media manifest — all nine chapters', () => {
     expect(exterior.caption).not.toBe(reveal.caption)
     expect(exterior.index).toBe('01')
     expect(reveal.index).toBe('09')
-    const i = homeTourSequence.indexOf(exterior)
-    const j = homeTourSequence.indexOf(reveal)
-    expect(homeTourRanges[j]!.from).toBeGreaterThan(homeTourRanges[i]!.to)
-    expect(homeTourRanges[i]!.from).toBe(0)
-    expect(homeTourRanges[j]!.to).toBe(1)
     expect(reveal.still).toContain('final-reveal.webp')
     expect(exterior.still).toContain('exterior.webp')
   })
@@ -211,30 +203,6 @@ describe('Home Tour media manifest — all nine chapters', () => {
     expect(resolveStill({ poster: null, reference: '/r.webp' }, true)).toBe('/r.webp')
   })
 
-  it('gives the key chapters more scroll than the transitional ones', () => {
-    const vh = Object.fromEntries(homeTourMedia.map((m) => [m.id, m.scrollVh]))
-    for (const major of ['exterior', 'living', 'staircase', 'balcony', 'reveal']) {
-      for (const minor of ['entry', 'dining', 'kitchen', 'bedroom']) {
-        expect(vh[major]!, `${major} vs ${minor}`).toBeGreaterThan(vh[minor]!)
-      }
-    }
-    // not identical weights, and the journey stays comfortable (under 15 viewport heights)
-    expect(new Set(Object.values(vh)).size).toBeGreaterThan(1)
-    expect(homeTourPinPercent).toBeLessThan(1500)
-  })
-
-  it("derives each chapter's normalized range from its weight: contiguous, covering 0 → 1", () => {
-    expect(homeTourRanges[0]!.from).toBe(0)
-    expect(homeTourRanges[8]!.to).toBe(1)
-    homeTourRanges.forEach((r, i) => {
-      expect(r.to).toBeGreaterThan(r.from)
-      if (i > 0) expect(r.from).toBeCloseTo(homeTourRanges[i - 1]!.to, 10)
-    })
-    const exterior = homeTourRanges[0]!
-    const entry = homeTourRanges[1]!
-    expect(exterior.to - exterior.from).toBeGreaterThan(entry.to - entry.from)
-  })
-
   it('fails loudly on a manifest entry with no chapter, a chapter with no entry, or a bad range', () => {
     const base = homeTourMedia[0]!
     expect(() => joinChapters(homeTourChapters, [{ ...base, id: 'nowhere' }])).toThrow(
@@ -248,10 +216,6 @@ describe('Home Tour media manifest — all nine chapters', () => {
         homeTourMedia.map((m) => ({ ...m, video: '/x.mp4', start: 2, end: 1 })),
       ),
     ).toThrow(/invalid/)
-  })
-
-  it('derives the pin length from the chapters (data, not a constant in the hook)', () => {
-    expect(homeTourPinPercent).toBe(homeTourSequence.reduce((sum, c) => sum + c.scrollVh, 0))
   })
 
   it('keeps every reference still under the placeholder folder that builds strip out', () => {

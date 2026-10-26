@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
+import { expectOnlyVerifiedContactLinks } from '../helpers/contactLinks'
+import { telHref } from '../../src/utils/telHref'
 import { services } from '../../src/data/services'
 import { site } from '../../src/data/site'
 import { CONTACT_FIELD_LIMITS } from '../../src/utils/contactValidation'
@@ -144,24 +146,23 @@ describe('contact page', () => {
     expect(screen.getByLabelText(/^Location/)).toHaveValue('Test Fixture Location')
   })
 
-  it('renders no fabricated phone, email or WhatsApp link anywhere on the page', () => {
+  it('lists the client-supplied phone numbers and email, and a WhatsApp link to the first number', () => {
     renderContact()
-    expect(site.phone).toBeUndefined()
-    expect(site.email).toBeUndefined()
-    expect(site.whatsappNumber).toBeUndefined()
+    expect(site.whatsappNumber).toBe(site.phones[0])
+    expectOnlyVerifiedContactLinks()
 
-    const allLinks = screen.getAllByRole('link')
-    for (const link of allLinks) {
-      const href = link.getAttribute('href') ?? ''
-      expect(href.startsWith('tel:')).toBe(false)
-      expect(href.startsWith('mailto:')).toBe(false)
-      expect(href.includes('wa.me')).toBe(false)
+    const heading = screen.getByRole('heading', { name: 'Prefer to talk directly?' })
+    const section = heading.closest('section') as HTMLElement
+    for (const phone of site.phones) {
+      expect(within(section).getByRole('link', { name: `Call ${phone}` })).toHaveAttribute(
+        'href',
+        telHref(phone),
+      )
     }
-    // The "Reach Us Directly" section itself is omitted entirely, not
-    // shown with a placeholder — no such heading exists.
-    expect(
-      screen.queryByRole('heading', { name: 'Prefer to talk directly?' }),
-    ).not.toBeInTheDocument()
+    expect(within(section).getByRole('link', { name: `Email ${site.email}` })).toHaveAttribute(
+      'href',
+      `mailto:${site.email}`,
+    )
   })
 
   it('renders the verified service areas, no invented address', () => {

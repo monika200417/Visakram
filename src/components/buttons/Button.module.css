@@ -16,7 +16,8 @@
     background-color var(--motion-micro) var(--ease-standard),
     border-color var(--motion-micro) var(--ease-standard),
     color var(--motion-micro) var(--ease-standard),
-    transform var(--motion-micro) var(--ease-standard);
+    transform var(--motion-micro) var(--ease-standard),
+    box-shadow var(--motion-ui) var(--ease-standard);
 }
 
 .button:active {
@@ -33,11 +34,15 @@
   background: var(--color-accent);
   color: var(--color-on-accent);
   border-color: var(--color-accent);
+  box-shadow:
+    0 0 0 0 var(--color-lac-glow),
+    0 4px 18px -6px var(--color-lac-glow);
 }
 
 .primary:hover:not(:disabled) {
-  background: var(--color-accent-strong);
-  border-color: var(--color-accent-strong);
+  background: var(--color-lac-hot);
+  border-color: var(--color-lac-hot);
+  box-shadow: 0 0 22px 2px var(--color-lac-glow);
 }
 
 .secondary {

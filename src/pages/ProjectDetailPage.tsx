@@ -8,6 +8,7 @@ import { getProjectBySlug, type Project } from '../data/projects'
 import { getServiceByCategory } from '../data/services'
 import { NotFoundPage } from './NotFoundPage'
 import styles from './ProjectDetailPage.module.css'
+import { Heading } from '../components/heading/Heading'
 
 /**
  * /projects/:slug — reusable for every future project; there is no
@@ -58,9 +59,9 @@ function ProjectDetail({ project }: { project: Project }) {
               {categoryLabel}
               {project.year ? ` · ${project.year}` : ''}
             </span>
-            <h1 id="project-detail-heading" className={styles.title}>
+            <Heading as="h1" id="project-detail-heading" className={styles.title}>
               {project.name}
-            </h1>
+            </Heading>
             <p className={styles.location}>{project.location}</p>
           </div>
         </Container>
@@ -79,9 +80,9 @@ function ProjectDetail({ project }: { project: Project }) {
       {project.details && project.details.length > 0 ? (
         <section aria-labelledby="project-facts-heading" className={styles.section}>
           <Container>
-            <h2 id="project-facts-heading" className={styles.sectionHeading}>
+            <Heading as="h2" id="project-facts-heading" className={styles.sectionHeading}>
               Project facts
-            </h2>
+            </Heading>
             <dl className={styles.facts}>
               {project.details.map((detail) => (
                 <div className={styles.fact} key={detail.label}>
@@ -98,9 +99,9 @@ function ProjectDetail({ project }: { project: Project }) {
       {project.media.gallery.length > 0 ? (
         <section aria-labelledby="project-gallery-heading" className={styles.section}>
           <Container>
-            <h2 id="project-gallery-heading" className={styles.sectionHeading}>
+            <Heading as="h2" id="project-gallery-heading" className={styles.sectionHeading}>
               Gallery
-            </h2>
+            </Heading>
             <ul className={styles.gallery}>
               {project.media.gallery.map((image) => (
                 <li key={image.src} className={styles.galleryItem}>
@@ -122,9 +123,9 @@ function ProjectDetail({ project }: { project: Project }) {
       {project.media.video ? (
         <section aria-labelledby="project-video-heading" className={styles.section}>
           <Container>
-            <h2 id="project-video-heading" className={styles.sectionHeading}>
+            <Heading as="h2" id="project-video-heading" className={styles.sectionHeading}>
               Video
-            </h2>
+            </Heading>
             <video
               className={styles.video}
               controls
@@ -142,9 +143,9 @@ function ProjectDetail({ project }: { project: Project }) {
           every other CTA in this app already points at. */}
       <section aria-labelledby="project-cta-heading" className={styles.cta}>
         <Container>
-          <h2 id="project-cta-heading" className={styles.ctaHeading}>
+          <Heading as="h2" id="project-cta-heading" className={styles.ctaHeading}>
             Building something similar?
-          </h2>
+          </Heading>
           <Button to="/contact" variant="primary">
             Start a project
           </Button>

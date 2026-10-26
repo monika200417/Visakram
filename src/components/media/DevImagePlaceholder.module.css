@@ -2,7 +2,7 @@
   position: absolute;
   inset: 0;
   background:
-    repeating-linear-gradient(135deg, rgb(17 18 15 / 5%) 0 2px, transparent 2px 14px),
+    repeating-linear-gradient(135deg, rgb(74 99 96 / 26%) 0 2px, transparent 2px 14px),
     linear-gradient(160deg, var(--color-stone), var(--color-paper) 75%);
 }
 
@@ -15,7 +15,7 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--color-accent-strong);
-  border: 1px dashed rgb(127 68 51 / 55%);
+  border: 1px dashed rgb(196 68 31 / 55%);
   padding: var(--space-2) var(--space-3);
-  background: rgb(244 241 234 / 80%);
+  background: rgb(244 236 220 / 80%);
 }

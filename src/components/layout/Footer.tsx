@@ -1,6 +1,8 @@
 import { Logo } from '../brand/Logo'
 import { primaryNavigation } from '../../data/navigation'
+import { samify } from '../../data/samify'
 import { site } from '../../data/site'
+import { telHref } from '../../utils/telHref'
 import styles from './Footer.module.css'
 
 /**
@@ -9,15 +11,15 @@ import styles from './Footer.module.css'
  */
 export function Footer() {
   const contactLines = [
-    site.phone && { label: 'Phone', value: site.phone, href: `tel:${site.phone}` },
-    site.email && { label: 'Email', value: site.email, href: `mailto:${site.email}` },
-  ].filter((line): line is { label: string; value: string; href: string } => Boolean(line))
+    ...site.phones.map((phone) => ({ value: phone, href: telHref(phone) })),
+    ...(site.email ? [{ value: site.email, href: `mailto:${site.email}` }] : []),
+  ]
 
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.grid}`}>
         <div className={styles.brand}>
-          <Logo variant="light" />
+          <Logo />
           <p className={styles.tagline}>{site.values.join(' · ')}</p>
         </div>
 
@@ -47,7 +49,7 @@ export function Footer() {
             <span className={styles.heading}>Contact</span>
             <ul className={styles.list}>
               {contactLines.map((line) => (
-                <li key={line.label}>
+                <li key={line.href}>
                   <a href={line.href}>{line.value}</a>
                 </li>
               ))}
@@ -59,6 +61,21 @@ export function Footer() {
       <div className={`container ${styles.bottom}`}>
         <p className="text-mono-label">
           © {new Date().getFullYear()} {site.name}
+        </p>
+        <p className={styles.credit}>
+          <span className={styles.powered}>Powered by</span>{' '}
+          <a
+            href={samify.url}
+            className={styles.creditLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Powered by ${samify.name} (${samify.domain}) — opens in a new tab`}
+          >
+            {samify.name}
+            <span className={styles.creditDomain}>{samify.domain}</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <span className={styles.creditLine}>{samify.tagline}</span>
         </p>
       </div>
     </footer>

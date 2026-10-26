@@ -1,0 +1,41 @@
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* falling letters are drawn outside the svg's own box */
+  overflow: visible;
+}
+
+/* Waiting: out of sight above the window until `drop` turns on. */
+.waiting {
+  opacity: 0;
+}
+
+/* The fall: a slow start that gathers speed and then eases to a soft stop, no bounce. The fade is
+   quicker than the fall so a letter is solid before it lands. Each letter's own animation-delay is
+   set inline. */
+.falling {
+  animation:
+    letter-fall var(--drop-dur, 1.25s) cubic-bezier(0.33, 0, 0.2, 1) both,
+    letter-fade 0.3s ease-out both;
+}
+
+@keyframes letter-fall {
+  from {
+    transform: translateY(calc(var(--rise, 1800) * -1px));
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes letter-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

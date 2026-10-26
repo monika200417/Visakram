@@ -1,0 +1,356 @@
+/*
+ * Home Tour — a pinned, full-screen cinematic film. In "film" mode the stage
+ * is exactly one viewport tall (100svh) and is the element useFilmScrub pins:
+ * the video covers all of it and the text floats over the footage with no panel,
+ * glass or card. The film itself is slightly transparent over the cream of the page (no mask
+ * lies over it), so the type is ink on a lightened picture, like the rest of the site. The section's introduction ("07B — Home Tour", the heading, its line and the
+ * description) is laid directly over the opening of the film, left of centre, and
+ * gives way once the film begins; the chapter titles then take the lower left. In
+ * "still" mode (reduced motion or data-saver) nothing is pinned: the introduction
+ * sits over the poster frame and the chapters read as a plain list beneath it.
+ *
+ * Chapter motion is CSS only: useFilmScrub moves `data-pos` (past / current /
+ * next) and `data-active` on each chapter and these transitions do the rest.
+ */
+.section {
+  --tour-line: var(--color-lac);
+
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* --- Introduction, over the film ---------------------------------------- */
+.introLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  padding-inline: 6vw;
+  pointer-events: none;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 40rem;
+  text-shadow:
+    0 0 2px rgb(244 236 220 / 100%),
+    0 0 6px rgb(244 236 220 / 95%),
+    0 0 14px rgb(244 236 220 / 90%),
+    0 0 28px rgb(244 236 220 / 85%);
+}
+
+.heading {
+  margin-top: var(--space-4);
+  font-size: clamp(2.75rem, 1.3rem + 5.2vw, 6rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.014em;
+  color: var(--color-ink);
+  max-width: 18ch;
+}
+
+.tagline {
+  margin-top: var(--space-4);
+  font-size: var(--text-body-l);
+  line-height: 1.45;
+  color: var(--color-ink);
+  max-width: 32ch;
+  font-weight: 600;
+}
+
+.disclaimer {
+  margin-top: var(--space-5);
+  max-width: 44ch;
+  font-size: var(--text-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+/* Entrance and exit (film mode): staggered rise, fade and blur-to-sharp. */
+.section[data-mode='film'] .heading,
+.section[data-mode='film'] .tagline,
+.section[data-mode='film'] .disclaimer {
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(5px);
+  transition:
+    opacity var(--motion-editorial) var(--ease-standard),
+    transform var(--motion-editorial) var(--ease-standard),
+    filter var(--motion-editorial) var(--ease-standard);
+}
+
+.section[data-mode='film'] .intro[data-in='true'] .heading,
+.section[data-mode='film'] .intro[data-in='true'] .tagline,
+.section[data-mode='film'] .intro[data-in='true'] .disclaimer {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+  transition-duration: var(--motion-cinematic);
+  transition-timing-function: var(--ease-enter);
+}
+
+.section[data-mode='film'] .intro[data-in='true'] .heading {
+  transition-delay: 0.15s;
+}
+
+.section[data-mode='film'] .intro[data-in='true'] .tagline {
+  transition-delay: 0.35s;
+}
+
+.section[data-mode='film'] .intro[data-in='true'] .disclaimer {
+  transition-delay: 0.5s;
+}
+
+/* Once the film has begun, the introduction lifts away (the cream mask stays, for the chapter titles). */
+.section[data-mode='film'] .pinned[data-past='true'] .intro > * {
+  opacity: 0;
+  transform: translateY(-12px);
+  filter: blur(5px);
+  transition-delay: 0s;
+  transition-duration: var(--motion-editorial);
+  transition-timing-function: var(--ease-standard);
+}
+
+/* Still mode: the introduction sits over the poster frame, always. */
+.section[data-mode='still'] .introLayer {
+  padding-inline: var(--page-padding);
+}
+
+/* Film mode: the introduction fills the pinned stage, held in its upper left, clear of the chapter titles below. */
+.section[data-mode='film'] .introLayer {
+  bottom: 0;
+  aspect-ratio: auto;
+  align-items: flex-start;
+  padding-top: clamp(5rem, 16svh, 9rem);
+}
+
+@media (min-width: 768px) {
+  .section[data-mode='film'] .introLayer {
+    padding-inline: 9vw 6vw;
+  }
+}
+
+/* --- Stage -------------------------------------------------------------- */
+.stage {
+  position: relative;
+}
+
+.frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: transparent;
+  overflow: hidden;
+}
+
+/* `cover` fills the frame edge to edge without distorting the film. */
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: transparent;
+  /* a little transparent: the cream of the page shows through the film */
+  opacity: 0.82;
+}
+
+.section[data-mode='film'] .pinned,
+.section[data-mode='film'] .stage {
+  height: 100svh;
+}
+
+.section[data-mode='film'] .frame {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+}
+
+/* --- Chapter overlay ----------------------------------------------------- */
+.overlay {
+  position: absolute;
+  inset-inline: 6vw;
+  bottom: 8svh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.chapters {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  align-items: end;
+  max-width: min(36rem, 100%);
+}
+
+/* All chapters share one grid cell, so the overlay is as tall as the tallest and nothing overlaps layout. */
+.chapter {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-shadow:
+    0 0 2px rgb(244 236 220 / 100%),
+    0 0 6px rgb(244 236 220 / 95%),
+    0 0 14px rgb(244 236 220 / 90%),
+    0 0 28px rgb(244 236 220 / 85%);
+}
+
+/* The rise is masked by clipping the bottom edge only, so the text shadow is never cut into a box. */
+.index {
+  display: block;
+  padding-bottom: 0.4em;
+  clip-path: inset(-40px -40px 0 -40px);
+  color: var(--color-lac-deep);
+  font-weight: 700;
+}
+
+.title {
+  display: block;
+  padding-bottom: 0.3em;
+  margin-bottom: -0.2em;
+  clip-path: inset(-40px -40px 0 -40px);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.75rem, 1.1rem + 3.4vw, 4.5rem);
+  line-height: var(--leading-tight);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  overflow-wrap: break-word;
+}
+
+.reveal {
+  display: block;
+}
+
+.support {
+  max-width: 34ch;
+  margin-top: var(--space-1);
+  font-size: var(--text-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.baseline {
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: var(--space-4);
+  background: var(--tour-line);
+  transform-origin: left center;
+  box-shadow: none;
+}
+
+/*
+ * Film mode: a chapter is hidden until the stage is live (the pin has begun),
+ * so chapter 01 rises into view when the visitor arrives. Past chapters leave
+ * upward, upcoming ones wait below — scrolling back reverses it.
+ */
+.section[data-mode='film'] .chapter {
+  pointer-events: none;
+}
+
+.section[data-mode='film'] .reveal {
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    transform 600ms var(--ease-exit),
+    opacity 400ms var(--ease-standard);
+}
+
+.section[data-mode='film'] .support {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    transform 500ms var(--ease-exit),
+    opacity 350ms var(--ease-standard);
+}
+
+.section[data-mode='film'] .baseline {
+  transform: scaleX(0);
+  transition: transform 350ms var(--ease-exit);
+}
+
+.section[data-mode='film'] .chapter[data-pos='past'] .reveal {
+  transform: translateY(-100%);
+}
+
+.section[data-mode='film'] .chapter[data-pos='past'] .support {
+  transform: translateY(-10px);
+}
+
+/* The incoming chapter waits a beat for the outgoing one to clear. */
+.section[data-mode='film'] .pinned[data-live='true'] .chapter[data-pos='current'] .reveal {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    transform 1000ms var(--ease-enter) 220ms,
+    opacity 800ms var(--ease-standard) 220ms;
+}
+
+.section[data-mode='film'] .pinned[data-live='true'] .chapter[data-pos='current'] .support {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    transform 900ms var(--ease-enter) 420ms,
+    opacity 800ms var(--ease-standard) 420ms;
+}
+
+.section[data-mode='film'] .pinned[data-live='true'] .chapter[data-pos='current'] .baseline {
+  transform: scaleX(1);
+  transition: transform 1200ms var(--ease-enter) 520ms;
+}
+
+/* --- Still mode (reduced motion / data-saver): no pin, no film, a plain list --- */
+.section[data-mode='still'] .overlay {
+  position: static;
+  padding: var(--space-6) var(--page-padding) var(--space-9);
+}
+
+.section[data-mode='still'] .chapters {
+  max-width: none;
+  gap: var(--space-5) var(--space-7);
+}
+
+.section[data-mode='still'] .chapter {
+  grid-area: auto;
+  text-shadow: none;
+  border-top: 1px solid rgb(46 43 40 / 18%);
+  padding-top: var(--space-3);
+}
+
+.section[data-mode='still'] .title {
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem);
+}
+
+.section[data-mode='still'] .baseline {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .overlay {
+    inset-inline: 9vw 6vw;
+    bottom: 10svh;
+  }
+
+  .section[data-mode='still'] .chapters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section[data-mode='film'] .reveal,
+  .section[data-mode='film'] .support,
+  .section[data-mode='film'] .baseline {
+    transition-duration: 1ms;
+    transition-delay: 0s;
+  }
+}

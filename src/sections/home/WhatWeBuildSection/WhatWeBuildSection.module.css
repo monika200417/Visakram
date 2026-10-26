@@ -1,11 +1,22 @@
+/*
+ * What We Build — the three service cards as a carousel that drifts from left to right, forever,
+ * and stops under the pointer or the keyboard. The track holds four copies of the set and moves by
+ * one set's width (25% of the track) each cycle, so the loop has no seam. The cards are white with a
+ * hairline edge and a soft shadow; the photograph (or the looping video) sits on top and the text
+ * below; on hover a card lifts, its picture grows and the arrow runs ahead.
+ */
 .section {
+  background: linear-gradient(180deg, var(--color-blush), var(--color-paper));
   padding-block: var(--space-9);
   border-top: 1px solid var(--color-border);
+  overflow: hidden;
 }
 
-.eyebrow {
-  display: block;
-  color: var(--color-text-muted);
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
 }
 
 .heading {
@@ -14,31 +25,170 @@
   max-width: 16ch;
 }
 
-.list {
-  list-style: none;
-  margin: var(--space-9) 0 0;
-  padding: 0;
+/* --- Controls: previous, pause / play, next ---------------------------------------------------------- */
+.controls {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-2);
+  flex-shrink: 0;
 }
 
-.row {
-  border-top: 1px solid var(--color-border);
-  padding-top: var(--space-8);
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 1px solid rgb(46 43 40 / 28%);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-ui) var(--ease-standard),
+    border-color var(--motion-ui) var(--ease-standard),
+    color var(--motion-ui) var(--ease-standard),
+    transform var(--motion-micro) var(--ease-standard);
 }
 
-.row:first-child {
-  border-top: 0;
-  padding-top: 0;
+.button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.button .solid {
+  fill: currentColor;
+  stroke: none;
+}
+
+.button:hover {
+  background: var(--color-lac);
+  border-color: var(--color-lac);
+  color: #fff;
+}
+
+.button:active {
+  transform: scale(0.94);
+}
+
+@media (min-width: 768px) {
+  .head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-8);
+  }
+
+  .controls {
+    padding-bottom: var(--space-2);
+  }
+}
+
+/* --- The moving track ----------------------------------------------------------------------------- */
+.carousel {
+  --card-w: clamp(17.5rem, 78vw, 25rem);
+  --gap: var(--space-5);
+
+  margin-top: var(--space-8);
+  padding-block: var(--space-5) var(--space-7);
+  overflow: hidden;
+  /* the cards fade in and out at the edges of the page */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  /* left to right: the track starts one set to the left and slides to rest, then begins again */
+  /* 10s a card (five cards in a set), so the pace stays what it was with four */
+  animation: drift 50s linear infinite;
+  will-change: transform;
+}
+
+.carousel:hover .track,
+.carousel:focus-within .track,
+.carousel[data-paused='true'] .track {
+  animation-play-state: paused;
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(-25%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.set {
+  display: flex;
+  gap: var(--gap);
+  /* the gap after the last card, so every set is exactly the same width */
+  padding: 0 var(--gap) 0 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* --- A card ---------------------------------------------------------------------------------------- */
+.card {
+  flex: 0 0 var(--card-w);
+  width: var(--card-w);
 }
 
 .link {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  height: 100%;
+  overflow: hidden;
   text-decoration: none;
   color: inherit;
+  border: 1px solid rgb(46 43 40 / 10%);
+  border-radius: var(--radius-md);
+  background: linear-gradient(165deg, #fff 0%, var(--color-white) 60%, #f6eddc 100%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 1px 2px rgb(46 43 40 / 6%),
+    0 22px 44px -28px rgb(46 43 40 / 40%);
+  transition:
+    transform 520ms var(--ease-enter),
+    box-shadow 520ms var(--ease-standard),
+    border-color 360ms var(--ease-standard);
+}
+
+/* the red rule: a short stub at rest, drawn across the top edge on hover */
+.link::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 0;
+  z-index: 3;
+  width: 3.25rem;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-lac), var(--color-lac-hot));
+  transition: width 640ms var(--ease-enter);
+}
+
+.link:hover,
+.link:focus-visible {
+  transform: translateY(-8px);
+  border-color: rgb(196 68 31 / 40%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 2px 4px rgb(46 43 40 / 8%),
+    0 34px 56px -28px rgb(46 43 40 / 50%),
+    0 0 0 4px rgb(196 68 31 / 7%);
+}
+
+.link:hover::before,
+.link:focus-visible::before {
+  width: 100%;
 }
 
 .image {
@@ -51,46 +201,61 @@
 .imageInner {
   position: absolute;
   inset: 0;
-  transition: transform var(--motion-ui) var(--ease-standard);
-}
-
-.text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-
-.index {
-  color: var(--color-text-muted);
-}
-
-.title {
-  margin: 0;
-  font-size: var(--text-h2);
-  transition: transform var(--motion-ui) var(--ease-standard);
-}
-
-.description {
-  color: var(--color-text-muted);
-  font-size: var(--text-body-l);
-  max-width: 38ch;
-}
-
-.arrow {
-  font-family: var(--font-mono);
-  font-size: var(--text-h3);
-  transition: transform var(--motion-ui) var(--ease-standard);
+  transition: transform 900ms var(--ease-enter);
 }
 
 .link:hover .imageInner,
 .link:focus-visible .imageInner {
-  transform: scale(1.02);
+  transform: scale(1.06);
 }
 
-.link:hover .title,
-.link:focus-visible .title {
-  transform: translateX(var(--space-2));
+/* the number sits on the photograph, in a small ink tab */
+.image .index {
+  position: absolute;
+  z-index: 2;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  padding: 0.35rem 0.7rem;
+  background: var(--color-ink);
+  color: var(--color-sandalwood);
+}
+
+.text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-h3);
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+.description {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  max-width: 38ch;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arrow {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-h3);
+  color: var(--color-lac);
+  transition: transform var(--motion-ui) var(--ease-standard);
 }
 
 .link:hover .arrow,
@@ -98,23 +263,43 @@
   transform: translateX(var(--space-2));
 }
 
-@media (min-width: 1024px) {
-  .link {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-8);
+/* --- Reduced motion: nothing drifts; one row that scrolls sideways ------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .carousel {
+    overflow-x: auto;
+    padding-inline: var(--page-padding);
+    scroll-snap-type: x proximity;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
-  .row[data-align='end'] .link {
-    flex-direction: row-reverse;
+  .track {
+    animation: none;
   }
 
-  .image {
-    flex: 0 0 58%;
-    aspect-ratio: 16 / 10;
+  .set[data-copy='true'] {
+    display: none;
   }
 
-  .text {
-    flex: 1;
+  .card {
+    scroll-snap-align: start;
+  }
+
+  .link,
+  .link::before,
+  .imageInner,
+  .arrow,
+  .button {
+    transition: none;
+  }
+
+  .link:hover,
+  .link:focus-visible {
+    transform: none;
+  }
+
+  .link:hover .imageInner,
+  .link:focus-visible .imageInner {
+    transform: none;
   }
 }

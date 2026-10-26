@@ -7,6 +7,7 @@ import { projects, type Project } from '../data/projects'
 import { services } from '../data/services'
 import { site } from '../data/site'
 import styles from './ProjectsPage.module.css'
+import { Heading } from '../components/heading/Heading'
 
 const ALL = 'all' as const
 type CategoryFilter = typeof ALL | Project['category']
@@ -44,7 +45,9 @@ export function ProjectsPage() {
     <>
       <section className={styles.intro}>
         <Container>
-          <h1 className={styles.heading}>Projects</h1>
+          <Heading as="h1" className={styles.heading}>
+            Projects
+          </Heading>
           <p className={styles.lede}>
             A working record of {site.name}&rsquo;s villas, apartments and residential construction
             &mdash; each one added here once it&rsquo;s approved to share.

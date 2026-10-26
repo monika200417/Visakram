@@ -6,7 +6,7 @@ type DevImagePlaceholderProps = {
 
 /**
  * Generic stand-in for real photography in any image slot that isn't the
- * hero (see DevScenePlaceholder for that one). Always obvious, always
+ * hero. Always obvious, always
  * auditable via `data-dev-placeholder` — never a stock photo mislabelled as
  * Visakram work.
  */

@@ -17,3 +17,13 @@ image was resized to 720px wide (well above its largest planned display size) an
 re-compressed, dropping it to ~135KB with no vector tracing and no color/design changes.
 If the client supplies a true vector (AI/EPS/PDF) version later, replace the production
 files directly.
+
+## Production logos are cropped above the slogan
+
+The three production SVGs in `public/assets/brand/` (`visakram-logo-dark.svg`,
+`visakram-logo-light.svg`, `visakram-builders-white.svg`) are the client's artwork with one change:
+their `height` and `viewBox` were shortened so the small slogan line under "BUILDERS" ("Building the
+Future You Imagine") is cropped away (dark/light: 1323 x 594, white: 1304 x 581). The picture inside
+each file is untouched, and the files here are the unmodified originals. To bring the slogan back,
+restore the original `height`/`viewBox` (672 / 650) and the matching sizes in
+`src/components/layout/Header.*` and `src/components/brand/Logo.*`.

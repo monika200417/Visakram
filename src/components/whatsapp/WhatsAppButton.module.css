@@ -1,0 +1,70 @@
+/* The floating WhatsApp button: fixed to the bottom right, above the page, below the header menu. */
+.button {
+  position: fixed;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: #25d366; /* WhatsApp's own green, so the button is recognised at a glance */
+  color: #fff;
+  box-shadow: 0 8px 22px -6px rgb(0 0 0 / 40%);
+  transition:
+    transform 260ms var(--ease-standard),
+    box-shadow 260ms var(--ease-standard);
+}
+
+.button svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  fill: currentColor;
+}
+
+/* a soft ring that pulses outward, now and then */
+.button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #25d366;
+  opacity: 0;
+  animation: whatsapp-ring 2.8s ease-out infinite;
+  pointer-events: none;
+}
+
+.button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 28px -6px rgb(0 0 0 / 45%);
+}
+
+.button:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+@keyframes whatsapp-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .button:hover {
+    transition: none;
+  }
+
+  .button::after {
+    animation: none;
+  }
+}

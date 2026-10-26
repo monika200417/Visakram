@@ -14,6 +14,7 @@ import { founders } from '../data/founders'
 import { visakramWayPrinciples } from '../data/visakramWay'
 import { primaryCta } from '../data/navigation'
 import styles from './AboutPage.module.css'
+import { Heading } from '../components/heading/Heading'
 
 /**
  * /about — Milestone 7. An editorial narrative built entirely from
@@ -53,11 +54,10 @@ export function AboutPage() {
       <section className={styles.hero} aria-labelledby="about-hero-heading">
         <Container>
           <div ref={heroRef} className={styles.heroInner}>
-            <p className={`text-mono-label ${styles.eyebrow}`}>01 — About</p>
-            <h1 id="about-hero-heading" className={styles.heroHeading}>
+            <Heading as="h1" id="about-hero-heading" className={styles.heroHeading}>
               {site.stats.yearsExperience} years of construction experience, carried into a
               contemporary way of building.
-            </h1>
+            </Heading>
             <p className={styles.heroSupporting}>
               {site.name} is a residential construction company delivering villas, apartments and
               residential construction across {formatList(site.serviceAreas)} — guided by{' '}
@@ -83,13 +83,12 @@ export function AboutPage() {
       {/* 02 — Experience */}
       <section className={styles.section} aria-labelledby="experience-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>02 — Experience</p>
           <div ref={experienceRef} className={styles.experienceRow}>
             <p className={styles.experienceValue}>{site.stats.yearsExperience}</p>
             <div className={styles.experienceText}>
-              <h2 id="experience-heading" className={styles.sectionHeading}>
+              <Heading as="h2" id="experience-heading" className={styles.sectionHeading}>
                 Years of construction experience.
-              </h2>
+              </Heading>
               <p className={styles.supporting}>
                 That experience now carries into a contemporary approach to residential building —{' '}
                 {site.stats.completedProjects} completed projects and {site.stats.ongoingProjects}{' '}
@@ -103,10 +102,9 @@ export function AboutPage() {
       {/* 03 — What Visakram builds (reuses src/data/services.ts) */}
       <section className={styles.section} aria-labelledby="build-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>03 — What We Build</p>
-          <h2 id="build-heading" className={styles.sectionHeading}>
+          <Heading as="h2" id="build-heading" className={styles.sectionHeading}>
             What we build.
-          </h2>
+          </Heading>
           <ol ref={buildRef} className={styles.serviceList}>
             {services.map((service) => (
               <li key={service.slug} className={styles.serviceItem}>
@@ -125,10 +123,9 @@ export function AboutPage() {
       {/* 04 — Values / trust (reuses src/data/visakramWay.ts) */}
       <section className={styles.section} aria-labelledby="values-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>04 — Values</p>
-          <h2 id="values-heading" className={styles.sectionHeading}>
+          <Heading as="h2" id="values-heading" className={styles.sectionHeading}>
             {formatList(site.values)}.
-          </h2>
+          </Heading>
           <ol ref={valuesRef} className={styles.valuesList}>
             {visakramWayPrinciples.map((principle) => (
               <li key={principle.title} className={styles.valueItem}>
@@ -144,10 +141,9 @@ export function AboutPage() {
       {/* 05 — Founders: "Two backgrounds. One direction." */}
       <section className={styles.section} aria-labelledby="founders-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>05 — Founders</p>
-          <h2 id="founders-heading" className={styles.sectionHeading}>
+          <Heading as="h2" id="founders-heading" className={styles.sectionHeading}>
             Two backgrounds. One direction.
-          </h2>
+          </Heading>
           <div className={styles.founders}>
             {founders.map((founder, i) => (
               <FounderProfile
@@ -166,11 +162,10 @@ export function AboutPage() {
       {/* 06 — Trust story: experience → people → values → what we build */}
       <section className={styles.section} aria-labelledby="trust-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>06 — Why Visakram</p>
           <div ref={trustRef} className={styles.trustInner}>
-            <h2 id="trust-heading" className={styles.sectionHeading}>
+            <Heading as="h2" id="trust-heading" className={styles.sectionHeading}>
               Established, not assumed.
-            </h2>
+            </Heading>
             <p className={styles.supporting}>
               {site.stats.yearsExperience} years of construction experience. Two founders with
               complementary backgrounds. {formatList(site.values)} at every stage. That combination
@@ -184,11 +179,10 @@ export function AboutPage() {
       {/* 07 — Local presence */}
       <section className={styles.section} aria-labelledby="local-heading">
         <Container>
-          <p className={`text-mono-label ${styles.eyebrow}`}>07 — Where We Build</p>
           <div ref={localRef} className={styles.localInner}>
-            <h2 id="local-heading" className={styles.sectionHeading}>
+            <Heading as="h2" id="local-heading" className={styles.sectionHeading}>
               {formatList(site.serviceAreas)}.
-            </h2>
+            </Heading>
             <p className={styles.supporting}>
               {site.name} is based in {site.locality}, {site.city}, {site.region}, building across{' '}
               {formatList(site.serviceAreas)}.
@@ -200,9 +194,9 @@ export function AboutPage() {
       {/* CTA — reuses the site's existing primary CTA, no invented contact details */}
       <section className={styles.cta} aria-labelledby="about-cta-heading">
         <Container>
-          <h2 id="about-cta-heading" className={styles.ctaHeading}>
+          <Heading as="h2" id="about-cta-heading" className={styles.ctaHeading}>
             Start a project.
-          </h2>
+          </Heading>
           <Button to={primaryCta.to} variant="primary">
             {primaryCta.label}
           </Button>

@@ -19,6 +19,7 @@ const fixtureSite = {
   serviceAreas: ['Visakhapatnam', 'Vizianagaram'],
   values: ['Quality', 'Timeliness', 'Transparency'],
   stats: { yearsExperience: '20+', completedProjects: '25+', ongoingProjects: 5 },
+  phones: ['+91 90000 00000'],
   phone: '+91 90000 00000',
   whatsappNumber: '+91 90000 00001',
   email: 'test-fixture@example.invalid',
@@ -47,7 +48,7 @@ describe('contact page — once phone/WhatsApp/email are confirmed', () => {
 
     expect(scoped.getByRole('link', { name: `Call ${fixtureSite.phone}` })).toHaveAttribute(
       'href',
-      `tel:${fixtureSite.phone}`,
+      'tel:+919000000000',
     )
     expect(scoped.getByRole('link', { name: `Email ${fixtureSite.email}` })).toHaveAttribute(
       'href',

@@ -1,11 +1,7 @@
 .section {
+  background: linear-gradient(180deg, var(--color-paper), #ece0c8);
   padding-block: var(--space-9);
   border-top: 1px solid var(--color-border);
-}
-
-.eyebrow {
-  display: block;
-  color: var(--color-text-muted);
 }
 
 .heading {
@@ -32,6 +28,23 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* A slow zoom on hover; the fade-in of a loading picture keeps its own transition. */
+.image img {
+  transition:
+    opacity var(--motion-editorial) var(--ease-standard),
+    transform 700ms var(--ease-standard);
+}
+
+.image:hover img {
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image:hover img {
+    transform: none;
+  }
 }
 
 .meta {

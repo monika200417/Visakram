@@ -2,10 +2,13 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Container } from '../../../components/layout/Container'
 import { DevImagePlaceholder } from '../../../components/media/DevImagePlaceholder'
+import { MediaImage } from '../../../components/media/MediaImage'
 import { useRevealOnScroll } from '../../../animations/useRevealOnScroll'
+import { featuredProjectPreview } from '../../../data/featuredProjectPreview'
 import { getFeaturedProject } from '../../../data/projects'
 import { services } from '../../../data/services'
 import styles from './FeaturedProjectSection.module.css'
+import { Heading } from '../../../components/heading/Heading'
 
 /**
  * getFeaturedProject() honours an explicit `featured: true` project, or
@@ -18,9 +21,9 @@ const featuredProject = getFeaturedProject()
 /**
  * Chapter 05 — Featured Project
  * (docs/VISAKRAM-DIGITAL-EXPERIENCE-BLUEPRINT-v0.2.md §05). Large
- * image + small metadata + strong title, not a real-estate card. Renders a
- * clearly-labelled "awaiting content" state — never a fabricated project —
- * until `projects` has a real entry.
+ * image + small metadata + strong title, not a real-estate card. Until `projects`
+ * has a real entry it shows a clearly-labelled PREVIEW (data/featuredProjectPreview.ts) so
+ * the layout can be reviewed; a real project replaces it automatically.
  */
 export function FeaturedProjectSection() {
   const revealRef = useRef<HTMLDivElement>(null)
@@ -34,10 +37,9 @@ export function FeaturedProjectSection() {
     >
       <Container>
         <div ref={revealRef} className={styles.inner}>
-          <p className={`text-mono-label ${styles.eyebrow}`}>05 — Featured Project</p>
-          <h2 id="featured-project-heading" className={styles.heading}>
+          <Heading as="h2" id="featured-project-heading" className={styles.heading}>
             Featured project.
-          </h2>
+          </Heading>
 
           {featuredProject ? (
             <article className={styles.spread}>
@@ -88,32 +90,36 @@ export function FeaturedProjectSection() {
               </div>
             </article>
           ) : (
-            <div className={styles.spread}>
+            <article className={styles.spread}>
               <div className={styles.image}>
-                <DevImagePlaceholder label="Featured project" />
+                <MediaImage
+                  src={featuredProjectPreview.image.src}
+                  alt={featuredProjectPreview.image.alt}
+                />
               </div>
               <div className={styles.meta}>
-                <p className={styles.pending} data-dev-placeholder>
-                  Awaiting a client-approved project. This space is built to carry a project name,
-                  location, category and photography as soon as one is confirmed — no project is
-                  shown here until then.
-                </p>
+                <h3 className={styles.title}>{featuredProjectPreview.name}</h3>
                 <dl className={styles.facts}>
                   <div className={styles.fact}>
                     <dt>Project</dt>
-                    <dd>—</dd>
+                    <dd>{featuredProjectPreview.name}</dd>
                   </div>
                   <div className={styles.fact}>
                     <dt>Location</dt>
-                    <dd>—</dd>
+                    <dd>{featuredProjectPreview.location}</dd>
                   </div>
                   <div className={styles.fact}>
                     <dt>Category</dt>
-                    <dd>—</dd>
+                    <dd>{featuredProjectPreview.category}</dd>
                   </div>
                 </dl>
+                <p className={styles.pending} data-dev-placeholder>
+                  Preview: sample project details and a stock photograph, shown to review the
+                  layout. This is not a Visakram Builders project; a client-approved project
+                  replaces it.
+                </p>
               </div>
-            </div>
+            </article>
           )}
         </div>
       </Container>

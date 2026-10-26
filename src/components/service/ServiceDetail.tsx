@@ -1,11 +1,13 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Container } from '../layout/Container'
 import { DevImagePlaceholder } from '../media/DevImagePlaceholder'
 import { ProjectCard } from '../project/ProjectCard'
 import { useRevealOnScroll } from '../../animations/useRevealOnScroll'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import type { Project } from '../../data/projects'
 import type { Service } from '../../data/services'
 import styles from './ServiceDetail.module.css'
+import { Heading } from '../heading/Heading'
 
 type ServiceDetailProps = {
   service: Service
@@ -29,6 +31,23 @@ export function ServiceDetail({ service, relatedProjects, align }: ServiceDetail
 
   const headingId = `service-${service.slug}-heading`
   const highlights = service.highlights ?? []
+  const heading = service.pageTitle ?? service.title
+
+  // A service video plays through the native `autoplay` attribute: the browser starts
+  // it as soon as it is visible and holds it while it is off-screen. A script `play()`
+  // at mount is rejected for an off-screen video ("paused to save power") and would
+  // cancel that. Under reduced motion it stays on its first frame / poster.
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const reducedMotion = usePrefersReducedMotion()
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    // Silent playback is the only kind autoplay policies allow. React does not
+    // always reflect `muted` as an attribute, so set it on the element too.
+    video.muted = true
+    if (reducedMotion) video.pause()
+  }, [reducedMotion])
 
   return (
     <section
@@ -39,8 +58,25 @@ export function ServiceDetail({ service, relatedProjects, align }: ServiceDetail
     >
       <Container>
         <div ref={revealRef} className={styles.layout}>
-          <div className={styles.visual}>
-            {service.image ? (
+          <div className={styles.visual} data-media={service.video ? 'video' : undefined}>
+            {service.video ? (
+              <video
+                ref={videoRef}
+                className={styles.video}
+                src={service.video.src}
+                poster={service.video.poster}
+                autoPlay={!reducedMotion}
+                muted
+                loop
+                playsInline
+                preload={reducedMotion ? 'metadata' : 'auto'}
+                disablePictureInPicture
+                disableRemotePlayback
+                tabIndex={-1}
+                aria-label={service.video.alt}
+                aria-hidden={service.video.alt ? undefined : true}
+              />
+            ) : service.image ? (
               <img
                 src={service.image}
                 alt={service.imageAlt ?? ''}
@@ -49,15 +85,15 @@ export function ServiceDetail({ service, relatedProjects, align }: ServiceDetail
                 decoding="async"
               />
             ) : (
-              <DevImagePlaceholder label={service.title} />
+              <DevImagePlaceholder label={heading} />
             )}
           </div>
 
           <div className={styles.text}>
             <span className={`text-mono-label ${styles.index}`}>{service.index}</span>
-            <h2 id={headingId} className={styles.title}>
-              {service.title}
-            </h2>
+            <Heading as="h2" id={headingId} className={styles.title}>
+              {heading}
+            </Heading>
             <p className={styles.lede}>{service.shortDescription}</p>
             {service.description ? (
               <p className={styles.description}>{service.description}</p>
@@ -79,7 +115,7 @@ export function ServiceDetail({ service, relatedProjects, align }: ServiceDetail
         {relatedProjects.length > 0 ? (
           <div className={styles.related}>
             <p className={`text-mono-label ${styles.label}`}>Related projects</p>
-            <ul className={`grid ${styles.relatedGrid}`} aria-label={`${service.title} projects`}>
+            <ul className={`grid ${styles.relatedGrid}`} aria-label={`${heading} projects`}>
               {relatedProjects.map((project) => (
                 <ProjectCard key={project.slug} project={project} />
               ))}

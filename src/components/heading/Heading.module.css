@@ -1,0 +1,32 @@
+/* The one heading transition: each word drops in from above, slowly, one after another, when
+   data-drop is set (Heading.tsx). The delay steps with each word's --w by --step. */
+.word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(-1.15em);
+}
+
+.heading[data-drop='true'] .word {
+  animation: word-drop 1.7s cubic-bezier(0.22, 0.8, 0.28, 1) both;
+  animation-delay: calc(var(--w, 0) * var(--step, 0.28s));
+}
+
+@keyframes word-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-1.15em);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduced motion: the heading is simply there. */
+@media (prefers-reduced-motion: reduce) {
+  .word {
+    opacity: 1;
+    transform: none;
+  }
+}
