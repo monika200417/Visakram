@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from '../../src/app/App'
@@ -136,35 +136,79 @@ describe('Home Tour video section', () => {
     for (const item of items.slice(1)) expect(item).toHaveAttribute('aria-hidden', 'true')
   })
 
-  it('does not download the film until the section is near the viewport', () => {
+  it('does not download the film until the section is near the viewport', async () => {
     const { container } = render(<HomeTourVideoSection />)
     const video = getVideo(container)
     expect(video).not.toHaveAttribute('src')
-    expect(video).toHaveAttribute('preload', 'none')
+    expect(video).toHaveAttribute('preload', 'auto')
     // the poster (the film's own first frame) is what shows meanwhile
     expect(video).toHaveAttribute('poster', homeTourFilm.poster)
 
     setNear(true)
-    expect(video).toHaveAttribute('src', homeTourFilm.src)
+    // no blob support here (jsdom), so the plain address is used as soon as the attempt has failed
+    await waitFor(() => expect(video).toHaveAttribute('src', homeTourFilm.src))
     expect(HTMLMediaElement.prototype.load).toHaveBeenCalled()
   })
 
-  it('releases the film again when the visitor scrolls far away', () => {
+  it('downloads the whole film once and plays it from memory when it can', async () => {
+    const blob = new Blob(['film'], { type: 'video/mp4' })
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue({ ok: true, status: 200, blob: () => Promise.resolve(blob) })
+    const createObjectURL = vi.fn().mockReturnValue('blob:visakram-film')
+    const revokeObjectURL = vi.fn()
+    vi.stubGlobal('fetch', fetchSpy)
+    URL.createObjectURL = createObjectURL
+    URL.revokeObjectURL = revokeObjectURL
+    try {
+      const { container } = render(<HomeTourVideoSection />)
+      const video = getVideo(container)
+      setNear(true)
+      await waitFor(() => expect(video).toHaveAttribute('src', 'blob:visakram-film'))
+      expect(fetchSpy).toHaveBeenCalledWith(homeTourFilm.src, expect.anything())
+      expect(createObjectURL).toHaveBeenCalledWith(blob)
+
+      // released with the film: the source goes and the file is let go of
+      setNear(false)
+      expect(video).not.toHaveAttribute('src')
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:visakram-film')
+    } finally {
+      vi.unstubAllGlobals()
+      Reflect.deleteProperty(URL, 'createObjectURL')
+      Reflect.deleteProperty(URL, 'revokeObjectURL')
+    }
+  })
+
+  it('falls back to the plain address when the download fails', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }))
+    URL.createObjectURL = vi.fn()
+    try {
+      const { container } = render(<HomeTourVideoSection />)
+      const video = getVideo(container)
+      setNear(true)
+      await waitFor(() => expect(video).toHaveAttribute('src', homeTourFilm.src))
+    } finally {
+      vi.unstubAllGlobals()
+      Reflect.deleteProperty(URL, 'createObjectURL')
+    }
+  })
+
+  it('releases the film again when the visitor scrolls far away', async () => {
     const { container } = render(<HomeTourVideoSection />)
     const video = getVideo(container)
     setNear(true)
-    expect(video).toHaveAttribute('src')
+    await waitFor(() => expect(video).toHaveAttribute('src'))
 
     setNear(false)
     expect(video).not.toHaveAttribute('src')
     expect(HTMLMediaElement.prototype.pause).toHaveBeenCalled()
   })
 
-  it('does not release the film when a quick scroll merely overshoots the section', () => {
+  it('does not release the film when a quick scroll merely overshoots the section', async () => {
     const { container } = render(<HomeTourVideoSection />)
     const video = getVideo(container)
     setNear(true)
-    expect(video).toHaveAttribute('src')
+    await waitFor(() => expect(video).toHaveAttribute('src'))
 
     // outside the near margin, but still inside the far one: the film stays loaded
     trigger(ENTER, false)

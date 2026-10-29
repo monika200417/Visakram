@@ -58,10 +58,23 @@
   animation: twirl 16s linear infinite;
 }
 
-/* the ring holds still while a card is being looked at */
-.ring:hover,
+/* The ring holds still while a card is being looked at: under a mouse pointer, or keyboard focus. On a touch
+   screen a tap leaves :hover stuck on until something else is tapped, which froze the ring for good, so
+   there it pauses only while a finger is actually pressing (:active). */
 .ring:focus-within {
   animation-play-state: paused;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ring:hover {
+    animation-play-state: paused;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .ring:active {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes twirl {
@@ -173,13 +186,28 @@
   transition: opacity 520ms var(--ease-standard);
 }
 
-.card:hover .tint {
-  opacity: 0.94;
+/* orange, and the photograph pulled in: under a mouse, on hover; on a touch screen only while pressed (a tap
+   would otherwise leave the card orange) */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .tint {
+    opacity: 0.94;
+  }
+
+  .card:hover .photo {
+    transform: scale(1.08);
+    filter: grayscale(0.4);
+  }
 }
 
-.card:hover .photo {
-  transform: scale(1.08);
-  filter: grayscale(0.4);
+@media (hover: none), (pointer: coarse) {
+  .card:active .tint {
+    opacity: 0.94;
+  }
+
+  .card:active .photo {
+    transform: scale(1.08);
+    filter: grayscale(0.4);
+  }
 }
 
 .value,
@@ -258,7 +286,8 @@
     transition: none;
   }
 
-  .card:hover .photo {
+  .card:hover .photo,
+  .card:active .photo {
     transform: none;
   }
 }

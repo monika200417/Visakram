@@ -10,7 +10,7 @@ import {
 import { homeTourChapterCopy } from './chapterCopy'
 import { useFilmScrub } from './useFilmScrub'
 import { useIntroEntrance } from './useIntroEntrance'
-import { useNearViewport, useFilmSource, useIsPhone, useSaveData } from './useFilmMedia'
+import { useNearViewport, useFilmSource, useLightFilm, useSaveData } from './useFilmMedia'
 import styles from './HomeTourVideoSection.module.css'
 import { Heading } from '../../../components/heading/Heading'
 
@@ -39,13 +39,13 @@ export function HomeTourVideoSection() {
 
   const reducedMotion = usePrefersReducedMotion()
   const saveData = useSaveData()
-  const phone = useIsPhone()
+  const lightFilm = useLightFilm()
   const scrubbing = !reducedMotion && !saveData
 
   // The film is only fetched when the section is near the viewport, and released when it is not.
   const near = useNearViewport(sectionRef)
   const filmWanted = scrubbing && near
-  useFilmSource(videoRef, filmWanted)
+  useFilmSource(videoRef, filmWanted, lightFilm ? homeTourFilm.srcMobile : homeTourFilm.src)
 
   useFilmScrub(pinnedRef, videoRef, scrubbing)
   useIntroEntrance(introRef)
@@ -64,15 +64,14 @@ export function HomeTourVideoSection() {
             <video
               ref={videoRef}
               className={styles.video}
-              src={filmWanted ? (phone ? homeTourFilm.srcMobile : homeTourFilm.src) : undefined}
               poster={homeTourFilm.poster}
               width={homeTourFilm.width}
               height={homeTourFilm.height}
               muted
               playsInline
-              // The phone film is small enough to take whole, so a swipe never waits on a range request; the
-              // desktop film is 34 MB and is fetched only as the scrub reaches it.
-              preload={phone ? 'auto' : 'none'}
+              // Both films are small enough to take whole (about 4 and 15 MB): the browser fetches the film
+              // ahead of the scrub, so a skip into a part not yet seen never waits on a range request.
+              preload="auto"
               disablePictureInPicture
               disableRemotePlayback
               tabIndex={-1}

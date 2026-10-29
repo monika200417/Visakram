@@ -9,15 +9,17 @@
  */
 export const homeTourFilm = {
   /**
-   * Encoded for scrubbing: H.264 1920×1080 at 30 fps with a keyframe every 6 frames, no B-frames and
-   * no audio track (docs/PERFORMANCE-BUDGET.md §31B), so any frame is at most five frames of decoding
-   * away and a seek takes a few milliseconds. A film with sparse keyframes (the usual export) makes
-   * every seek decode from the previous keyframe and the scroll stutters badly. Re-encode with the
-   * same settings if the film is ever replaced.
+   * Encoded for scrubbing: H.264 1920×1080 at 30 fps with a keyframe every 4 frames, no B-frames and no
+   * audio track (docs/PERFORMANCE-BUDGET.md §31B), so any frame is at most three frames of decoding away and a
+   * seek takes a few milliseconds. A film with sparse keyframes (the usual export) makes every seek decode
+   * from the previous keyframe and the scroll stutters badly. About 15 MB (crf 25, SSIM 0.993 against the
+   * 34 MB original it replaced), small enough for the browser to fetch whole. Re-encode with the same
+   * settings if the film is ever replaced: -c:v libx264 -profile:v high -preset slow -crf 25 -g 4
+   * -keyint_min 4 -sc_threshold 0 -bf 0 -an -movflags +faststart.
    */
   src: '/assets/videos/home-tour.mp4',
   /**
-   * The same film for phones: 960×540, a keyframe every 3 frames, no audio, about 4 MB instead of 34.
+   * The same film for phones (and slow connections): 960×540, a keyframe every 3 frames, no audio, about 4 MB.
    * A phone cannot seek a 1080p file fast enough to follow a thumb, and should not have to download it.
    * Encode with: -vf scale=960:540 -c:v libx264 -profile:v main -crf 28 -g 3 -keyint_min 3 -sc_threshold 0
    * -bf 0 -an -movflags +faststart.

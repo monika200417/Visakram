@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 
 /**
  * Whether the film is worth having loaded, with hysteresis. It is wanted once
@@ -56,38 +56,78 @@ export function useSaveData(): boolean {
   return saveData
 }
 
-/** Phone-width screens get the light film. Read once: the film is not swapped mid-scrub if the window changes. */
-export function useIsPhone(): boolean {
-  const [phone] = useState(
-    () =>
-      typeof window !== 'undefined' && window.matchMedia?.('(max-width: 767px)').matches === true,
-  )
-  return phone
+/**
+ * Whether to take the light film (the 540p copy, about 4 MB) rather than the 1080p one (about 15 MB): on a
+ * phone-width screen, and on any screen whose connection reports itself as slow (2G/3G). Read once: the film
+ * is not swapped mid-scrub if the window or the connection changes.
+ */
+export function useLightFilm(): boolean {
+  const [light] = useState(() => {
+    if (typeof window === 'undefined') return false
+    if (window.matchMedia?.('(max-width: 767px)').matches === true) return true
+    const connection = (navigator as Navigator & { connection?: { effectiveType?: string } })
+      .connection
+    return (
+      connection?.effectiveType === 'slow-2g' ||
+      connection?.effectiveType === '2g' ||
+      connection?.effectiveType === '3g'
+    )
+  })
+  return light
 }
 
 /**
- * Owns the video's network lifecycle. When the film is wanted, the `src` prop
- * is set but `preload="none"` means the browser fetches nothing on its own,
- * so `load()` starts it. When it is no longer wanted (the visitor scrolled far
- * away, or reduced motion switched on), setting `src` to undefined removes the
- * attribute but the browser keeps the media pipeline alive until `load()` is
- * called on an element with no source — so that releases the download and decoder.
+ * Owns the video's network lifecycle. When the film is wanted it is downloaded whole, once, and played from
+ * memory: the file is fetched as a blob and handed to the video as an object URL. A browser given a plain
+ * address fetches a paused video only part-way ahead (Chrome stops at about half of this one), so skipping
+ * into a part not yet fetched waits on the network, and on a phone that is a visible stall in the middle of
+ * a swipe. From memory every seek is local. Until the blob has arrived the poster (the film's first frame) is
+ * shown. If the blob cannot be made (no fetch, or the request fails) the plain address is used, as before.
+ *
+ * When the film is no longer wanted (the visitor scrolled far away, or reduced motion switched on) the
+ * request is aborted, the source removed and `load()` called on the empty element, which releases the
+ * decoder, and the object URL is revoked, which releases the file.
  */
-export function useFilmSource(videoRef: RefObject<HTMLVideoElement | null>, wanted: boolean) {
-  const hadSource = useRef(false)
-
+export function useFilmSource(
+  videoRef: RefObject<HTMLVideoElement | null>,
+  wanted: boolean,
+  url: string,
+) {
   useEffect(() => {
     const video = videoRef.current
-    if (!video) return
-    if (wanted) {
-      hadSource.current = true
-      if (video.getAttribute('src') && video.readyState === 0) video.load()
-      return
+    if (!video || !wanted) return
+
+    const controller = new AbortController()
+    let objectUrl: string | undefined
+    const play = (src: string) => {
+      video.src = src
+      video.load()
     }
-    if (!hadSource.current) return
-    hadSource.current = false
-    video.pause()
-    video.removeAttribute('src')
-    video.load()
-  }, [videoRef, wanted])
+    const canMakeBlob = typeof fetch === 'function' && typeof URL.createObjectURL === 'function'
+
+    if (canMakeBlob) {
+      fetch(url, { signal: controller.signal })
+        .then((response) => {
+          if (!response.ok) throw new Error(`Film request failed: ${response.status}`)
+          return response.blob()
+        })
+        .then((blob) => {
+          objectUrl = URL.createObjectURL(blob)
+          play(objectUrl)
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) play(url)
+        })
+    } else {
+      play(url)
+    }
+
+    return () => {
+      controller.abort()
+      video.pause()
+      video.removeAttribute('src')
+      video.load()
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+    }
+  }, [videoRef, wanted, url])
 }

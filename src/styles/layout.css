@@ -35,3 +35,86 @@
 main:has(> [data-flush-footer]:last-child) + footer {
   margin-top: 0;
 }
+
+/**
+ * Light-orange "blushes": ten soft glows at random, far-apart places down the page, to warm the cream. One
+ * decorative layer drawn by a pseudo-element of <main> (no extra elements, no images, no blur filter, no
+ * animation, so it costs a phone nothing while scrolling). Their places come from SiteLayout's
+ * --blush-N-x / -y / -size variables, redrawn on each visit (src/components/layout/blushSpots.ts); the numbers
+ * here are the fallbacks. The hero and the Home Tour film sit above it (z-index 2 and 1, later in the page), so
+ * the photograph and the film are not tinted.
+ */
+main {
+  position: relative;
+  --blush-core: rgb(255 158 98 / 30%);
+  --blush-mid: rgb(255 172 118 / 13%);
+}
+
+main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      var(--blush-1-size, 460px) circle at var(--blush-1-x, 14%) var(--blush-1-y, 3%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-2-size, 520px) circle at var(--blush-2-x, 84%) var(--blush-2-y, 13%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-3-size, 400px) circle at var(--blush-3-x, 18%) var(--blush-3-y, 24%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-4-size, 480px) circle at var(--blush-4-x, 88%) var(--blush-4-y, 34%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-5-size, 540px) circle at var(--blush-5-x, 10%) var(--blush-5-y, 44%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-6-size, 420px) circle at var(--blush-6-x, 82%) var(--blush-6-y, 55%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-7-size, 500px) circle at var(--blush-7-x, 16%) var(--blush-7-y, 66%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-8-size, 460px) circle at var(--blush-8-x, 86%) var(--blush-8-y, 76%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-9-size, 440px) circle at var(--blush-9-x, 12%) var(--blush-9-y, 86%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      var(--blush-10-size, 520px) circle at var(--blush-10-x, 84%) var(--blush-10-y, 95%),
+      var(--blush-core) 0%,
+      var(--blush-mid) 42%,
+      transparent 70%
+    );
+}

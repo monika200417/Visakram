@@ -791,11 +791,17 @@ First view  the first poster (WebP, ~100 KB) paints immediately; clips fade in o
 Encode      short keyframe spacing (about every 4-8 frames), no B-frames, so seeking is cheap
 Idle        zero work: clips are never played; seeks happen only when scroll progress changes
 Mobile/RM   reduced motion and Save-Data get stills + captions, no clip download
-Phones      (max-width 767px) scrub a lighter copy of the same film: home-tour-mobile.mp4, 960x540,
-            a keyframe every 3 frames, ~4 MB (the desktop film is 1080p, ~34 MB). preload="auto" so a
-            swipe never waits on a range request. The scrub follows the thumb closely (scrub 0.35 vs
-            1.2 on desktop), the hero dive skips its blur, and ScrollTrigger ignores the address-bar
-            resize so pins are not re-measured mid-scroll (see src/animations/gsap.ts)
+Film files  desktop: home-tour.mp4, 1920x1080, a keyframe every 4 frames, ~15 MB (crf 25; SSIM 0.993 vs the
+            34 MB original it replaced). Phones (max-width 767px) and 2G/3G connections: home-tour-mobile.mp4,
+            960x540, a keyframe every 3 frames, ~4 MB
+In memory   once the section is near, the whole film is fetched as a blob and played from memory (useFilmSource),
+            because a browser fetches a paused video only part-way ahead and every skip past that waits on the
+            network. Seeks are then local: measured picture lag behind the scroll 0.05-0.16 s at a normal swipe and
+            0.02-0.07 s at three times that speed, at a steady 60 fps. Falls back to the plain address if the fetch
+            fails. Released (aborted, revoked) when the visitor scrolls far away
+Phones      the scrub follows the thumb closely (scrub 0.35 vs 1.2 on desktop), the hero dive skips its blur, and
+            ScrollTrigger ignores the address-bar resize so pins are not re-measured mid-scroll
+            (see src/animations/gsap.ts)
 Stars       14 small gold stars (CSS only) at random places, new places each time scrolling starts; they twinkle only
             while the film is being scrolled (data-moving, ~260 ms after the last scroll tick) and are paused and
             faded out otherwise, so they cost nothing at rest. Hidden in still mode (reduced motion / Save-Data)
