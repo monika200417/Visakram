@@ -166,8 +166,9 @@
   padding-top: var(--space-7);
   border-top: 1px solid var(--color-border);
   font-family: var(--font-display);
-  font-size: var(--text-h3);
-  max-width: 20ch;
+  /* one unbroken line (smaller only where the phone's width would otherwise break it) under one unbroken rule */
+  font-size: min(var(--text-h3), 5.6vw);
+  white-space: nowrap;
 }
 
 /* --- 06 Trust story / 07 Local presence share a simple stacked layout --- */
@@ -177,6 +178,39 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+}
+
+/* the three figures under "Credibility Built. Never Claimed." */
+.proof {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: start;
+  gap: var(--space-6) var(--space-8);
+}
+
+.proofValue {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-display-l);
+  line-height: var(--leading-tight);
+  color: var(--color-accent-strong);
+}
+
+.proofLabel {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-body);
+}
+
+@media (max-width: 479px) {
+  .proof {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* --- CTA --- */
@@ -191,7 +225,7 @@
 
 .ctaHeading {
   font-size: var(--text-h2);
-  max-width: 20ch;
+  max-width: 32ch;
 }
 
 @media (min-width: 768px) {

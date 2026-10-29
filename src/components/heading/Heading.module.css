@@ -2,6 +2,7 @@
    data-drop is set (Heading.tsx). The delay steps with each word's --w by --step. */
 .word {
   display: inline-block;
+  white-space: nowrap;
   opacity: 0;
   transform: translateY(-1.15em);
 }

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Container } from '../../../components/layout/Container'
 import { useRevealOnScroll } from '../../../animations/useRevealOnScroll'
 import { Heading } from '../../../components/heading/Heading'
+import { NoBreak } from '../../../components/text/NoBreak'
 import { useReplayOnView } from '../../../hooks/useReplayOnView'
 import styles from './LocalPresenceSection.module.css'
 
@@ -65,7 +66,8 @@ export function LocalPresenceSection() {
             </div>
             <p className={styles.statement}>
               Driven by visionary development, architectural innovation, and uncompromising quality,
-              we create future ready spaces that shape how Andhra Pradesh lives, works, and grows.
+              we create future ready spaces that shape how <NoBreak>Andhra Pradesh</NoBreak> lives,
+              works, and grows.
             </p>
           </div>
         </div>

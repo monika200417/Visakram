@@ -18,7 +18,7 @@ describe('routing', () => {
     ['/services', 'Villas, apartments and residential construction.'],
     [
       '/about',
-      '20+ years of construction experience, carried into a contemporary way of building.',
+      '15+ years of construction experience, carried into a contemporary way of building.',
     ],
     ['/process', 'From consult to handover.'],
     ['/contact', 'Start a project.'],

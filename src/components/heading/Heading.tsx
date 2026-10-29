@@ -17,6 +17,9 @@ function plainText(children: ReactNode): string | null {
   return text
 }
 
+/** A word is a run of non-space characters, except that "Andhra Pradesh" is one word and is never split across lines. */
+const WORD = /Andhra Pradesh\S*|\S+/g
+
 /** Total time a long heading may spend starting its words, so it never drags on. */
 const MAX_STAGGER_S = 1.4
 const STEP_S = 0.28
@@ -35,7 +38,7 @@ export function Heading({ as: Tag = 'h2', children, className, ...rest }: Headin
   useReplayOnView(ref, 'drop')
 
   const text = plainText(children)
-  const words = text === null ? null : text.split(/\s+/).filter(Boolean)
+  const words = text === null ? null : (text.match(WORD) ?? [])
   const step = words ? Math.min(STEP_S, MAX_STAGGER_S / Math.max(1, words.length - 1)) : STEP_S
 
   return (

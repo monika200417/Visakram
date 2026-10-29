@@ -76,7 +76,13 @@ describe('Chapter 12 — Local Presence', () => {
       scoped.getByRole('heading', { level: 2, name: 'Building Across Andhra Pradesh.' }),
     ).toBeInTheDocument()
     expect(scoped.getByText(/Driven by visionary development/)).toBeInTheDocument()
-    expect(scoped.getByText(/how Andhra Pradesh lives, works, and grows/)).toBeInTheDocument()
+    expect(
+      scoped.getByText(
+        (_, element) =>
+          element?.tagName === 'P' &&
+          element.textContent?.includes('how Andhra Pradesh lives, works, and grows') === true,
+      ),
+    ).toBeInTheDocument()
     // the earlier base-and-areas panel is gone
     expect(scoped.queryAllByRole('listitem')).toHaveLength(0)
     expect(scoped.queryByText(site.locality)).not.toBeInTheDocument()

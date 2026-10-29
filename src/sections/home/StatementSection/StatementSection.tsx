@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Container } from '../../../components/layout/Container'
+import { NoBreak } from '../../../components/text/NoBreak'
 import { useRevealOnScroll } from '../../../animations/useRevealOnScroll'
 import { site } from '../../../data/site'
 import { CountUp } from './CountUp'
@@ -57,10 +58,10 @@ export function StatementSection() {
             </Heading>
             <p className={styles.supporting}>
               Visakram Builders is a forward thinking real estate development company creating
-              distinctive residential, commercial, and mixed use spaces across Andhra Pradesh.
-              Driven by innovation, architectural excellence, and an unwavering commitment to
-              quality, we transform ambitious visions into thoughtfully designed developments built
-              for generations.
+              distinctive residential, commercial, and mixed use spaces across{' '}
+              <NoBreak>Andhra Pradesh</NoBreak>. Driven by innovation, architectural excellence, and
+              an unwavering commitment to quality, we transform ambitious visions into thoughtfully
+              designed developments built for generations.
             </p>
           </div>
 

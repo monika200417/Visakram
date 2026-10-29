@@ -4,6 +4,7 @@ import { Container } from '../components/layout/Container'
 import { Button } from '../components/buttons/Button'
 import { DevImagePlaceholder } from '../components/media/DevImagePlaceholder'
 import { FounderProfile } from '../components/founder/FounderProfile'
+import { NoBreak } from '../components/text/NoBreak'
 import { useRevealOnScroll } from '../animations/useRevealOnScroll'
 import { useDocumentMeta } from '../hooks/useDocumentMeta'
 import { buildAboutSeo } from '../utils/aboutSeo'
@@ -164,14 +165,22 @@ export function AboutPage() {
         <Container>
           <div ref={trustRef} className={styles.trustInner}>
             <Heading as="h2" id="trust-heading" className={styles.sectionHeading}>
-              Established, not assumed.
+              Credibility Built. Never Claimed.
             </Heading>
-            <p className={styles.supporting}>
-              {site.stats.yearsExperience} years of construction experience. Two founders with
-              complementary backgrounds. {formatList(site.values)} at every stage. That combination
-              is what {site.name} builds from — villas, apartments and residential construction
-              across {formatList(site.serviceAreas)}.
-            </p>
+            <ul className={styles.proof}>
+              <li>
+                <span className={styles.proofValue}>{site.stats.yearsExperience}</span>
+                <span className={styles.proofLabel}>Years of experience</span>
+              </li>
+              <li>
+                <span className={styles.proofValue}>{site.stats.completedProjects}</span>
+                <span className={styles.proofLabel}>Projects</span>
+              </li>
+              <li>
+                <span className={styles.proofValue}>{site.stats.ongoingProjects}</span>
+                <span className={styles.proofLabel}>Ongoing projects</span>
+              </li>
+            </ul>
           </div>
         </Container>
       </section>
@@ -184,8 +193,8 @@ export function AboutPage() {
               {formatList(site.serviceAreas)}.
             </Heading>
             <p className={styles.supporting}>
-              {site.name} is based in {site.locality}, {site.city}, {site.region}, building across{' '}
-              {formatList(site.serviceAreas)}.
+              {site.name} is based in {site.locality}, {site.city}, <NoBreak>{site.region}</NoBreak>
+              , building across {formatList(site.serviceAreas)}.
             </p>
           </div>
         </Container>
@@ -195,7 +204,7 @@ export function AboutPage() {
       <section className={styles.cta} aria-labelledby="about-cta-heading">
         <Container>
           <Heading as="h2" id="about-cta-heading" className={styles.ctaHeading}>
-            Start a project.
+            Let’s Create a Lasting Legacy.
           </Heading>
           <Button to={primaryCta.to} variant="primary">
             {primaryCta.label}

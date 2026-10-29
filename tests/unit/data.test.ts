@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { founderBackgroundDisclaimer, founders, getFounderBySlug } from '../../src/data/founders'
+import { founders, getFounderBySlug } from '../../src/data/founders'
 import { primaryNavigation } from '../../src/data/navigation'
 import { processSteps } from '../../src/data/process'
 import { getFeaturedProject, getProjectBySlug, projects } from '../../src/data/projects'
@@ -17,7 +17,7 @@ describe('data layer', () => {
   })
 
   it('has the client-supplied phone numbers, email and WhatsApp number, and leaves the unconfirmed details undefined', () => {
-    expect(site.phones).toEqual(['+91 95154 52875', '+91 95154 52876', '+91 95737 60438'])
+    expect(site.phones).toEqual(['+91 95154 52875', '+91 95154 52876'])
     expect(site.phone).toBe(site.phones[0])
     expect(site.email).toBe('hello@visakrambuilders.com')
     expect(site.whatsappNumber).toBe(site.phones[0])
@@ -67,20 +67,19 @@ describe('data layer', () => {
     }
   })
 
-  it('has exactly the two verified founders, with no invented role or photo', () => {
+  it('has exactly the two founders, each with their own story, education and no photo yet', () => {
     expect(founders).toHaveLength(2)
     expect(founders.map((f) => f.name)).toEqual(['Shanmukesh Sirikolla', 'Venkata Satish Anne'])
+    expect(founders.map((f) => f.storyLabel)).toEqual(['Founder story', 'Co-Founder story'])
     for (const founder of founders) {
-      // No formal Visakram title has been verified — positioning describes
-      // skill focus, never an invented role like "Co-Founder" or "CEO".
-      expect(founder.positioning.length).toBeGreaterThan(0)
+      expect(founder.story).toHaveLength(3)
+      expect(founder.education?.length).toBeGreaterThan(0)
+      expect(founder.closing).toBe('Turning Land Into Legacy.')
+      // No stand-in portrait: the page shows its placeholder until a real photo is supplied.
       expect(founder.image).toBeUndefined()
     }
     expect(getFounderBySlug('shanmukesh-sirikolla')?.name).toBe('Shanmukesh Sirikolla')
     expect(getFounderBySlug('not-a-real-founder')).toBeUndefined()
-    // The disclaimer that prior employment isn't Visakram Builders' own
-    // project history must exist wherever founder background is defined.
-    expect(founderBackgroundDisclaimer.toLowerCase()).toContain('does not mean')
   })
 
   it('has no invented testimonials', () => {

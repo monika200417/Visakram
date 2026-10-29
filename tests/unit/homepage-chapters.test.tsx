@@ -207,7 +207,13 @@ describe('homepage — our story', () => {
     const scoped = within(section)
     expect(scoped.getByText('Turning Land into Legacy.')).toBeInTheDocument()
     expect(scoped.getByText(/Every piece of land holds a possibility/)).toBeInTheDocument()
-    expect(scoped.getByText(/Rooted in Andhra Pradesh/)).toBeInTheDocument()
+    expect(
+      scoped.getByText(
+        (_, element) =>
+          element?.tagName === 'P' &&
+          element.textContent?.includes('Rooted in Andhra Pradesh') === true,
+      ),
+    ).toBeInTheDocument()
     expect(scoped.getByText(/We build what it can become/)).toBeInTheDocument()
     // it directly follows the From Plan to Place section
     const previous = section.previousElementSibling

@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Container } from '../../../components/layout/Container'
+import { NoBreak } from '../../../components/text/NoBreak'
 import { useRevealOnScroll } from '../../../animations/useRevealOnScroll'
 import styles from './OurStorySection.module.css'
 import { Heading } from '../../../components/heading/Heading'
@@ -34,9 +35,9 @@ export function OurStorySection() {
               building enduring value.
             </p>
             <p>
-              Rooted in Andhra Pradesh and driven by progressive thinking, we bring together
-              architectural vision, thoughtful planning, and a commitment to quality to shape
-              developments designed for today and generations to come.
+              Rooted in <NoBreak>Andhra Pradesh</NoBreak> and driven by progressive thinking, we
+              bring together architectural vision, thoughtful planning, and a commitment to quality
+              to shape developments designed for today and generations to come.
             </p>
           </div>
 

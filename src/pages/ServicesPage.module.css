@@ -169,7 +169,7 @@
 
 .ctaHeading {
   font-size: var(--text-h2);
-  max-width: 20ch;
+  max-width: 32ch;
 }
 
 @media (min-width: 768px) {

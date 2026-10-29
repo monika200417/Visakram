@@ -36,7 +36,11 @@ describe('global shell', () => {
     // the supplied office address, with its PIN code
     expect(within(footer).getByText('Office address')).toBeInTheDocument()
     expect(
-      within(footer).getByText('Kommadi, Visakhapatnam, Andhra Pradesh - 530048'),
+      within(footer).getByText(
+        (_, element) =>
+          element?.tagName === 'P' &&
+          element.textContent?.includes('Kommadi, Visakhapatnam, Andhra Pradesh - 530048') === true,
+      ),
     ).toBeInTheDocument()
     expect(footer.textContent).not.toMatch(/Vizianagaram/)
     for (const phone of site.phones) {

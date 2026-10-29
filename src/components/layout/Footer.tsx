@@ -1,5 +1,6 @@
 import { Logo } from '../brand/Logo'
 import { primaryNavigation } from '../../data/navigation'
+import { NoBreak } from '../text/NoBreak'
 import { samify } from '../../data/samify'
 import { site } from '../../data/site'
 import { telHref } from '../../utils/telHref'
@@ -36,10 +37,12 @@ export function Footer() {
 
         <div className={styles.location}>
           <span className={styles.heading}>Building across</span>
-          <p className="text-mono-label">{site.region}</p>
+          <p className="text-mono-label">
+            <NoBreak>{site.region}</NoBreak>
+          </p>
           <span className={styles.heading}>Office address</span>
           <p className="text-mono-label">
-            {site.locality}, {site.city}, {site.region} - {site.postalCode}
+            {site.locality}, {site.city}, <NoBreak>{site.region}</NoBreak> - {site.postalCode}
           </p>
         </div>
 

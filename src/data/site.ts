@@ -3,10 +3,10 @@
  * Fields that are not yet confirmed by the client are left undefined on purpose.
  */
 /**
- * The phone numbers supplied by the client (written 9515452875, 9515452876 and +91 95737 60438; the first
- * two are given the same +91 country code as the third).
+ * The phone numbers supplied by the client (written 9515452875 and 9515452876; given the +91 country code).
+ * A third number, +91 95737 60438, was supplied earlier and then withdrawn by the client: it is not shown.
  */
-const phones = ['+91 95154 52875', '+91 95154 52876', '+91 95737 60438'] as const
+const phones = ['+91 95154 52875', '+91 95154 52876'] as const
 
 export const site = {
   name: 'Visakram Builders',
@@ -19,8 +19,8 @@ export const site = {
   values: ['Quality', 'Timeliness', 'Transparency'],
   /** Client-stated figures; approved wording to be confirmed before launch. */
   stats: {
-    yearsExperience: '20+',
-    completedProjects: '25+',
+    yearsExperience: '15+',
+    completedProjects: '40+',
     ongoingProjects: 5,
   },
 

@@ -21,7 +21,9 @@ describe('process page with no approved steps', () => {
       screen.getByRole('heading', { level: 1, name: 'Our construction process.' }),
     ).toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
-    expect(screen.getByRole('heading', { level: 2, name: 'Start a project.' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Let’s Create a Lasting Legacy.' }),
+    ).toBeInTheDocument()
 
     // No overview, no journey, no empty lists or stray headings.
     expect(screen.queryByRole('navigation', { name: 'Process stages' })).not.toBeInTheDocument()

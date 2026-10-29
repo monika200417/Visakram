@@ -93,14 +93,20 @@ describe('homepage — statement and proof', () => {
     expect(statementSection).not.toBeNull()
     const scoped = within(statementSection as HTMLElement)
     expect(scoped.getByText(/forward thinking real estate development company/)).toBeInTheDocument()
-    expect(scoped.getByText(/across Andhra Pradesh/)).toBeInTheDocument()
+    expect(
+      scoped.getByText(
+        (_, element) =>
+          element?.tagName === 'P' &&
+          element.textContent?.includes('across Andhra Pradesh') === true,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('shows only the verified stats, with no invented figures', () => {
     renderHome()
     const proof = screen.getByRole('region', { name: 'Visakram Builders in numbers' })
-    expect(within(proof).getByText('20+')).toBeInTheDocument()
-    expect(within(proof).getByText('25+')).toBeInTheDocument()
+    expect(within(proof).getByText('15+')).toBeInTheDocument()
+    expect(within(proof).getByText('40+')).toBeInTheDocument()
     expect(within(proof).getByText('5')).toBeInTheDocument()
     expect(within(proof).getByText('Years of experience')).toBeInTheDocument()
     expect(within(proof).getByText('Completed projects')).toBeInTheDocument()

@@ -18,8 +18,8 @@ Business context:
 - Based in Kommadi, Visakhapatnam, Andhra Pradesh
 - Service area: Visakhapatnam + Vizianagaram
 - Primary services: Residential construction, apartments, villas
-- Stated company experience: 20+ years
-- Stated project figures: 25+ completed, 5 ongoing
+- Stated company experience: 15+ years (client update; earlier drafts said 20+)
+- Stated project figures: 40+ projects, 5 ongoing (client update; earlier drafts said 25+)
 - Core values: Quality, Timeliness, Transparency
 
 These business facts are client-provided project context and must not be expanded into unsupported claims.

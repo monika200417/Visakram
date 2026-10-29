@@ -90,7 +90,10 @@ describe('process page', () => {
 
   it('offers the primary CTA and a path to services, with no invented contact details', () => {
     renderProcess()
-    const ctaHeading = screen.getByRole('heading', { level: 2, name: 'Start a project.' })
+    const ctaHeading = screen.getByRole('heading', {
+      level: 2,
+      name: 'Let’s Create a Lasting Legacy.',
+    })
     const section = ctaHeading.closest('section') as HTMLElement
     expect(within(section).getByRole('link', { name: primaryCta.label })).toHaveAttribute(
       'href',
@@ -118,7 +121,9 @@ describe('process page', () => {
     renderProcess()
     expect(screen.getByRole('heading', { level: 2, name: 'The sequence.' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2, name: 'Stage by stage.' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 2, name: 'Start a project.' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Let’s Create a Lasting Legacy.' }),
+    ).toBeInTheDocument()
   })
 })
 

@@ -280,7 +280,7 @@ The exact browser versions supported for production should be finalized before l
 # 9. About / Founders QA
 
 - [ ] Company information is accurate
-- [ ] 20+ years statement is approved
+- [ ] 15+ years statement is approved
 - [ ] Founder information is verified
 - [ ] Professional experience is represented accurately
 - [ ] Education information is accurate
