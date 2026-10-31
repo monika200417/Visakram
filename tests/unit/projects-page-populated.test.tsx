@@ -91,13 +91,12 @@ describe('projects archive — once real project data exists', () => {
     ).toBeInTheDocument()
   })
 
-  it('shows a category-specific empty message when a filter matches nothing', async () => {
+  it('draws no list, and no message, when a filter matches nothing', async () => {
     await renderProjects()
 
     fireEvent.click(screen.getByRole('button', { name: 'Residential Construction' }))
-    expect(
-      screen.getByText(/no residential construction projects to show yet/i),
-    ).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'All projects' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/to show yet/i)).not.toBeInTheDocument()
   })
 
   it('sets the document title and description from verified site data', async () => {

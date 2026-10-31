@@ -56,6 +56,9 @@ export const services: readonly Service[] = [
     title: 'Villas',
     shortDescription:
       'Independent homes built end-to-end — from foundation to finish — for families building the place they will live in.',
+    image: '/assets/images/projects-page/villa-dusk.webp',
+    imageAlt:
+      'A contemporary villa with tall glazed walls, lit from within at dusk, behind a planted garden',
   },
   {
     slug: 'apartments',
@@ -74,6 +77,9 @@ export const services: readonly Service[] = [
     title: 'Residential Construction',
     shortDescription:
       'Ground-up residential construction across Visakhapatnam and Vizianagaram, built to the client’s own plan and timeline.',
+    image: '/assets/images/projects-page/construction-timber-frame.webp',
+    imageAlt:
+      'The timber frame and roof of a two-storey house under construction, with scaffolding along its eaves',
   },
 ]
 

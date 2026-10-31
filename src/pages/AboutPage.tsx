@@ -1,8 +1,7 @@
-import { useRef } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { Container } from '../components/layout/Container'
 import { Button } from '../components/buttons/Button'
-import { DevImagePlaceholder } from '../components/media/DevImagePlaceholder'
 import { FounderProfile } from '../components/founder/FounderProfile'
 import { NoBreak } from '../components/text/NoBreak'
 import { useRevealOnScroll } from '../animations/useRevealOnScroll'
@@ -11,6 +10,7 @@ import { buildAboutSeo } from '../utils/aboutSeo'
 import { formatList } from '../utils/formatList'
 import { site } from '../data/site'
 import { services } from '../data/services'
+import { aboutCollage } from '../data/aboutCollage'
 import { founders } from '../data/founders'
 import { visakramWayPrinciples } from '../data/visakramWay'
 import { primaryCta } from '../data/navigation'
@@ -21,7 +21,7 @@ import { Heading } from '../components/heading/Heading'
  * /about — Milestone 7. An editorial narrative built entirely from
  * already-verified content (src/data/site.ts, services.ts, founders.ts,
  * visakramWay.ts) — no invented slogan, title, statistic or claim.
- * Section order follows the blueprint's own trust arc: experience, what
+ * Section order follows the blueprint's own trust arc: what
  * Visakram builds, values, the two founders, why that combination reads
  * as established, and where the company actually builds.
  */
@@ -30,9 +30,6 @@ export function AboutPage() {
 
   const heroRef = useRef<HTMLDivElement>(null)
   useRevealOnScroll(heroRef, { y: 32 })
-
-  const experienceRef = useRef<HTMLDivElement>(null)
-  useRevealOnScroll(experienceRef, { y: 24 })
 
   const buildRef = useRef<HTMLOListElement>(null)
   useRevealOnScroll(buildRef, { y: 24 })
@@ -74,27 +71,28 @@ export function AboutPage() {
                   decoding="async"
                 />
               ) : (
-                <DevImagePlaceholder label={site.name} />
+                <ul className={styles.collage}>
+                  {aboutCollage.map((image, i) => (
+                    <li
+                      key={image.src}
+                      className={styles.collageTile}
+                      style={
+                        {
+                          '--ratio': image.ratio,
+                          '--ratio-phone': image.ratioPhone,
+                        } as CSSProperties
+                      }
+                    >
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        loading={i < 2 ? 'eager' : 'lazy'}
+                        decoding="async"
+                      />
+                    </li>
+                  ))}
+                </ul>
               )}
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* 02 — Experience */}
-      <section className={styles.section} aria-labelledby="experience-heading">
-        <Container>
-          <div ref={experienceRef} className={styles.experienceRow}>
-            <p className={styles.experienceValue}>{site.stats.yearsExperience}</p>
-            <div className={styles.experienceText}>
-              <Heading as="h2" id="experience-heading" className={styles.sectionHeading}>
-                Years of construction experience.
-              </Heading>
-              <p className={styles.supporting}>
-                That experience now carries into a contemporary approach to residential building —{' '}
-                {site.stats.completedProjects} completed projects and {site.stats.ongoingProjects}{' '}
-                currently underway, across {formatList(site.serviceAreas)}.
-              </p>
             </div>
           </div>
         </Container>

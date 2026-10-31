@@ -50,6 +50,7 @@
 .link.active,
 .link[aria-current='page'] {
   color: var(--color-accent);
+  font-weight: 700;
 }
 
 .cta {

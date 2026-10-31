@@ -27,3 +27,10 @@ Future You Imagine") is cropped away (dark/light: 1323 x 594, white: 1304 x 581)
 each file is untouched, and the files here are the unmodified originals. To bring the slogan back,
 restore the original `height`/`viewBox` (672 / 650) and the matching sizes in
 `src/components/layout/Header.*` and `src/components/brand/Logo.*`.
+
+## Gold "V" mark (favicon)
+
+`visakram-logo-mark-gold.webp` is the client-supplied gold "V" mark on white (1254x1254), unmodified. The
+browser-tab icons in `public/` (`favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`) are made from it: the
+white background was keyed out to transparent (apple-touch-icon keeps a white square, as iOS requires),
+cropped square around the mark and scaled.

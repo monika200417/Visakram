@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { App } from '../../src/app/App'
 import { expectOnlyVerifiedContactLinks } from '../helpers/contactLinks'
 import { services } from '../../src/data/services'
+import { aboutCollage } from '../../src/data/aboutCollage'
 import { founders } from '../../src/data/founders'
 import { site } from '../../src/data/site'
 import { primaryCta } from '../../src/data/navigation'
@@ -35,19 +36,29 @@ describe('about page', () => {
     }
   })
 
-  it('renders the verified years-of-experience figure, not an invented one', () => {
+  it('sets the construction collage right under the headline, every picture with its own alt text', () => {
     renderAbout()
-    // Appears at least twice: the hero headline and the experience callout.
-    // A plain substring matcher, not a regex — site.stats.yearsExperience
-    // ('20+') contains a '+', a regex quantifier that would otherwise
-    // change what this actually matches.
-    const matches = screen.getAllByText((_, element) =>
-      Boolean(element?.textContent?.includes(site.stats.yearsExperience)),
-    )
-    expect(matches.length).toBeGreaterThan(0)
+    const heading = screen.getByRole('heading', { level: 1 })
+    const hero = heading.closest('section') as HTMLElement
+    const images = within(hero).getAllByRole('img')
+    expect(images).toHaveLength(aboutCollage.length)
+    for (const [i, image] of aboutCollage.entries()) {
+      expect(images[i]).toHaveAttribute('src', image.src)
+      expect(images[i]).toHaveAttribute('alt', image.alt)
+      expect(image.alt.length).toBeGreaterThan(10)
+    }
+    // no stand-in placeholder box beside the real pictures
+    expect(within(hero).queryByText(/Dev placeholder/)).not.toBeInTheDocument()
+  })
+
+  it('shows the years-of-experience figure in the headline only, with no repeated "years" section below', () => {
+    renderAbout()
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Years of construction experience.' }),
-    ).toBeInTheDocument()
+      screen.getByRole('heading', { level: 1 }).textContent?.includes(site.stats.yearsExperience),
+    ).toBe(true)
+    expect(
+      screen.queryByRole('heading', { level: 2, name: 'Years of construction experience.' }),
+    ).not.toBeInTheDocument()
   })
 
   it('sources "what we build" from services.ts — all three, matching titles and copy', () => {

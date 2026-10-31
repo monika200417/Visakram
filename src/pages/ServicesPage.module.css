@@ -213,3 +213,17 @@
     padding-left: 0;
   }
 }
+
+/* --- a wide picture under the process --- */
+.banner {
+  margin: var(--space-8) 0 0;
+}
+
+.bannerImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}

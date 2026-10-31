@@ -44,39 +44,56 @@
 
 .heroMedia {
   position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  background: var(--color-stone);
   margin-top: var(--space-4);
 }
 
 .heroPhoto {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* The collage: columns of pictures laid down one after another, two across on a phone, three from tablet up,
+   each at its own proportion and cropped to fit. Every tile keeps a small gap, and nothing can overflow. */
+.collage {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 2;
+  column-gap: var(--space-2);
+}
+
+.collageTile {
+  aspect-ratio: var(--ratio-phone);
+  break-inside: avoid;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-stone);
+}
+
+.collageTile img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* --- 02 Experience --- */
-.experienceRow {
-  margin-top: var(--space-7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
+@media (min-width: 640px) {
+  .collage {
+    columns: 3;
+    column-gap: var(--space-3);
+  }
 
-.experienceValue {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-display-xl);
-  line-height: var(--leading-tight);
-  color: var(--color-accent-strong);
-}
+  .collageTile {
+    aspect-ratio: var(--ratio);
+  }
 
-.experienceText {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  .collageTile {
+    margin-bottom: var(--space-3);
+  }
 }
 
 /* --- 03 What we build --- */
@@ -229,15 +246,6 @@
 }
 
 @media (min-width: 768px) {
-  .experienceRow {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: var(--space-8);
-  }
-
-  .experienceValue {
-    flex: 0 0 auto;
-  }
 }
 
 @media (min-width: 1024px) {

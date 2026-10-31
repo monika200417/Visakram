@@ -11,6 +11,7 @@ import { processSteps } from '../data/process'
 import { projects } from '../data/projects'
 import { services } from '../data/services'
 import { site } from '../data/site'
+import { servicesProcessImage } from '../data/servicesPageMedia'
 import styles from './ServicesPage.module.css'
 import { Heading } from '../components/heading/Heading'
 
@@ -115,6 +116,17 @@ export function ServicesPage() {
               </li>
             ))}
           </ol>
+          <figure className={styles.banner}>
+            <img
+              src={servicesProcessImage.src}
+              alt={servicesProcessImage.alt}
+              className={styles.bannerImage}
+              width={1200}
+              height={801}
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
         </Container>
       </section>
 

@@ -6,6 +6,11 @@ import { buildProjectsListingSeo } from '../utils/projectSeo'
 import { projects, type Project } from '../data/projects'
 import { services } from '../data/services'
 import { site } from '../data/site'
+import {
+  projectsPageCategoryImages,
+  projectsPageGallery,
+  projectsPageHero,
+} from '../data/projectsPageMedia'
 import styles from './ProjectsPage.module.css'
 import { Heading } from '../components/heading/Heading'
 
@@ -18,8 +23,7 @@ type CategoryFilter = typeof ALL | Project['category']
  * category filter + data-driven grid, entirely sourced from
  * src/data/projects.ts and src/data/services.ts — no hardcoded cards, no
  * duplicated category strings. `projects` is empty until the client
- * approves real work, so the grid renders a refined, non-dominant empty
- * state instead of any invented project.
+ * approves real work: until then no list is drawn, and the sample gallery stands in. No project is invented.
  *
  * Deviation from the blueprint's "editorial masonry / asymmetric grid":
  * this renders a clean, evenly responsive 1 / 2 / 3-column grid instead.
@@ -39,19 +43,41 @@ export function ProjectsPage() {
     [activeFilter],
   )
 
-  const activeServiceTitle = services.find((service) => service.category === activeFilter)?.title
+  // sample pictures while there is nothing real to list: the same category filter applies, "All" shows them all
+  const sampleImages = useMemo(
+    () =>
+      activeFilter === ALL
+        ? projectsPageGallery
+        : projectsPageGallery.filter((image) => image.category === activeFilter),
+    [activeFilter],
+  )
 
   return (
     <>
       <section className={styles.intro}>
         <Container>
-          <Heading as="h1" className={styles.heading}>
-            Projects
-          </Heading>
-          <p className={styles.lede}>
-            A working record of {site.name}&rsquo;s villas, apartments and residential construction
-            &mdash; each one added here once it&rsquo;s approved to share.
-          </p>
+          <div className={styles.introGrid}>
+            <div>
+              <Heading as="h1" className={styles.heading}>
+                Projects
+              </Heading>
+              <p className={styles.lede}>
+                A working record of {site.name}&rsquo;s villas, apartments and residential
+                construction &mdash; each one added here once it&rsquo;s approved to share.
+              </p>
+            </div>
+            <figure className={styles.heroFigure}>
+              <img
+                src={projectsPageHero.src}
+                alt={projectsPageHero.alt}
+                className={styles.heroImage}
+                width={1600}
+                height={1067}
+                loading="eager"
+                decoding="async"
+              />
+            </figure>
+          </div>
         </Container>
       </section>
 
@@ -66,41 +92,70 @@ export function ProjectsPage() {
             >
               All
             </button>
-            {services.map((service) => (
-              <button
-                key={service.slug}
-                type="button"
-                className={styles.filterButton}
-                aria-pressed={activeFilter === service.category}
-                onClick={() => setActiveFilter(service.category)}
-              >
-                {service.title}
-              </button>
-            ))}
+            {services.map((service) => {
+              const image = projectsPageCategoryImages[service.slug]
+              return (
+                <button
+                  key={service.slug}
+                  type="button"
+                  className={styles.categoryTile}
+                  aria-pressed={activeFilter === service.category}
+                  onClick={() => setActiveFilter(service.category)}
+                >
+                  {image ? (
+                    <img
+                      src={image.src}
+                      alt=""
+                      className={styles.tileImage}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : null}
+                  <span className={styles.tileLabel}>{service.title}</span>
+                </button>
+              )
+            })}
           </div>
         </Container>
       </section>
 
-      <section aria-labelledby="project-list-heading" className={styles.listSection}>
-        <Container>
-          <h2 id="project-list-heading" className="visually-hidden">
-            All projects
-          </h2>
-          {filteredProjects.length > 0 ? (
+      {filteredProjects.length > 0 ? (
+        <section aria-labelledby="project-list-heading" className={styles.listSection}>
+          <Container>
+            <h2 id="project-list-heading" className="visually-hidden">
+              All projects
+            </h2>
             <ul className={`grid ${styles.grid}`}>
               {filteredProjects.map((project) => (
                 <ProjectCard key={project.slug} project={project} />
               ))}
             </ul>
-          ) : (
-            <p className={styles.empty} data-dev-placeholder>
-              {activeFilter === ALL
-                ? `No projects to show yet. This page is built to hold every ${site.name} project — villas, apartments and residential construction — as soon as one is approved to share.`
-                : `No ${activeServiceTitle?.toLowerCase() ?? 'matching'} projects to show yet.`}
-            </p>
-          )}
-        </Container>
-      </section>
+          </Container>
+        </section>
+      ) : null}
+
+      {projects.length === 0 && sampleImages.length > 0 ? (
+        <section aria-label="Gallery" className={styles.gallerySection}>
+          <Container>
+            <ul className={styles.gallery}>
+              {sampleImages.map((image) => (
+                <li key={image.id} className={styles.galleryItem}>
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className={styles.galleryImage}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span className={styles.galleryTag}>
+                    {services.find((service) => service.category === image.category)?.title}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      ) : null}
     </>
   )
 }

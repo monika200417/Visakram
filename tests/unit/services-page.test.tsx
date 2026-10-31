@@ -165,36 +165,30 @@ describe('services page', () => {
     expect(video).not.toBeNull()
     expect(video).toHaveAttribute('src', apartments.video!.src)
     expect(within(section).queryByText(/Dev placeholder/)).not.toBeInTheDocument()
-    // the other two services are untouched: no video, still their placeholders
+    // the other two services have no video: each has its own photograph instead
     for (const slug of ['villas', 'residential-construction']) {
       const other = container.querySelector(`section#${slug}`) as HTMLElement
       expect(other.querySelector('video')).toBeNull()
-      expect(within(other).getByText(/Dev placeholder/)).toBeInTheDocument()
+      expect(within(other).queryByText(/Dev placeholder/)).not.toBeInTheDocument()
+      expect(other.querySelector('img')).not.toBeNull()
     }
   })
 
-  it('handles unapproved service fields without broken or fabricated UI', () => {
+  it('handles the still-unapproved service fields without broken or fabricated UI', () => {
     const { container } = renderServices()
     for (const service of services) {
       // The real data really is still unapproved — if this ever fails because
       // content was added, the page already renders it (see the populated
       // ServiceDetail tests) and this assertion should simply be retired.
       expect(service.description).toBeUndefined()
-      expect(service.image).toBeUndefined()
       expect(service.highlights).toBeUndefined()
 
       const section = container.querySelector(`section#${service.slug}`) as HTMLElement
       const scoped = within(section)
-      // The media slot holds the service's own video where one is supplied; otherwise
-      // it falls back to the obvious dev placeholder, never a fake photo.
-      if (service.video) {
-        expect(scoped.queryByText(/Dev placeholder/)).not.toBeInTheDocument()
-      } else {
-        expect(
-          scoped.getByText(`Dev placeholder · ${service.pageTitle ?? service.title}`),
-        ).toBeInTheDocument()
-      }
-      expect(scoped.queryAllByRole('img')).toHaveLength(0)
+      // The media slot holds the service's own video or photograph; every service has one of the two.
+      expect(scoped.queryByText(/Dev placeholder/)).not.toBeInTheDocument()
+      expect(Boolean(service.video) || Boolean(service.image)).toBe(true)
+      expect(service.image ? scoped.getAllByRole('img').length : 0).toBe(service.image ? 1 : 0)
       // No empty headings, lists or labels left behind for the missing fields.
       expect(scoped.queryByText('What we provide')).not.toBeInTheDocument()
       expect(scoped.queryByText('Related projects')).not.toBeInTheDocument()
